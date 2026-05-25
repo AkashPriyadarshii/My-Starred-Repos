@@ -4,6 +4,7 @@ An automated tracker that fetches, organizes, and analyzes my starred GitHub rep
 
 ## 📊 Quick Links
 * **[Pretty Markdown Analysis](STARRED_ANALYSIS.md)**: Daily updated analysis categorized by tech stack and category.
+* **[Full Repository List](ALL_STARRED_REPOS.md)**: Daily updated flat list of all repositories sorted by star count.
 * **[Raw JSON Data](repos_output.json)**: Raw JSON structured output for programmatic use and dashboards.
 
 ---
