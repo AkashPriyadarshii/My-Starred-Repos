@@ -1,9 +1,13 @@
-# 🌟 Starred Repos Tracker & Analyzer
+# 🌟 Akash Priyadarshi (@AkashPriyadarshii) — Starred Repos Tracker & Analyzer
+
+**GitHub Starred Repos Dashboard** | **Auto-Updating Starred Repos** | **Glassmorphism Dashboard GitHub**
 
 An automated tracker that fetches, organizes, and analyzes my starred GitHub repositories every day.
 
+---
+
 ## 📊 Quick Links
-* **[Interactive Portfolio Dashboard](https://akashpriyadarshii.github.io/My-Starred-Repos/dashboard/index.html)**: Live interactive web app portfolio featuring premium UI/UX, particle canvas backgrounds, theme engines, bento grid stats, PWA capabilities, and performance controls.
+* **[Interactive Portfolio Dashboard](https://akashpriyadarshii.github.io/My-Starred-Repos/dashboard/index.html)**: Live interactive web app portfolio featuring premium UI/UX, particle canvas background, glassmorphism design, 6 themes, and daily GitHub Actions sync
 * **[Pretty Markdown Analysis](STARRED_ANALYSIS.md)**: Daily updated analysis categorized by tech stack and category.
 * **[Full Repository List](ALL_STARRED_REPOS.md)**: Daily updated flat list of all repositories sorted by star count.
 * **[Changelog History](CHANGELOG.md)**: Daily log of added and removed starred repositories.
@@ -35,6 +39,6 @@ An interactive Single Page Application (SPA) dashboard styled with modern glassm
 ## 🔒 Security & Privacy (Is this safe?)
 **Yes, it is 100% safe.** 
 
-* **No Personal Secrets:** The workflow does **NOT** use your personal password or personal access tokens (PAT). It uses GitHub's built-in `GITHUB_TOKEN` which is temporary and expires as soon as the run is done.
+* **No Personal Secrets:** The workflow does **NOT** use your personal password or personal access tokens (PAT). It uses GitHub's built-in `GITHUB_TOKEN` which is temporary and expires as soon as the workflow finishes.
 * **Public Data Only:** The script fetches public starred repositories, which are already public on GitHub. No private information is accessed or leaked.
 * **Auto-Rotated Key:** The token used is scoped only to this repository, meaning it cannot be used to modify or access anything else on your account.
