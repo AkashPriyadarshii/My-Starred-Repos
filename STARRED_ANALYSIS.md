@@ -2,7 +2,7 @@
 
 **GitHub User:** `AkashPriyadarshii`  
 **Total Repositories:** 337
-**Last Generated:** 2026-05-25 12:57:06 UTC
+**Last Generated:** 2026-05-25 13:15:38 UTC
 **Auto-Updated:** Daily @ 00:00 UTC via GitHub Actions
 
 ---
@@ -12,27 +12,27 @@
 - **Total Starred:** 337
 - **Categories:** 9
 - **Top Language:** Python
-- **Avg Stars:** 27768
+- **Avg Stars:** 27770
 
 ## 🏆 Top 15 by Stars
 
 | Rank | Repo | Stars | Language |
 |------|------|-------|----------|
-| 1 | [public-apis/public-apis](https://github.com/public-apis/public-apis) | 437,102 | Python |
-| 2 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | 374,539 | TypeScript |
+| 1 | [public-apis/public-apis](https://github.com/public-apis/public-apis) | 437,105 | Python |
+| 2 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | 374,544 | TypeScript |
 | 3 | [donnemartin/system-design-primer](https://github.com/donnemartin/system-design-primer) | 350,220 | Python |
-| 4 | [obra/superpowers](https://github.com/obra/superpowers) | 205,844 | Shell |
-| 5 | [ultraworkers/claw-code](https://github.com/ultraworkers/claw-code) | 192,469 | Rust |
-| 6 | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 191,732 | JavaScript |
-| 7 | [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | 166,602 | Python |
-| 8 | [anomalyco/opencode](https://github.com/anomalyco/opencode) | 165,069 | TypeScript |
-| 9 | [f/prompts.chat](https://github.com/f/prompts.chat) | 162,797 | HTML |
-| 10 | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) | 153,592 | N/A |
-| 11 | [open-webui/open-webui](https://github.com/open-webui/open-webui) | 138,565 | Python |
-| 12 | [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) | 123,999 | TypeScript |
-| 13 | [Hack-with-Github/Awesome-Hacking](https://github.com/Hack-with-Github/Awesome-Hacking) | 113,035 | N/A |
-| 14 | [Shubhamsaboo/awesome-llm-apps](https://github.com/Shubhamsaboo/awesome-llm-apps) | 111,707 | Python |
-| 15 | [github/spec-kit](https://github.com/github/spec-kit) | 105,716 | Python |
+| 4 | [obra/superpowers](https://github.com/obra/superpowers) | 205,871 | Shell |
+| 5 | [ultraworkers/claw-code](https://github.com/ultraworkers/claw-code) | 192,470 | Rust |
+| 6 | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 191,764 | JavaScript |
+| 7 | [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | 166,629 | Python |
+| 8 | [anomalyco/opencode](https://github.com/anomalyco/opencode) | 165,075 | TypeScript |
+| 9 | [f/prompts.chat](https://github.com/f/prompts.chat) | 162,798 | HTML |
+| 10 | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) | 153,637 | N/A |
+| 11 | [open-webui/open-webui](https://github.com/open-webui/open-webui) | 138,566 | Python |
+| 12 | [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) | 124,007 | TypeScript |
+| 13 | [Hack-with-Github/Awesome-Hacking](https://github.com/Hack-with-Github/Awesome-Hacking) | 113,037 | N/A |
+| 14 | [Shubhamsaboo/awesome-llm-apps](https://github.com/Shubhamsaboo/awesome-llm-apps) | 111,708 | Python |
+| 15 | [github/spec-kit](https://github.com/github/spec-kit) | 105,722 | Python |
 
 ---
 
@@ -40,55 +40,55 @@
 
 ### AI Agents (169 repos)
 
-- **[openclaw/openclaw](https://github.com/openclaw/openclaw)** (374,539⭐) - Your own personal AI assistant. Any OS. Any Platform. The lobster way. 🦞 
-- **[obra/superpowers](https://github.com/obra/superpowers)** (205,844⭐) - An agentic skills framework & software development methodology that works.
-- **[ultraworkers/claw-code](https://github.com/ultraworkers/claw-code)** (192,469⭐) - The repo is finally unlocked. enjoy the party! The fastest repo in history to surpass 100K stars ⭐. Join Discord: https://discord.gg/5TUQKqFWd Built in Rust using oh-my-codex.
-- **[affaan-m/ECC](https://github.com/affaan-m/ECC)** (191,732⭐) - The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond.
-- **[NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)** (166,602⭐) - The agent that grows with you
+- **[openclaw/openclaw](https://github.com/openclaw/openclaw)** (374,544⭐) - Your own personal AI assistant. Any OS. Any Platform. The lobster way. 🦞 
+- **[obra/superpowers](https://github.com/obra/superpowers)** (205,871⭐) - An agentic skills framework & software development methodology that works.
+- **[ultraworkers/claw-code](https://github.com/ultraworkers/claw-code)** (192,470⭐) - The repo is finally unlocked. enjoy the party! The fastest repo in history to surpass 100K stars ⭐. Join Discord: https://discord.gg/5TUQKqFWd Built in Rust using oh-my-codex.
+- **[affaan-m/ECC](https://github.com/affaan-m/ECC)** (191,764⭐) - The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond.
+- **[NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)** (166,629⭐) - The agent that grows with you
   *... and 164 more*
 
 ### Other (66 repos)
 
-- **[public-apis/public-apis](https://github.com/public-apis/public-apis)** (437,102⭐) - A collective list of free APIs
-- **[f/prompts.chat](https://github.com/f/prompts.chat)** (162,797⭐) - f.k.a. Awesome ChatGPT Prompts. Share, discover, and collect prompts from the community. Free and open source — self-host for your organization with complete privacy.
-- **[syncthing/syncthing](https://github.com/syncthing/syncthing)** (84,469⭐) - Open Source Continuous File Synchronization
-- **[localsend/localsend](https://github.com/localsend/localsend)** (82,024⭐) - An open-source cross-platform alternative to AirDrop
-- **[666ghj/MiroFish](https://github.com/666ghj/MiroFish)** (62,450⭐) - A Simple and Universal Swarm Intelligence Engine, Predicting Anything. 简洁通用的群体智能引擎，预测万物
+- **[public-apis/public-apis](https://github.com/public-apis/public-apis)** (437,105⭐) - A collective list of free APIs
+- **[f/prompts.chat](https://github.com/f/prompts.chat)** (162,798⭐) - f.k.a. Awesome ChatGPT Prompts. Share, discover, and collect prompts from the community. Free and open source — self-host for your organization with complete privacy.
+- **[syncthing/syncthing](https://github.com/syncthing/syncthing)** (84,470⭐) - Open Source Continuous File Synchronization
+- **[localsend/localsend](https://github.com/localsend/localsend)** (82,025⭐) - An open-source cross-platform alternative to AirDrop
+- **[666ghj/MiroFish](https://github.com/666ghj/MiroFish)** (62,453⭐) - A Simple and Universal Swarm Intelligence Engine, Predicting Anything. 简洁通用的群体智能引擎，预测万物
   *... and 61 more*
 
 ### Dev Tools (29 repos)
 
-- **[Hack-with-Github/Awesome-Hacking](https://github.com/Hack-with-Github/Awesome-Hacking)** (113,035⭐) - A collection of various awesome lists for hackers, pentesters and security researchers
-- **[github/spec-kit](https://github.com/github/spec-kit)** (105,716⭐) - 💫 Toolkit to help you get started with Spec-Driven Development
-- **[zed-industries/zed](https://github.com/zed-industries/zed)** (83,735⭐) - Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
-- **[Stirling-Tools/Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF)** (79,454⭐) - #1 PDF Application on GitHub that lets you edit PDFs on any device anywhere
-- **[BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep)** (64,195⭐) - ripgrep recursively searches directories for a regex pattern while respecting your gitignore
+- **[Hack-with-Github/Awesome-Hacking](https://github.com/Hack-with-Github/Awesome-Hacking)** (113,037⭐) - A collection of various awesome lists for hackers, pentesters and security researchers
+- **[github/spec-kit](https://github.com/github/spec-kit)** (105,722⭐) - 💫 Toolkit to help you get started with Spec-Driven Development
+- **[zed-industries/zed](https://github.com/zed-industries/zed)** (83,736⭐) - Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
+- **[Stirling-Tools/Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF)** (79,456⭐) - #1 PDF Application on GitHub that lets you edit PDFs on any device anywhere
+- **[BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep)** (64,198⭐) - ripgrep recursively searches directories for a regex pattern while respecting your gitignore
   *... and 24 more*
 
 ### Design Systems (26 repos)
 
 - **[donnemartin/system-design-primer](https://github.com/donnemartin/system-design-primer)** (350,220⭐) - Learn how to design large-scale systems. Prep for the system design interview.  Includes Anki flashcards.
-- **[open-webui/open-webui](https://github.com/open-webui/open-webui)** (138,565⭐) - User-friendly AI Interface (Supports Ollama, OpenAI API, ...)
-- **[nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)** (82,534⭐) - An AI SKILL that provide design intelligence for building professional UI/UX multiple platforms
-- **[penpot/penpot](https://github.com/penpot/penpot)** (48,399⭐) - Penpot: The open-source design tool for design and code collaboration
-- **[pbakaus/impeccable](https://github.com/pbakaus/impeccable)** (30,108⭐) - The design language that makes your AI harness better at design.
+- **[open-webui/open-webui](https://github.com/open-webui/open-webui)** (138,566⭐) - User-friendly AI Interface (Supports Ollama, OpenAI API, ...)
+- **[nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)** (82,538⭐) - An AI SKILL that provide design intelligence for building professional UI/UX multiple platforms
+- **[penpot/penpot](https://github.com/penpot/penpot)** (48,402⭐) - Penpot: The open-source design tool for design and code collaboration
+- **[pbakaus/impeccable](https://github.com/pbakaus/impeccable)** (30,111⭐) - The design language that makes your AI harness better at design.
   *... and 21 more*
 
 ### LLM Infrastructure (17 repos)
 
 - **[vllm-project/vllm](https://github.com/vllm-project/vllm)** (80,956⭐) - A high-throughput and memory-efficient inference and serving engine for LLMs
-- **[rtk-ai/rtk](https://github.com/rtk-ai/rtk)** (53,879⭐) - CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
+- **[rtk-ai/rtk](https://github.com/rtk-ai/rtk)** (53,884⭐) - CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **[TryGhost/Ghost](https://github.com/TryGhost/Ghost)** (53,669⭐) - Independent technology for modern publishing, memberships, subscriptions and newsletters.
-- **[HKUDS/RAG-Anything](https://github.com/HKUDS/RAG-Anything)** (20,616⭐) - "RAG-Anything: All-in-One RAG Framework"
+- **[HKUDS/RAG-Anything](https://github.com/HKUDS/RAG-Anything)** (20,617⭐) - "RAG-Anything: All-in-One RAG Framework"
 - **[karpathy/llm-council](https://github.com/karpathy/llm-council)** (19,294⭐) - LLM Council works together to answer your hardest questions
   *... and 12 more*
 
 ### Web Automation (16 repos)
 
-- **[unclecode/crawl4ai](https://github.com/unclecode/crawl4ai)** (66,214⭐) - 🚀🤖 Crawl4AI: Open-source LLM Friendly Web Crawler & Scraper. Don't be shy, join here: https://discord.gg/jP8KfhDhyN
-- **[D4Vinci/Scrapling](https://github.com/D4Vinci/Scrapling)** (54,081⭐) - 🕷️ An adaptive Web Scraping framework that handles everything from a single request to a full-scale crawl!
+- **[unclecode/crawl4ai](https://github.com/unclecode/crawl4ai)** (66,215⭐) - 🚀🤖 Crawl4AI: Open-source LLM Friendly Web Crawler & Scraper. Don't be shy, join here: https://discord.gg/jP8KfhDhyN
+- **[D4Vinci/Scrapling](https://github.com/D4Vinci/Scrapling)** (54,083⭐) - 🕷️ An adaptive Web Scraping framework that handles everything from a single request to a full-scale crawl!
 - **[lightpanda-io/browser](https://github.com/lightpanda-io/browser)** (30,553⭐) - Lightpanda: the headless browser designed for AI and automation
-- **[ScrapeGraphAI/Scrapegraph-ai](https://github.com/ScrapeGraphAI/Scrapegraph-ai)** (26,012⭐) - Python scraper based on AI
+- **[ScrapeGraphAI/Scrapegraph-ai](https://github.com/ScrapeGraphAI/Scrapegraph-ai)** (26,013⭐) - Python scraper based on AI
 - **[apify/crawlee](https://github.com/apify/crawlee)** (23,393⭐) - Crawlee—A web scraping and browser automation library for Node.js to build reliable crawlers. In JavaScript and TypeScript. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and other files from websites. Works with Puppeteer, Playwright, Cheerio, JSDOM, and raw HTTP. Both headful and headless mode. With proxy rotation.
   *... and 11 more*
 
@@ -108,8 +108,8 @@
 
 ### Media & Content (2 repos)
 
-- **[sherlock-project/sherlock](https://github.com/sherlock-project/sherlock)** (83,811⭐) - Hunt down social media accounts by username across social networks
-- **[Robbyant/lingbot-map](https://github.com/Robbyant/lingbot-map)** (6,757⭐) - A feed-forward 3D foundation model for reconstructing scenes from streaming data
+- **[sherlock-project/sherlock](https://github.com/sherlock-project/sherlock)** (83,819⭐) - Hunt down social media accounts by username across social networks
+- **[Robbyant/lingbot-map](https://github.com/Robbyant/lingbot-map)** (6,758⭐) - A feed-forward 3D foundation model for reconstructing scenes from streaming data
 
 ---
 
@@ -135,6 +135,6 @@
 - Auto-generated by GitHub Actions
 - Updated daily at UTC 00:00
 - Source: GitHub API
-- Last run: 2026-05-25T12:57:06.671521
+- Last run: 2026-05-25T13:15:38.807643
 
 **Want to add/remove starred repos?** Star/unstar on GitHub, and this report auto-updates tomorrow!
