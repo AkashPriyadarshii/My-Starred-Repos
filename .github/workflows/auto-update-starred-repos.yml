@@ -1,0 +1,373 @@
+name: Auto-Update GitHub Starred Repos Analysis
+
+on:
+  schedule:
+    # Runs every day at 00:00 UTC (midnight)
+    - cron: '0 0 * * *'
+  
+  # Allow manual trigger via GitHub UI
+  workflow_dispatch:
+
+jobs:
+  update-starred-analysis:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+      
+      - name: Create analysis script
+        run: |
+          cat > github_analyzer.py << 'EOF'
+          #!/usr/bin/env python3
+          import requests
+          import json
+          import re
+          from datetime import datetime
+          import base64
+          
+          class GitHubAnalyzer:
+              def __init__(self, token, username):
+                  self.token = token
+                  self.username = username
+                  self.headers = {
+                      'Authorization': f'token {token}',
+                      'Accept': 'application/vnd.github.v3+json'
+                  }
+                  self.repos = []
+                  self.session = requests.Session()
+                  self.session.headers.update(self.headers)
+              
+              def fetch_all_starred(self):
+                  """Fetch all starred repos with pagination"""
+                  page = 1
+                  while True:
+                      url = f"https://api.github.com/users/{self.username}/starred?per_page=100&page={page}"
+                      try:
+                          resp = self.session.get(url, timeout=30)
+                          resp.raise_for_status()
+                          data = resp.json()
+                          
+                          if not data:
+                               break
+                          
+                          self.repos.extend(data)
+                          print(f"✓ Page {page}: {len(data)} repos")
+                          
+                          if len(data) < 100:
+                              break
+                          page += 1
+                      except Exception as e:
+                          print(f"✗ Error fetching page {page}: {e}")
+                          break
+                  
+                  print(f"\n✓ Total repos fetched: {len(self.repos)}\n")
+              
+              def fetch_readme(self, repo):
+                  """Fetch README from a repo with fallback"""
+                  owner, name = repo['full_name'].split('/')
+                  
+                  # Try different README formats
+                  readme_names = [
+                      'README.md', 'README.txt', 'README.rst', 'readme.md', 
+                      'readme.txt', 'Readme.md', 'README', 'readme'
+                  ]
+                  
+                  for readme in readme_names:
+                      url = f"https://api.github.com/repos/{owner}/{name}/contents/{readme}"
+                      try:
+                          resp = self.session.get(url, timeout=10)
+                          if resp.status_code == 200:
+                              content = resp.json()
+                              if 'content' in content:
+                                  readme_text = base64.b64decode(content['content']).decode('utf-8')
+                                  return readme_text, readme
+                      except:
+                          continue
+                  
+                  return None, None
+              
+              def extract_summary(self, readme_text):
+                  """Extract first 300 chars from README"""
+                  if not readme_text:
+                      return None
+                  
+                  # Remove markdown syntax
+                  text = re.sub(r'[#*`\[\](){}]', '', readme_text)
+                  text = re.sub(r'\n+', ' ', text)
+                  text = re.sub(r'\s+', ' ', text).strip()
+                  
+                  return text[:300] if text else None
+              
+              def process_repos(self):
+                  """Process each repo sequentially (rate limit friendly)"""
+                  results = []
+                  
+                  for i, repo in enumerate(self.repos, 1):
+                      try:
+                          readme_text, readme_name = self.fetch_readme(repo)
+                          summary = self.extract_summary(readme_text) if readme_text else None
+                          
+                          result = {
+                              'rank': i,
+                              'full_name': repo['full_name'],
+                              'stars': repo.get('stargazers_count', 0),
+                              'language': repo.get('language', 'Unknown'),
+                              'description': repo.get('description', 'No description'),
+                              'readme_summary': summary if summary else repo.get('description', 'No README'),
+                              'readme_found': readme_text is not None,
+                              'url': repo['html_url'],
+                              'last_updated': repo.get('updated_at', 'Unknown')
+                          }
+                          results.append(result)
+                          if i % 10 == 0:
+                              print(f"✓ [{i}/{len(self.repos)}] {repo['full_name']}")
+                      except Exception as e:
+                          print(f"✗ Error processing {repo['full_name']}: {e}")
+                  
+                  return sorted(results, key=lambda x: x['stars'], reverse=True)
+              
+              def save_output(self, results):
+                  """Save results to JSON"""
+                  output = {
+                      'username': self.username,
+                      'total_repos': len(results),
+                      'generated_at': datetime.now().isoformat(),
+                      'repos': results
+                  }
+                  
+                  # Save JSON
+                  with open('repos_output.json', 'w') as f:
+                      json.dump(output, f, indent=2)
+                  
+                  return output
+          
+          if __name__ == "__main__":
+              import sys
+              TOKEN = sys.argv[1] if len(sys.argv) > 1 else ""
+              USERNAME = sys.argv[2] if len(sys.argv) > 2 else "AkashPriyadarshii"
+              
+              if not TOKEN:
+                  print("Error: GitHub token not provided")
+                  sys.exit(1)
+              
+              print("🚀 GitHub Starred Repos Analyzer\n")
+              
+              analyzer = GitHubAnalyzer(TOKEN, USERNAME)
+              
+              print("Phase 1: Fetching all starred repos...")
+              analyzer.fetch_all_starred()
+              
+              print("Phase 2: Extracting README summaries...")
+              results = analyzer.process_repos()
+              
+              print("Phase 3: Saving output...")
+              analyzer.save_output(results)
+              
+              print("\n✅ Complete!")
+          EOF
+        
+      - name: Create markdown generator
+        run: |
+          cat > generate_markdown.py << 'EOF'
+          #!/usr/bin/env python3
+          import json
+          from datetime import datetime
+          from collections import defaultdict
+          
+          def get_top_language(repos):
+              from collections import Counter
+              langs = [r['language'] for r in repos if r['language']]
+              return Counter(langs).most_common(1)[0][0] if langs else 'Unknown'
+
+          with open('repos_output.json', 'r') as f:
+              data = json.load(f)
+          
+          repos = data['repos']
+          
+          # Categorize repos
+          categories = {
+              'AI Agents': [],
+              'Web Automation': [],
+              'LLM Infrastructure': [],
+              'Design Systems': [],
+              'Dev Tools': [],
+              'Mobile': [],
+              'Infrastructure': [],
+              'Media & Content': [],
+              'Other': []
+          }
+          
+          keywords = {
+              'AI Agents': ['agent', 'openclaw', 'codex', 'claude', 'hermes', 'claw', 'opencode', 'grok'],
+              'Web Automation': ['crawl', 'scrape', 'browser', 'selenium', 'playwright', 'puppeteer', 'firecrawl'],
+              'LLM Infrastructure': ['mem', 'rag', 'llm', 'memory', 'knowledge', 'vector', 'embedding'],
+              'Design Systems': ['design', 'ui', 'component', 'style', 'css', 'tailwind', 'figma'],
+              'Dev Tools': ['editor', 'ide', 'git', 'code', 'cli', 'terminal', 'debug', 'linter'],
+              'Mobile': ['android', 'ios', 'mobile', 'react-native', 'flutter', 'kotlin'],
+              'Infrastructure': ['docker', 'devops', 'k8s', 'infra', 'deploy', 'podman', 'terraform'],
+              'Media & Content': ['video', 'audio', 'image', 'media', 'streaming', 'content']
+          }
+          
+          # Categorize each repo
+          for repo in repos:
+              full_name = repo['full_name'].lower()
+              description = (repo['description'] or '').lower()
+              language = (repo['language'] or '').lower()
+              
+              text = f"{full_name} {description} {language}"
+              
+              categorized = False
+              for category, words in keywords.items():
+                  if any(word in text for word in words):
+                      categories[category].append(repo)
+                      categorized = True
+                      break
+              
+              if not categorized:
+                  categories['Other'].append(repo)
+          
+          # Generate markdown
+          markdown = f"""# 🌟 GitHub Starred Repos Analysis
+          
+**GitHub User:** `{data['username']}`  
+**Total Repositories:** {data['total_repos']}  
+**Last Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}  
+**Auto-Updated:** Daily @ 00:00 UTC via GitHub Actions  
+
+---
+
+## 📊 Quick Stats
+
+- **Total Starred:** {data['total_repos']}
+- **Categories:** {sum(1 for v in categories.values() if v)}
+- **Top Language:** {get_top_language(repos)}
+- **Avg Stars:** {int(sum(r['stars'] for r in repos) / len(repos)) if repos else 0}
+
+## 🏆 Top 15 by Stars
+
+| Rank | Repo | Stars | Language |
+|------|------|-------|----------|
+"""
+          
+          for i, repo in enumerate(repos[:15], 1):
+              markdown += f"| {i} | [{repo['full_name']}]({repo['url']}) | {repo['stars']:,} | {repo['language'] or 'N/A'} |\n"
+          
+          markdown += "\n---\n\n## 📂 By Category\n\n"
+          
+          for category, category_repos in sorted(categories.items(), key=lambda x: -len(x[1])):
+              if not category_repos:
+                  continue
+              
+              markdown += f"### {category} ({len(category_repos)} repos)\n\n"
+              
+              # Show top 5 per category
+              for repo in sorted(category_repos, key=lambda x: -x['stars'])[:5]:
+                  markdown += f"- **[{repo['full_name']}]({repo['url']})** ({repo['stars']:,}⭐) - {repo['description'] or 'No description'}\n"
+              
+              if len(category_repos) > 5:
+                  markdown += f"  *... and {len(category_repos) - 5} more*\n"
+              
+              markdown += "\n"
+          
+          markdown += f"""---
+
+## 🔍 Language Distribution
+
+| Language | Count | % |
+|----------|-------|---|
+"""
+          
+          lang_count = defaultdict(int)
+          for repo in repos:
+              lang = repo['language'] or 'Unknown'
+              lang_count[lang] += 1
+          
+          total = len(repos)
+          for lang, count in sorted(lang_count.items(), key=lambda x: -x[1])[:10]:
+              pct = round(100 * count / total, 1)
+              markdown += f"| {lang} | {count} | {pct}% |\n"
+          
+          markdown += f"""
+---
+
+## 📝 Notes
+
+- Auto-generated by GitHub Actions
+- Updated daily at UTC 00:00
+- Source: GitHub API
+- Last run: {datetime.now().isoformat()}
+
+**Want to add/remove starred repos?** Star/unstar on GitHub, and this report auto-updates tomorrow!
+"""
+          
+          with open('STARRED_ANALYSIS.md', 'w') as f:
+              f.write(markdown)
+          
+          print("✅ Markdown generated: STARRED_ANALYSIS.md")
+          EOF
+        
+      - name: Run GitHub analyzer
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python github_analyzer.py "$GITHUB_TOKEN" "AkashPriyadarshii"
+      
+      - name: Generate markdown report
+        run: |
+          python generate_markdown.py
+      
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if git diff --quiet repos_output.json STARRED_ANALYSIS.md; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit and push changes
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          git add repos_output.json STARRED_ANALYSIS.md
+          
+          git commit -m "🤖 Auto-update: GitHub starred repos analysis ($(date -u +'%Y-%m-%d %H:%M UTC'))" \
+            -m "- Total repos: $(jq '.total_repos' repos_output.json)" \
+            -m "- Updated via GitHub Actions" \
+            || echo "No changes to commit"
+          
+          git push origin main || git push origin master
+      
+      - name: Create PR if needed (optional)
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          echo "✅ Changes pushed to main branch"
+          echo "📊 Report updated: $(date -u +'%Y-%m-%d %H:%M UTC')"
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: update-starred-analysis
+    if: always()
+    
+    steps:
+      - name: Report status
+        run: |
+          echo "✅ GitHub Starred Repos Analysis - Daily Update Complete"
+          echo "⏰ $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
