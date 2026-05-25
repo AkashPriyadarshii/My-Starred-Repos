@@ -351,7 +351,10 @@ function closeSettingsDrawer() {
 
   drawer.classList.remove('open');
   overlay.classList.remove('visible');
-  syncDrawerUI(state); // Revert controls visually to match actual saved state
+  
+  // Revert all visual styles on page to match current saved state
+  applyActiveSettings();
+  syncDrawerUI(state);
   Logger.log('info', 'ui', 'SettingsDrawerClosed');
 }
 
@@ -1137,13 +1140,15 @@ function initUI() {
       modeDevBtn.classList.add('active');
       modeSimpleBtn.classList.remove('active');
       stagedSettings.userMode = 'developer';
-      Logger.log('info', 'ui', 'UserModeStaged', { mode: 'developer' });
+      document.body.classList.remove('non-tech-mode');
+      Logger.log('info', 'ui', 'UserModePreview', { mode: 'developer' });
     });
     modeSimpleBtn.addEventListener('click', () => {
       modeDevBtn.classList.remove('active');
       modeSimpleBtn.classList.add('active');
       stagedSettings.userMode = 'non-tech';
-      Logger.log('info', 'ui', 'UserModeStaged', { mode: 'non-tech' });
+      document.body.classList.add('non-tech-mode');
+      Logger.log('info', 'ui', 'UserModePreview', { mode: 'non-tech' });
     });
   }
 
@@ -1159,6 +1164,8 @@ function initUI() {
       stagedSettings.tiltEnabled = true;
       stagedSettings.maxVisibleCards = 350;
 
+      document.body.classList.remove('low-end-device');
+
       // Sync checkbox UI
       const pCheck = document.getElementById('effects-particles-checkbox');
       const tCheck = document.getElementById('effects-tilt-checkbox');
@@ -1173,7 +1180,15 @@ function initUI() {
         if (sLabel) sLabel.textContent = 'All';
       }
 
-      Logger.log('info', 'ui', 'DeviceProfileStaged', { profile: 'high' });
+      if (particleBgInstance) {
+        particleBgInstance.setActive(true);
+      }
+      connectCardHoverPhysics();
+      if (state.repos && state.repos.length > 0) {
+        applyFilters();
+      }
+
+      Logger.log('info', 'ui', 'DeviceProfilePreview', { profile: 'high' });
     });
 
     profileLowBtn.addEventListener('click', () => {
@@ -1183,6 +1198,8 @@ function initUI() {
       stagedSettings.particlesEnabled = false;
       stagedSettings.tiltEnabled = false;
       stagedSettings.maxVisibleCards = Math.min(stagedSettings.maxVisibleCards, 50);
+
+      document.body.classList.add('low-end-device');
 
       // Sync checkbox UI
       const pCheck = document.getElementById('effects-particles-checkbox');
@@ -1198,7 +1215,15 @@ function initUI() {
         if (sLabel) sLabel.textContent = stagedSettings.maxVisibleCards;
       }
 
-      Logger.log('info', 'ui', 'DeviceProfileStaged', { profile: 'low' });
+      if (particleBgInstance) {
+        particleBgInstance.setActive(false);
+      }
+      connectCardHoverPhysics();
+      if (state.repos && state.repos.length > 0) {
+        applyFilters();
+      }
+
+      Logger.log('info', 'ui', 'DeviceProfilePreview', { profile: 'low' });
     });
   }
 
@@ -1208,7 +1233,8 @@ function initUI() {
       document.querySelectorAll('.density-btn[data-density]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       stagedSettings.density = btn.dataset.density;
-      Logger.log('info', 'ui', 'DensityStaged', { density: stagedSettings.density });
+      document.documentElement.setAttribute('data-density', stagedSettings.density);
+      Logger.log('info', 'ui', 'DensityPreview', { density: stagedSettings.density });
     });
   });
 
@@ -1218,7 +1244,15 @@ function initUI() {
       document.querySelectorAll('.theme-btn[data-theme]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       stagedSettings.theme = btn.dataset.theme;
-      Logger.log('info', 'ui', 'ThemeStaged', { theme: stagedSettings.theme });
+      document.documentElement.setAttribute('data-theme', stagedSettings.theme);
+      
+      // Update canvas background colors dynamically for preview
+      if (particleBgInstance) {
+        particleBgInstance.init();
+      }
+      renderStarsSparkline();
+
+      Logger.log('info', 'ui', 'ThemePreview', { theme: stagedSettings.theme });
     });
   });
 
@@ -1227,7 +1261,10 @@ function initUI() {
   if (particlesCheckbox) {
     particlesCheckbox.addEventListener('change', e => {
       stagedSettings.particlesEnabled = e.target.checked;
-      Logger.log('info', 'ui', 'ParticlesToggleStaged', { enabled: stagedSettings.particlesEnabled });
+      if (particleBgInstance) {
+        particleBgInstance.setActive(stagedSettings.particlesEnabled && stagedSettings.deviceProfile !== 'low');
+      }
+      Logger.log('info', 'ui', 'ParticlesTogglePreview', { enabled: stagedSettings.particlesEnabled });
     });
   }
 
@@ -1235,7 +1272,11 @@ function initUI() {
   if (tiltCheckbox) {
     tiltCheckbox.addEventListener('change', e => {
       stagedSettings.tiltEnabled = e.target.checked;
-      Logger.log('info', 'ui', 'TiltToggleStaged', { enabled: stagedSettings.tiltEnabled });
+      const oldTilt = state.tiltEnabled;
+      state.tiltEnabled = stagedSettings.tiltEnabled;
+      connectCardHoverPhysics();
+      state.tiltEnabled = oldTilt;
+      Logger.log('info', 'ui', 'TiltTogglePreview', { enabled: stagedSettings.tiltEnabled });
     });
   }
 
@@ -1245,9 +1286,10 @@ function initUI() {
       document.querySelectorAll('[data-fontsize]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       stagedSettings.fontSize = btn.dataset.fontsize;
+      document.documentElement.setAttribute('data-fontsize', stagedSettings.fontSize);
       const badge = document.getElementById('font-size-badge');
       if (badge) badge.textContent = stagedSettings.fontSize.charAt(0).toUpperCase() + stagedSettings.fontSize.slice(1);
-      Logger.log('info', 'ui', 'FontSizeStaged', { fontSize: stagedSettings.fontSize });
+      Logger.log('info', 'ui', 'FontSizePreview', { fontSize: stagedSettings.fontSize });
     });
   });
 
@@ -1259,7 +1301,15 @@ function initUI() {
       const v = parseInt(e.target.value);
       stagedSettings.maxVisibleCards = v;
       if (sLabel) sLabel.textContent = v >= 350 ? 'All' : v;
-      Logger.log('info', 'ui', 'MaxCardsStaged', { maxCards: v });
+      
+      const oldMax = state.maxVisibleCards;
+      state.maxVisibleCards = v;
+      if (state.repos && state.repos.length > 0) {
+        applyFilters();
+      }
+      state.maxVisibleCards = oldMax;
+
+      Logger.log('info', 'ui', 'MaxCardsPreview', { maxCards: v });
     });
   }
 
