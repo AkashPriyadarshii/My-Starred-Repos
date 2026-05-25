@@ -1179,6 +1179,98 @@ input[type="range"]::-webkit-slider-thumb:hover {
   display: none !important;
 }
 
+/* Last Updated Badge style */
+.last-updated-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  background: hsla(217, 33%, 92%, 0.04);
+  border: 1px solid var(--border-color);
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  margin-top: 0.5rem;
+}
+
+.last-updated-badge i {
+  width: 12px;
+  height: 12px;
+  color: var(--primary-color);
+}
+
+.last-updated-badge strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Empty Changelog Style */
+.changelog-header-placeholder h1 {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.changelog-header-placeholder p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.changelog-header-placeholder .section-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 1.5rem 0;
+}
+
+.empty-changelog-card {
+  padding: 3rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 2rem;
+  border-style: dashed;
+  border-color: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.3);
+}
+
+.empty-changelog-card .empty-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  box-shadow: 0 0 15px 0 rgba(99, 102, 241, 0.1);
+}
+
+.empty-changelog-card .empty-icon-wrapper i {
+  width: 28px;
+  height: 28px;
+}
+
+.empty-changelog-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.empty-changelog-card p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
 /* ==========================================================================
    RESPONSIVE DESIGN BREAKPOINTS
    ========================================================================== */

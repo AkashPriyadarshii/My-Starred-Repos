@@ -12,9 +12,3 @@ Track history of starred and unstarred repositories.
 **Total Repositories:** 337 (+1 / -0)
 
 ---
-
-# 📜 Starred Repos Changelog
-
-Track history of starred and unstarred repositories.
-
----

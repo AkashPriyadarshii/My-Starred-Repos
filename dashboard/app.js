@@ -157,8 +157,8 @@ async function fetchData() {
 
   try {
     const [reposResponse, changelogResponse] = await Promise.all([
-      fetch('../repos_output.json'),
-      fetch('../CHANGELOG.md')
+      fetch(`../repos_output.json?t=${Date.now()}`),
+      fetch(`../CHANGELOG.md?t=${Date.now()}`)
     ]);
 
     if (!reposResponse.ok) {
@@ -171,6 +171,7 @@ async function fetchData() {
     const reposData = await reposResponse.json();
     state.repos = reposData.repos || [];
     state.changelogMarkdown = await changelogResponse.text();
+    state.generatedAt = reposData.generated_at || null;
 
     Logger.log('info', 'network', 'FetchResourcesCompleted', { repos_count: state.repos.length }, Math.round(performance.now() - fetchStartTime));
 
@@ -235,6 +236,11 @@ function renderStats() {
   document.getElementById('stat-total-repos').textContent = state.stats.totalRepos;
   document.getElementById('stat-top-lang').textContent = state.stats.topLang;
   document.getElementById('stat-avg-stars').textContent = formatStarNumber(state.stats.avgStars);
+  
+  const lastUpdatedEl = document.getElementById('last-updated-time');
+  if (lastUpdatedEl) {
+    lastUpdatedEl.textContent = formatDateTime(state.generatedAt);
+  }
   Logger.log('info', 'ui', 'StatsRendered');
 }
 
@@ -326,6 +332,26 @@ function renderGrid() {
 function renderChangelog() {
   const changelogContainer = document.getElementById('changelog-markdown');
   try {
+    if (!state.changelogMarkdown || !state.changelogMarkdown.includes('## [')) {
+      changelogContainer.innerHTML = `
+        <div class="changelog-header-placeholder">
+          <h1># 📜 Starred Repos Changelog</h1>
+          <p>Track history of starred and unstarred repositories.</p>
+          <hr class="section-divider">
+        </div>
+        <div class="empty-changelog-card glass-card">
+          <div class="empty-icon-wrapper">
+            <i data-lucide="info"></i>
+          </div>
+          <h3>No Updates Yet</h3>
+          <p>We are actively tracking your starred repositories. Once you add or remove stars, the automated daily updates will log changes here.</p>
+        </div>
+      `;
+      lucide.createIcons();
+      Logger.log('info', 'ui', 'ChangelogRenderedEmptyState');
+      return;
+    }
+
     // Marked parsing options
     marked.setOptions({
       gfm: true,
@@ -665,6 +691,22 @@ function formatDate(isoString) {
   try {
     const date = new Date(isoString);
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  } catch {
+    return 'N/A';
+  }
+}
+
+function formatDateTime(isoString) {
+  if (!isoString || isoString === 'Unknown') return 'N/A';
+  try {
+    const date = new Date(isoString);
+    const year = date.getUTCFullYear();
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[date.getUTCMonth()];
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    return `${month} ${day}, ${year} ${hours}:${minutes} UTC`;
   } catch {
     return 'N/A';
   }
