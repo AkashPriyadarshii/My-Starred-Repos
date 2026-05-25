@@ -3,10 +3,23 @@
 An automated tracker that fetches, organizes, and analyzes my starred GitHub repositories every day.
 
 ## 📊 Quick Links
+* **[Interactive Portfolio Dashboard](https://akashpriyadarshii.github.io/My-Starred-Repos/dashboard/index.html)**: Live interactive web app portfolio featuring premium UI/UX, particle canvas backgrounds, theme engines, bento grid stats, PWA capabilities, and performance controls.
 * **[Pretty Markdown Analysis](STARRED_ANALYSIS.md)**: Daily updated analysis categorized by tech stack and category.
 * **[Full Repository List](ALL_STARRED_REPOS.md)**: Daily updated flat list of all repositories sorted by star count.
 * **[Changelog History](CHANGELOG.md)**: Daily log of added and removed starred repositories.
 * **[Raw JSON Data](repos_output.json)**: Raw JSON structured output for programmatic use and dashboards.
+
+---
+
+## 🌐 Interactive Portfolio Dashboard
+An interactive Single Page Application (SPA) dashboard styled with modern glassmorphism.
+
+* **🌌 Constellation Particles**: Active particle canvas background nodes following the cursor.
+* **🛸 3D Card Hover**: 3D perspective tilt and glowing holographic spotlight borders.
+* **🎨 6 Themes**: Tokyo Midnight, Cyber Punk, Nordic Frost, Forest Tech, Aura Light, AMOLED Pure.
+* **⚙️ Performance Controls**: Switch between High Performance and Low-End / Battery Saver presets (caps visible cards at 50 to optimize battery/render times).
+* **🧸 Experience Modes**: Developer (includes diagnostics console) vs. Simple (Non-Tech) Mode.
+* **📲 Offline PWA**: Installable locally with offline caching.
 
 ---
 
