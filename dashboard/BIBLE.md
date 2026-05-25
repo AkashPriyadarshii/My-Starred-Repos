@@ -11,6 +11,7 @@ This document is the sole source of truth for the Starred Repos Portfolio Dashbo
     1.  **Load & Initialize:** Fetch the parent directory's `repos_output.json` relatively. Cache the data structure in memory.
     2.  **Filter & Search:** Real-time search on titles, languages, and descriptions with visual highlight feedback and tag-based filtering (e.g., clicking on the "AI Agents" category tab).
     3.  **Explore Details:** Cards expand to show full details, including a clean display of the extracted README summary snippet.
+    4.  **Changelog Integration:** Load the parent directory's `CHANGELOG.md` relatively, compile it in-browser, and render it in a dedicated "Changelog History" tab.
 *   **Budget & Deployment:** ₹0 budget. Served statically via GitHub Pages from the repository root (or `/dashboard` folder).
 
 ---
@@ -25,6 +26,8 @@ This document is the sole source of truth for the Starred Repos Portfolio Dashbo
 | Layer | Technology | Why Best | Alternatives Considered | Cons | Neutralization |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Frontend UI** | HTML5 / CSS3 / Vanilla JS | Natively parsed by browser. Zero compile steps, zero bundle overhead. Best for high-refresh scrolling (120Hz). | React / Next.js (Rejected: requires compilation and node_modules). Tailwind CSS (Rejected: needs build process). | Lacks component abstraction. | Use ES6 template strings and class-based DOM reference caching. |
+| **Icons Library** | Lucide Icons (via CDN) | Crisp, modern vector SVGs loaded dynamically. | FontAwesome (Rejected: heavy payload and slow rendering). | Requires internet connection. | Fallback text indicators on network failure. |
+| **Markdown Parser** | Marked.js (via CDN) | Extremely fast client-side markdown compiling. Allows rendering CHANGELOG.md directly in the UI. | Showdown (Rejected: slightly larger bundle size, slower parsing). | Requires script load. | Defer script loading to prevent render-blocking. |
 | **Data Engine** | Local Static JSON | Load times under 100ms. No database connection setup needed. | Supabase / MongoDB (Rejected: overkill for read-only static list). | Must keep files in sync. | Managed automatically by the daily GitHub Action. |
 | **Hosting** | GitHub Pages | Free hosting, automatic deploys on git push. | Vercel / Netlify (Rejected: Pages keeps everything in one git ecosystem). | Cold start latency on first build. | Minimal builds, instant deployment. |
 
@@ -37,14 +40,17 @@ This document is the sole source of truth for the Starred Repos Portfolio Dashbo
 graph TD
     A[Visitor Browser] -->|Load index.html| B[GitHub Pages Host]
     A -->|Fetch request| C[repos_output.json]
+    A -->|Fetch request| F[CHANGELOG.md]
     A -->|Process Data & Render DOM| D[app.js]
     A -->|Style & Animations| E[style.css]
+    A -->|Parse MD| G[Marked.js CDN]
+    A -->|Load Icons| H[Lucide CDN]
 ```
 
 ### Low-Level Modules (Vanilla JS)
 *   **`AppLogger`**: Custom JSON Logger class.
-*   **`DataManager`**: Fetches the JSON file, sanitizes missing fields, and runs memory-cached query filtering.
-*   **`UIManager`**: Pre-renders elements once. Manages card visibility toggles (`.hidden` state) on search inputs and filters.
+*   **`DataManager`**: Fetches the JSON file, loads the `CHANGELOG.md` file, sanitizes missing fields, and runs memory-cached query filtering.
+*   **`UIManager`**: Pre-renders elements once. Manages card visibility toggles (`.hidden` state) on search inputs, compiles markdown using Marked.js, and initializes Lucide icons.
 *   **`SettingsManager`**: Manages state for custom settings (card limits, default layout mode, theme overrides) using `localStorage`.
 
 ---
@@ -86,15 +92,15 @@ The system reads the structured output of `repos_output.json`:
 ---
 
 ## 🔌 6. API Spec (Static Data Loading)
-*   **Endpoint:** `GET ../repos_output.json`
-*   **Query Parameters:** None (Client-side handles all search/filter queries locally).
-*   **Client Routing:** Single Page Application (Hash-based router `#category=ai-agents` for shareable filter states).
+*   **Endpoint 1:** `GET ../repos_output.json` (Returns the structured repository array).
+*   **Endpoint 2:** `GET ../CHANGELOG.md` (Returns the raw markdown log of repository changes).
+*   **Client Routing:** Single Page Application (Hash-based router `#tab=changelog` or `#category=ai-agents` for shareable UI states).
 
 ---
 
 ## 🔒 7. Security
 *   **No API Keys Exposes:** No tokens, passwords, or personal access tokens are stored in the frontend files.
-*   **Content Security Policy (CSP):** Standard static site settings, zero inline scripts or unverified third-party libraries.
+*   **Content Security Policy (CSP):** Standard static site settings, allowing unpkg/jsDelivr CDNs for Lucide and Marked.
 *   **Sanitization:** Text inputs are escaped using standard browser DOM functions (`element.textContent`) to prevent Cross-Site Scripting (XSS).
 
 ---
@@ -103,8 +109,10 @@ The system reads the structured output of `repos_output.json`:
 *   **Theme:** Premium deep dark mode (`#070a13` background, `#0b0f19` panels, HSL gradient accents `#6366f1` to `#a855f7`).
 *   **Layout:**
     *   **Header Section:** Profile identity, quick stats (total repos, categories, top language, average stars).
-    *   **Control Panel:** Fuzzy search input, category selection tabs, sort drop-down, and card layout density toggles.
+    *   **Navigation Tabs:** Toggle between "Repository Grid" and "Changelog History".
+    *   **Control Panel:** Fuzzy search input, category selection tabs, sort drop-down, and card layout density toggles (visible only under Repository Grid).
     *   **Card Grid:** Responsive cards featuring rank tags, glowing borders, language indicator chips, and an expandable README summary fold.
+    *   **Changelog Panel:** Rendered markdown list of updates using Marked.js.
     *   **Settings Panel:** Slider for max visible cards, dark/pitch-black theme toggles, and circular buffer log inspector.
 
 ---
@@ -113,26 +121,28 @@ The system reads the structured output of `repos_output.json`:
 *   **Fuzzy Search:** Filter cards instantly as you type (150ms debounced).
 *   **Fast Category Filters:** One-click filter tabs to filter by AI Agents, Web Automation, DevOps, and Dev Tools.
 *   **Sorting Modes:** Sort by Star Count (descending/ascending), Rank, and Name.
+*   **Interactive Changelog:** Load, compile, and display the repository update history directly on the screen.
 *   **Local Settings Control:** Full settings panel to customize card density, theme, and logs.
 
 ---
 
 ## 🏃 10. Sprints (Implementation Plan)
 *   **Sprint 1: Foundation & Logging**
-    *   Setup HTML structure, styling variables, and `AppLogger` system.
+    *   Setup HTML structure, load Lucide & Marked CDNs, configure CSS styling variables, and build the `AppLogger` system.
 *   **Sprint 2: Data Fetching & Rendering**
-    *   Implement async fetch modules, parse repository objects, and perform initial card grid generation.
-*   **Sprint 3: Filtering & Search Engine**
-    *   Implement debounced fuzzy search, category tabs, and sorting drop-downs.
+    *   Implement async fetch modules for both JSON and Markdown, parse repository objects, and perform initial card grid generation.
+*   **Sprint 3: Filtering, Search, & Changelog Engine**
+    *   Implement debounced fuzzy search, category tabs, sorting drop-downs, and render `CHANGELOG.md` inside the Updates tab.
 *   **Sprint 4: Settings & Final Polish**
-    *   Create settings control panel, glassmorphism animations, and verify layouts on mobile and desktop.
+    *   Create settings control panel, download logs action, glassmorphism animations, and verify layouts on mobile and desktop.
 
 ---
 
 ## 🚀 11. Deploy
 1. The code is written inside the `/dashboard` directory.
-2. Changes are pushed to the remote repository.
-3. GitHub Pages is configured to serve from the `main` branch. The page is instantly accessible at: `https://AkashPriyadarshii.github.io/My-Starred-Repos/dashboard/`.
+2. An `index.html` file is added at the repository root redirecting requests automatically to `dashboard/index.html`.
+3. Changes are pushed to the remote repository.
+4. GitHub Pages is configured to serve from the `main` branch. The page is instantly accessible at: `https://AkashPriyadarshii.github.io/My-Starred-Repos/dashboard/`.
 
 ---
 
@@ -162,7 +172,7 @@ The system reads the structured output of `repos_output.json`:
 
 ## ⚠️ 14. Constraints & Risks
 *   **No Build System:** Pure standard native JS. Avoid packages from npm or node modules.
-*   **Large JSON Loading:** JSON must not block the main thread. Solution: load asynchronously using `defer` on script tags.
+*   **CDN Availability:** Relies on Lucide and Marked CDN links. Neutralizer: Load local fallbacks or display text descriptions if CDNs fail to load.
 *   **₹0 Cost Constraint:** Strict dependency on free static hosting (GitHub Pages).
 
 ---
@@ -170,7 +180,10 @@ The system reads the structured output of `repos_output.json`:
 ## 🧠 15. Decision Log
 *   *Decision:* Pre-render cards on page load and toggle `.hidden` state.
     *   *Alternative:* Recreate elements dynamically on every search query.
-    *   *Reason:* Toggling visibility is significantly faster and eliminates garbage collection stutters.
+    *   *Reason:* Toggling visibility is significantly faster and eliminates stutters.
+*   *Decision:* Use Marked.js client-side.
+    *   *Alternative:* Duplicate changelog data inside JSON file.
+    *   *Reason:* Reading the markdown file directly keeps the code cleaner and leverages the existing CHANGELOG.md file.
 
 ---
 
@@ -184,22 +197,22 @@ The system reads the structured output of `repos_output.json`:
 
 ### Sprint 1 Prompt (Foundation & UI Architecture)
 ```text
-Build the foundation folder and UI file structure for the dynamic Starred Repos Dashboard. Create a directory named dashboard/ containing index.html, style.css, and app.js. Implement the full theme system using HSL CSS variables, custom typography, dark background styling, and the AppLogger singleton in app.js for logging initialization phases. Ensure index.html includes structural containers for the Header, Control Panel, Grid, and Settings panel. Do not include search logic or actual card components yet.
+Build the foundation folder and UI file structure for the dynamic Starred Repos Dashboard. Create a directory named dashboard/ containing index.html, style.css, and app.js. Index.html must load Lucide Icons (via CDN https://unpkg.com/lucide@latest) and Marked.js (via CDN https://cdn.jsdelivr.net/npm/marked/marked.min.js). Implement the full theme system using HSL CSS variables, custom typography, dark background styling, and the AppLogger singleton in app.js for logging initialization phases. Ensure index.html includes structural containers for the Header, Navigation Tabs, Control Panel, Grid, Changelog Panel, and Settings panel. Do not include search logic or actual card components yet.
 ```
 
 ### Sprint 2 Prompt (Data Loading & Rendering)
 ```text
-Implement the asynchronous data loading logic in app.js. Fetch the parent directory's repos_output.json relatively. Bind data processing errors to AppLogger and display error overlays if the file fails to load. Render the parsed list of 317 repositories into the HTML card container, mapping ranks, star counts, descriptions, languages, and README summaries into custom template structures with micro-animations and border glows.
+Implement the asynchronous data loading logic in app.js. Fetch the parent directory's repos_output.json and CHANGELOG.md relatively. Bind data processing errors to AppLogger and display error overlays if the files fail to load. Render the parsed list of 317 repositories into the HTML card container, mapping ranks, star counts, descriptions, languages, and README summaries into custom template structures with micro-animations, Lucide icons, and border glows.
 ```
 
-### Sprint 3 Prompt (Search & Sorting Engine)
+### Sprint 3 Prompt (Search, Filtering, & Changelog Engine)
 ```text
-Implement the debounced fuzzy search and category tab filter system. Add input listener to search bar with 150ms debouncing. Loop through pre-rendered cards and toggle the class ".hidden" based on text matches in title, language, description, and readme_summary. Connect the category tabs to filter by tag prefixes and sorting drop-downs to re-order cards dynamically on the screen using CSS flex/grid order attributes.
+Implement the search, filtering, and Markdown rendering logic. Add input listener to search bar with 150ms debouncing, toggling the class ".hidden" on cards based on search terms. Connect the category tabs to filter by tag prefixes and sorting drop-downs to re-order cards dynamically on the screen. Inside the Changelog panel, parse CHANGELOG.md dynamically using the marked.parse() function and render the HTML directly into the updates container. Implement the hash-based router to toggle between the Repository Grid and Changelog views.
 ```
 
 ### Sprint 4 Prompt (Settings Control & Polish)
 ```text
-Implement the settings inspector in the dashboard interface. Create controls for layout density selection, maximum visible cards sliders, dark/pitch-black theme overrides, and a log reader displaying the AppLogger circular buffer. Polish glassmorphism backdrop blurs, transition durations, and verify mobile responsiveness and touch gestures.
+Implement the settings inspector in the dashboard interface. Create controls for layout density selection, maximum visible cards sliders, dark/pitch-black theme overrides, and a log reader displaying the AppLogger circular buffer with a log download button. Polish glassmorphism backdrop blurs, transition durations, and verify mobile responsiveness and touch gestures.
 ```
 
 ---
@@ -210,12 +223,13 @@ Implement the settings inspector in the dashboard interface. Create controls for
 # Starred Repos Dashboard
 
 ## Identity & Mission
-You are an expert frontend engineering agent building a premium, dependency-free portfolio dashboard for the developer's starred repositories.
+You are an expert frontend engineering agent building a premium, high-performance portfolio dashboard for the developer's starred repositories.
 
 ## Tech Stack
 *   HTML5 (Semantic elements only)
 *   CSS3 (Vanilla custom properties, Grid, Flexbox, backdrop-filter)
 *   JavaScript (ES6+, Vanilla DOM, asynchronous Fetch API)
+*   Approved CDNs: Lucide Icons, Marked.js
 
 ## Key Files
 *   `dashboard/index.html` - Base application interface
@@ -224,7 +238,7 @@ You are an expert frontend engineering agent building a premium, dependency-free
 
 ## Constraints
 *   **₹0 Budget:** Must run completely free on GitHub Pages.
-*   **Zero Dependencies:** Do not import any NPM packages, Tailwind CLI, compiler layers, or build scripts. 
+*   **Zero Local Build Dependencies:** Do not import any local NPM packages, Tailwind CLI, compilers, or build scripts. Load approved libraries via CDN.
 *   **One User Mode:** Single-user design, optimized for high performance on 120Hz mobile (Realme GT 7) and desktop (MacBook Air).
 
 ## Code Style & Rules
