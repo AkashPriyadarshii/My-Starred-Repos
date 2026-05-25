@@ -144,7 +144,53 @@ jobs:
                   return sorted_results
               
               def save_output(self, results):
-                  """Save results to JSON"""
+                  """Save results to JSON and generate changelog"""
+                  old_repos = {}
+                  try:
+                      with open('repos_output.json', 'r') as f:
+                          old_data = json.load(f)
+                          old_repos = {r['full_name']: r for r in old_data.get('repos', [])}
+                  except Exception as e:
+                      print(f"No previous repos_output.json found or failed to read: {e}")
+
+                  new_repos = {r['full_name']: r for r in results}
+                  added = [name for name in new_repos if name not in old_repos]
+                  removed = [name for name in old_repos if name not in new_repos]
+
+                  if added or removed:
+                      date_str = datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')
+                      entry = f"## [{date_str}]\n\n"
+                      if added:
+                          entry += "### ➕ Added\n"
+                          for name in added:
+                              r = new_repos[name]
+                              entry += f"- **[{name}]({r['url']})** ({r['stars']:,}⭐) - {r['description']}\n"
+                          entry += "\n"
+                      if removed:
+                          entry += "### ➖ Removed\n"
+                          for name in removed:
+                              entry += f"- {name}\n"
+                          entry += "\n"
+                      entry += f"**Total Repositories:** {len(results)} (+{len(added)} / -{len(removed)})\n\n---\n\n"
+
+                      changelog_content = ""
+                      try:
+                          with open('CHANGELOG.md', 'r') as f:
+                              changelog_content = f.read()
+                      except:
+                          pass
+
+                      header = "# 📜 Starred Repos Changelog\n\nTrack history of starred and unstarred repositories.\n\n---\n\n"
+                      if changelog_content.startswith(header):
+                          body = changelog_content[len(header):]
+                      else:
+                          body = changelog_content
+
+                      new_changelog = header + entry + body
+                      with open('CHANGELOG.md', 'w') as f:
+                          f.write(new_changelog)
+                      print("✅ CHANGELOG.md updated.")
+
                   output = {
                       'username': self.username,
                       'total_repos': len(results),
@@ -356,7 +402,7 @@ jobs:
       - name: Check for changes
         id: check-changes
         run: |
-          if git diff --quiet repos_output.json STARRED_ANALYSIS.md ALL_STARRED_REPOS.md; then
+          if git diff --quiet repos_output.json STARRED_ANALYSIS.md ALL_STARRED_REPOS.md CHANGELOG.md; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
           else
             echo "has_changes=true" >> $GITHUB_OUTPUT
@@ -368,7 +414,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          git add repos_output.json STARRED_ANALYSIS.md ALL_STARRED_REPOS.md
+          git add repos_output.json STARRED_ANALYSIS.md ALL_STARRED_REPOS.md CHANGELOG.md
           
           git commit -m "🤖 Auto-update: GitHub starred repos analysis ($(date -u +'%Y-%m-%d %H:%M UTC'))" \
             -m "- Total repos: $(jq '.total_repos' repos_output.json)" \
@@ -388,7 +434,7 @@ jobs:
         run: |
           if [ "$(date +%u)" = "7" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "is_release=true" >> $GITHUB_OUTPUT
-            zip -r starred-repos-backup.zip repos_output.json STARRED_ANALYSIS.md ALL_STARRED_REPOS.md
+            zip -r starred-repos-backup.zip repos_output.json STARRED_ANALYSIS.md ALL_STARRED_REPOS.md CHANGELOG.md
             echo "RELEASE_TAG=weekly-$(date +'%Y-%m-%d-%H%M%S')" >> $GITHUB_ENV
           else
             echo "is_release=false" >> $GITHUB_OUTPUT
