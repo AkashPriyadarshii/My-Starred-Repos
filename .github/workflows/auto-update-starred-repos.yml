@@ -181,10 +181,14 @@ jobs:
                           pass
 
                       header = "# 📜 Starred Repos Changelog\n\nTrack history of starred and unstarred repositories.\n\n---\n\n"
-                      if changelog_content.startswith(header):
-                          body = changelog_content[len(header):]
+                      
+                      # Normalize line endings and split by horizontal rule to isolate body
+                      content_normalized = changelog_content.replace('\r\n', '\n')
+                      parts = content_normalized.split('\n---\n', 1)
+                      if len(parts) == 2 and "# 📜 Starred Repos Changelog" in parts[0]:
+                          body = parts[1].lstrip()
                       else:
-                          body = changelog_content
+                          body = content_normalized
 
                       new_changelog = header + entry + body
                       with open('CHANGELOG.md', 'w') as f:
