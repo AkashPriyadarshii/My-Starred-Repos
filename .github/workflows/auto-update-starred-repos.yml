@@ -382,6 +382,28 @@ jobs:
         run: |
           echo "✅ Changes pushed to main branch"
           echo "📊 Report updated: $(date -u +'%Y-%m-%d %H:%M UTC')"
+      
+      - name: Prepare weekly release
+        id: prep-release
+        run: |
+          if [ "$(date +%u)" = "7" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "is_release=true" >> $GITHUB_OUTPUT
+            zip -r starred-repos-backup.zip repos_output.json STARRED_ANALYSIS.md ALL_STARRED_REPOS.md
+            echo "RELEASE_TAG=weekly-$(date +'%Y-%m-%d-%H%M%S')" >> $GITHUB_ENV
+          else
+            echo "is_release=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create GitHub Release
+        if: steps.prep-release.outputs.is_release == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: Starred Repos Weekly Release - ${{ env.RELEASE_TAG }}
+          body_path: STARRED_ANALYSIS.md
+          files: starred-repos-backup.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   notify:
     runs-on: ubuntu-latest
