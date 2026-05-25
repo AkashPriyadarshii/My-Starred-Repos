@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-density="comfortable">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AkashPriyadarshii | Starred Repos Portfolio</title>
+  
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Approved CDN Dependencies -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <link rel="stylesheet" href="style.css">
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <!-- Deep Glass Background Elements -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-profile">
+        <div class="avatar-glow">
+          <i data-lucide="github" class="avatar-icon"></i>
+        </div>
+        <div class="profile-info">
+          <h1>AkashPriyadarshii</h1>
+          <p class="subtitle">Curated Starred Repositories & Tech Stack</p>
+        </div>
+      </div>
+      
+      <!-- Stats Container -->
+      <div class="stats-container" id="stats-container">
+        <div class="stat-card">
+          <div class="stat-icon"><i data-lucide="star"></i></div>
+          <div class="stat-content">
+            <span class="stat-val" id="stat-total-stars">-</span>
+            <span class="stat-label">Total Stars</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i data-lucide="folder-open"></i></div>
+          <div class="stat-content">
+            <span class="stat-val" id="stat-total-repos">-</span>
+            <span class="stat-label">Repositories</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i data-lucide="code"></i></div>
+          <div class="stat-content">
+            <span class="stat-val" id="stat-top-lang">-</span>
+            <span class="stat-label">Top Language</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i data-lucide="award"></i></div>
+          <div class="stat-content">
+            <span class="stat-val" id="stat-avg-stars">-</span>
+            <span class="stat-label">Avg Stars</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Navigation -->
+    <nav class="app-nav">
+      <button class="nav-tab active" data-tab="grid">
+        <i data-lucide="grid"></i>
+        <span>Repository Grid</span>
+      </button>
+      <button class="nav-tab" data-tab="changelog">
+        <i data-lucide="history"></i>
+        <span>Changelog History</span>
+      </button>
+    </nav>
+
+    <!-- Content Sections -->
+    <main class="app-main">
+      
+      <!-- Repository Grid View -->
+      <section id="view-grid" class="tab-view active">
+        <!-- Control Panel -->
+        <div class="control-panel">
+          <div class="search-bar">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="search-input" placeholder="Fuzzy search repo names, description, readme summary..." autocomplete="off">
+            <button id="search-clear-btn" class="search-clear-btn hidden">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+          
+          <div class="filters-row">
+            <div class="category-tabs" id="category-tabs">
+              <button class="category-tab active" data-category="all">All</button>
+              <button class="category-tab" data-category="ai agents">AI Agents</button>
+              <button class="category-tab" data-category="web automation">Automation</button>
+              <button class="category-tab" data-category="llm infrastructure">LLM & RAG</button>
+              <button class="category-tab" data-category="dev tools">Dev Tools</button>
+              <button class="category-tab" data-category="infrastructure">Infrastructure</button>
+            </div>
+            
+            <div class="sort-selector">
+              <i data-lucide="arrow-up-down"></i>
+              <select id="sort-select">
+                <option value="stars-desc">Stars: High to Low</option>
+                <option value="stars-asc">Stars: Low to High</option>
+                <option value="rank-asc">Rank: 1 to N</option>
+                <option value="name-asc">Name: A to Z</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Repository Cards Grid -->
+        <div class="cards-grid" id="cards-grid">
+          <!-- Dynamically populated via app.js -->
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Fetching curated database...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Changelog View -->
+      <section id="view-changelog" class="tab-view">
+        <div class="changelog-container glass-card">
+          <div class="changelog-markdown" id="changelog-markdown">
+            <div class="loading-state">
+              <div class="spinner"></div>
+              <p>Compiling updates history...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Settings Button -->
+  <button class="settings-toggle-btn" id="settings-toggle-btn" title="Open Dashboard Settings">
+    <i data-lucide="settings"></i>
+  </button>
+
+  <!-- Settings Drawer / Sidebar -->
+  <aside class="settings-drawer" id="settings-drawer">
+    <div class="settings-header">
+      <h2>Dashboard Settings</h2>
+      <button class="settings-close-btn" id="settings-close-btn">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    
+    <div class="settings-body">
+      <!-- Layout Density -->
+      <div class="setting-group">
+        <label class="setting-label">Layout Density</label>
+        <div class="density-buttons">
+          <button class="density-btn active" data-density="comfortable">Comfortable</button>
+          <button class="density-btn" data-density="compact">Compact</button>
+        </div>
+      </div>
+
+      <!-- Max Visible Cards -->
+      <div class="setting-group">
+        <div class="setting-label-row">
+          <label class="setting-label">Max Visible Cards</label>
+          <span class="setting-val-badge" id="max-cards-badge">All</span>
+        </div>
+        <input type="range" id="max-cards-slider" min="10" max="350" step="10" value="350">
+      </div>
+
+      <!-- Pitch Black Theme Toggle -->
+      <div class="setting-group">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <span class="setting-label">Pitch Black mode</span>
+            <span class="setting-desc">Optimize for 120Hz AMOLED screens</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="pitch-black-switch">
+            <span class="slider-round"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- AppLogger Circular Buffer Console -->
+      <div class="setting-group log-group">
+        <div class="setting-label-row">
+          <label class="setting-label"><i data-lucide="terminal"></i> System Diagnostics</label>
+          <button class="log-download-btn" id="log-download-btn" title="Download Logs JSON">
+            <i data-lucide="download"></i>
+          </button>
+        </div>
+        <div class="log-console" id="log-console"></div>
+      </div>
+    </div>
+  </aside>
+  
+  <div class="settings-overlay" id="settings-overlay"></div>
+
+  <!-- Error Overlay -->
+  <div class="error-overlay hidden" id="error-overlay">
+    <div class="error-card glass-card">
+      <i data-lucide="alert-triangle" class="error-icon"></i>
+      <h2>Initialization Failed</h2>
+      <p id="error-message">Unable to fetch or parse repository configuration database.</p>
+      <button class="retry-btn" onclick="window.location.reload();">Retry Loading</button>
+    </div>
+  </div>
+</body>
+</html>
