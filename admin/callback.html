@@ -153,11 +153,11 @@
       }
 
       try {
-        // 2. Exchange Temporary Code for Access Token via Netlify Serverless Function Proxy
+        // 2. Exchange Temporary Code for Access Token via Serverless Function Proxy
         titleEl.textContent = 'Verifying Code';
         textEl.textContent = 'Exchanging temporary authorization code for GitHub session token...';
 
-        const tokenResponse = await fetch(ADMIN_CONFIG.NETLIFY_OAUTH_FN, {
+        const tokenResponse = await fetch(ADMIN_CONFIG.API_OAUTH, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

@@ -2008,8 +2008,8 @@ window.addEventListener('resize', () => {
 
 // ── Analytics (Supabase Cloud + IndexedDB local fallback) ──────
 
-/** Netlify function endpoint — served from the same Netlify deployment */
-const ANALYTICS_LOG_URL = 'https://my-starred-repos.netlify.app/.netlify/functions/log-visit';
+/** Vercel Serverless Function endpoint */
+const ANALYTICS_LOG_URL = 'https://my-starred-repos.vercel.app/api/log-visit';
 
 // ─── Local IndexedDB (offline / fallback only) ────────────────
 async function openAnalyticsDB() {
