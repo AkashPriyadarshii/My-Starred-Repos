@@ -607,13 +607,9 @@
 
       // Initialize UI State
       initUIState();
-      
-      // ── Prompt for ADMIN_SECRET if not stored ───────────────
-      if (!sessionStorage.getItem('admin_secret')) {
-        promptAdminSecret();
-      }
 
-      // Load Analytics (cloud → local fallback)
+      // Load Analytics (cloud → local fallback).
+      // reloadDashboardData() will prompt for ADMIN_SECRET if not yet stored.
       await reloadDashboardData();
 
       // Start auto-refresh (every 30s)
@@ -708,31 +704,43 @@
       } catch { return []; }
     }
 
-    // ── Primary: fetch from Supabase via Netlify function ────────
-    function setCloudStatusBadge(mode) {
+
+    function setCloudStatusBadge(mode, detail) {
       const badge = document.getElementById('cloud-status-badge');
       if (!badge) return;
-      if (mode === 'live') {
-        badge.textContent = '☁️ Live';
-        badge.style.color = '#10b981';
-        badge.title = 'Data from Supabase (real-time, all devices)';
-      } else if (mode === 'offline') {
-        badge.textContent = '📴 Local';
-        badge.style.color = '#f59e0b';
-        badge.title = 'Supabase unreachable — showing local IndexedDB data';
-      } else {
-        badge.textContent = '⏳ Loading…';
-        badge.style.color = '#6b7280';
-      }
+      const states = {
+        loading:       { text: '⏳ Loading…',       color: '#6b7280', tip: 'Fetching analytics data…' },
+        live:          { text: '☁️ Live',            color: '#10b981', tip: 'Real-time data from Supabase (all devices)' },
+        offline:       { text: '📴 Local only',      color: '#f59e0b', tip: 'Supabase unreachable — showing local IndexedDB data only' },
+        error:         { text: '🔐 Auth Error',      color: '#ef4444', tip: 'Wrong ADMIN_SECRET — click Refresh and try again' },
+        unconfigured:  { text: '⚙️ Not configured', color: '#f59e0b', tip: 'Netlify env vars (SUPABASE_URL / SUPABASE_SERVICE_KEY / ADMIN_SECRET) not set yet' },
+        nosecret:      { text: '🔑 Need secret',    color: '#8b5cf6', tip: 'Click Refresh and enter your ADMIN_SECRET when prompted' }
+      };
+      const s = states[mode] || states.loading;
+      badge.textContent = s.text;
+      badge.style.color = s.color;
+      badge.title = detail || s.tip;
     }
 
     async function reloadDashboardData() {
       setCloudStatusBadge('loading');
       const adminSecret = sessionStorage.getItem('admin_secret');
       let cloudOk = false;
+      let cloudError = null;  // 'auth' | 'unconfigured' | 'network' | null
 
-      // ── Try Supabase (cloud) ─────────────────────────────────
-      if (adminSecret && GET_ANALYTICS_URL) {
+      // ── No secret stored → prompt then bail (auto-refresh will retry) ──
+      if (!adminSecret) {
+        setCloudStatusBadge('nosecret');
+        // Show prompt after badge update renders
+        setTimeout(() => promptAdminSecret(), 50);
+        rawVisitsList = await loadFromIndexedDB();
+        setCloudStatusBadge(rawVisitsList.length ? 'offline' : 'nosecret');
+        refreshDashboard();
+        return;
+      }
+
+      // ── Try Supabase (cloud) ──────────────────────────────────
+      if (GET_ANALYTICS_URL) {
         try {
           const dateFrom = document.getElementById('date-from')?.value;
           const dateTo   = document.getElementById('date-to')?.value;
@@ -742,33 +750,58 @@
           if (dateTo)   qp.push(`to=${encodeURIComponent(dateTo)}`);
           if (qp.length) url += '?' + qp.join('&');
 
+          const controller = new AbortController();
+          const timeoutId  = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
           const res = await fetch(url, {
-            headers: { 'x-admin-secret': adminSecret }
+            headers: { 'x-admin-secret': adminSecret },
+            signal: controller.signal
           });
+          clearTimeout(timeoutId);
 
           if (res.ok) {
             rawVisitsList = await res.json();
             cloudOk = true;
-            setCloudStatusBadge('live');
-            console.log(`[analytics] Loaded ${rawVisitsList.length} records from Supabase`);
+            setCloudStatusBadge('live', `${rawVisitsList.length} records loaded from Supabase`);
+            console.log(`[analytics] ☁️ Loaded ${rawVisitsList.length} records from Supabase`);
           } else if (res.status === 401) {
-            console.warn('[analytics] Invalid admin secret — clearing and re-prompting');
+            console.warn('[analytics] 401 — wrong ADMIN_SECRET');
             sessionStorage.removeItem('admin_secret');
-            promptAdminSecret();
-            return;
+            cloudError = 'auth';
+          } else if (res.status === 503) {
+            console.warn('[analytics] 503 — Netlify env vars not configured yet');
+            cloudError = 'unconfigured';
           } else {
-            console.warn('[analytics] Cloud responded non-OK:', res.status);
+            console.warn('[analytics] Cloud error:', res.status);
+            cloudError = 'network';
           }
         } catch (err) {
-          console.warn('[analytics] Cloud fetch failed:', err.message);
+          if (err.name === 'AbortError') {
+            console.warn('[analytics] Cloud fetch timed out');
+            cloudError = 'network';
+          } else {
+            console.warn('[analytics] Cloud fetch failed:', err.message);
+            cloudError = 'network';
+          }
         }
       }
 
-      // ── Fallback: IndexedDB ──────────────────────────────────
+      // ── Fallback: IndexedDB ────────────────────────────────────
       if (!cloudOk) {
         rawVisitsList = await loadFromIndexedDB();
-        setCloudStatusBadge('offline');
-        console.warn('[analytics] Using IndexedDB fallback, showing local data only');
+
+        if      (cloudError === 'auth')         setCloudStatusBadge('error');
+        else if (cloudError === 'unconfigured') setCloudStatusBadge('unconfigured');
+        else                                     setCloudStatusBadge('offline');
+
+        // Re-prompt only on auth error — don't loop on network/config issues
+        if (cloudError === 'auth') {
+          setTimeout(() => {
+            if (confirm('🔐 Admin secret was rejected. Enter a new ADMIN_SECRET?')) {
+              promptAdminSecret();
+            }
+          }, 200);
+        }
       }
 
       refreshDashboard();
@@ -776,20 +809,26 @@
 
     function promptAdminSecret() {
       const secret = prompt(
-        '🔐 Enter your ADMIN_SECRET to load live analytics from Supabase.\n' +
-        '(This is the ADMIN_SECRET you set in Netlify environment variables.)'
+        '🔐 Enter your ADMIN_SECRET\n' +
+        '(Set this in Netlify → Site config → Environment variables)'
       );
-      if (secret) {
+      if (secret && secret.trim()) {
         sessionStorage.setItem('admin_secret', secret.trim());
-        reloadDashboardData();
+        // Reload after a short delay so the UI updates first
+        setTimeout(() => reloadDashboardData(), 100);
+      } else {
+        // User cancelled — show local data
+        loadFromIndexedDB().then(rows => {
+          rawVisitsList = rows;
+          setCloudStatusBadge('nosecret');
+          refreshDashboard();
+        });
       }
     }
 
     function startAutoRefresh() {
       if (autoRefreshTimer) clearInterval(autoRefreshTimer);
-      autoRefreshTimer = setInterval(() => {
-        reloadDashboardData();
-      }, 30000); // refresh every 30 seconds
+      autoRefreshTimer = setInterval(() => reloadDashboardData(), 30000);
     }
 
     function refreshDashboard() {
