@@ -131,7 +131,7 @@ function registerServiceWorker() {
       try {
         const isGitHubPages = window.location.pathname.startsWith('/My-Starred-Repos/');
         const swPath = isGitHubPages ? '/My-Starred-Repos/dashboard/sw.js' : './sw.js';
-        const scope = isGitHubPages ? '/My-Starred-Repos/' : './';
+        const scope = isGitHubPages ? '/My-Starred-Repos/dashboard/' : './';
         const reg = await navigator.serviceWorker.register(swPath, { scope });
         Logger.log('info', 'pwa', 'ServiceWorkerRegistered', { scope: reg.scope });
       } catch (err) {
@@ -583,7 +583,7 @@ function renderProfile(profile) {
       items.push(`<a class="profile-meta-item profile-meta-link" href="${blogUrl}" target="_blank" rel="noopener"><i data-lucide="globe"></i>${escapeHTML(profile.blog.replace(/^https?:\/\//, ''))}</a>`);
     }
     if (profile.twitter_username) {
-      items.push(`<a class="profile-meta-item profile-meta-link" href="https://twitter.com/${profile.twitter_username}" target="_blank" rel="noopener"><i data-lucide="twitter"></i>@${escapeHTML(profile.twitter_username)}</a>`);
+      items.push(`<a class="profile-meta-item profile-meta-link" href="https://twitter.com/${profile.twitter_username}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 3px; display: inline-block; vertical-align: middle;"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>@${escapeHTML(profile.twitter_username)}</a>`);
     }
     metaRow.innerHTML = items.join('');
     lucide.createIcons();

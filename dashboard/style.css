@@ -131,6 +131,9 @@ html[data-fontsize="small"]  { font-size: 14px; }
 html[data-fontsize="medium"] { font-size: 16px; }
 html[data-fontsize="large"]  { font-size: 18px; }
 
+/* Global helper classes */
+.hidden { display: none !important; }
+
 /* ==========================================================================
    RESET & FOUNDATIONS
    ========================================================================== */
