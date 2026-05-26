@@ -17,12 +17,21 @@ const corsHeaders = {
 function makeRequest(url, options = {}, body = null) {
   return new Promise((resolve, reject) => {
     const parsedUrl = new URL(url);
+    
+    // Prepare headers and calculate content length if body exists
+    const headers = { ...(options.headers || {}) };
+    const reqBody = body ? (typeof body === 'string' ? body : JSON.stringify(body)) : null;
+    
+    if (reqBody) {
+      headers['Content-Length'] = Buffer.byteLength(reqBody);
+    }
+
     const reqOptions = {
       hostname: parsedUrl.hostname,
       path: parsedUrl.pathname + parsedUrl.search,
       port: 443,
       method: options.method || 'GET',
-      headers: options.headers || {}
+      headers: headers
     };
 
     const req = https.request(reqOptions, (res) => {
@@ -46,58 +55,59 @@ function makeRequest(url, options = {}, body = null) {
 
     req.on('error', (err) => reject(err));
 
-    if (body) {
-      req.write(typeof body === 'string' ? body : JSON.stringify(body));
+    if (reqBody) {
+      req.write(reqBody);
     }
     req.end();
   });
 }
 
 module.exports = async function handler(req, res) {
-  // Handle CORS Pre-flight
-  if (req.method === 'OPTIONS') {
-    return res.status(200).set(corsHeaders).end();
-  }
-
-  // Set response headers
-  Object.entries(corsHeaders).forEach(([key, val]) => res.setHeader(key, val));
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  // Env guard
-  const { SUPABASE_URL, SUPABASE_SERVICE_KEY } = process.env;
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-    console.error('[log-visit] Missing SUPABASE_URL or SUPABASE_SERVICE_KEY env vars');
-    return res.status(503).json({ error: 'Analytics backend not configured' });
-  }
-
-  const {
-    session_id,
-    timestamp,
-    theme      = null,
-    device     = null,
-    referrer   = null,
-    repo_clicked  = null,
-    duration_ms   = 0
-  } = req.body || {};
-
-  if (!session_id) {
-    return res.status(400).json({ error: 'session_id is required' });
-  }
-
-  const payload = {
-    session_id,
-    timestamp: timestamp || new Date().toISOString(),
-    theme,
-    device,
-    referrer,
-    repo_clicked,
-    duration_ms
-  };
-
+  // Always wrap in try-catch to guarantee CORS headers on error
   try {
+    // Handle CORS Pre-flight
+    if (req.method === 'OPTIONS') {
+      return res.status(200).set(corsHeaders).end();
+    }
+
+    // Set response headers
+    Object.entries(corsHeaders).forEach(([key, val]) => res.setHeader(key, val));
+
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    // Env guard
+    const { SUPABASE_URL, SUPABASE_SERVICE_KEY } = process.env;
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+      console.error('[log-visit] Missing SUPABASE_URL or SUPABASE_SERVICE_KEY env vars');
+      return res.status(503).json({ error: 'Analytics backend not configured' });
+    }
+
+    const {
+      session_id,
+      timestamp,
+      theme      = null,
+      device     = null,
+      referrer   = null,
+      repo_clicked  = null,
+      duration_ms   = 0
+    } = req.body || {};
+
+    if (!session_id) {
+      return res.status(400).json({ error: 'session_id is required' });
+    }
+
+    const payload = {
+      session_id,
+      timestamp: timestamp || new Date().toISOString(),
+      theme,
+      device,
+      referrer,
+      repo_clicked,
+      duration_ms
+    };
+
     const response = await makeRequest(
       `${SUPABASE_URL}/rest/v1/visits?on_conflict=session_id`,
       {
@@ -119,8 +129,15 @@ module.exports = async function handler(req, res) {
     }
 
     return res.status(200).json({ ok: true });
+
   } catch (err) {
-    console.error('[log-visit] Fetch error:', err.message);
-    return res.status(500).json({ error: 'Internal error' });
+    console.error('[log-visit] Global handler error:', err);
+    // Guarantee CORS headers are written
+    Object.entries(corsHeaders).forEach(([key, val]) => res.setHeader(key, val));
+    return res.status(500).json({ 
+      error: 'Internal server error', 
+      message: err.message,
+      stack: err.stack
+    });
   }
 };
