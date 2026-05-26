@@ -201,7 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   fetchData()
-    .then(() => Logger.log('info', 'ui', 'AppInitializationCompleted', null, Math.round(performance.now() - t0)))
+    .then(() => {
+      Logger.log('info', 'ui', 'AppInitializationCompleted', null, Math.round(performance.now() - t0));
+      logVisit().then(() => renderVisitCounter());
+    })
     .catch(err => {
       Logger.log('fatal', 'ui', 'AppInitializationFailed', { error: err.message }, Math.round(performance.now() - t0));
       showErrorOverlay(err.message);
@@ -241,9 +244,6 @@ function applyActiveSettings() {
   // Sync particle background activity
   if (particleBgInstance) {
     particleBgInstance.setActive(state.particlesEnabled && state.deviceProfile !== 'low');
-    if (state.particlesEnabled && state.deviceProfile !== 'low') {
-      particleBgInstance.init(); // updates colors for new theme
-    }
   }
 
   // Update card 3D tilt hover physics
@@ -321,6 +321,10 @@ function syncDrawerUI(src) {
   }
 }
 
+function syncSettingsUI() {
+  syncDrawerUI(state);
+}
+
 function openSettingsDrawer() {
   const drawer  = document.getElementById('settings-drawer');
   const overlay = document.getElementById('settings-overlay');
@@ -339,6 +343,12 @@ function openSettingsDrawer() {
   };
 
   syncDrawerUI(stagedSettings);
+  
+  const analyticsCheckbox = document.getElementById('analytics-enabled-checkbox');
+  if (analyticsCheckbox) {
+    analyticsCheckbox.checked = localStorage.getItem('analytics_paused') !== 'true';
+  }
+
   drawer.classList.add('open');
   overlay.classList.add('visible');
   Logger.log('info', 'ui', 'SettingsDrawerOpened');
@@ -374,7 +384,7 @@ function loadSettings() {
   state.deviceProfile = localStorage.getItem(CONFIG_KEYS.DEVICE_PROFILE) || 'high';
 
   applyActiveSettings();
-  syncDrawerUI(state);
+  syncSettingsUI();
 
   Logger.log('info', 'storage', 'ConfigurationsLoaded', { 
     theme: state.theme, 
@@ -647,6 +657,10 @@ function renderGrid() {
     card.setAttribute('data-rank',     repo.rank);
     card.setAttribute('data-name',     repo.full_name.toLowerCase());
     card.setAttribute('data-updated',  repo.last_updated || '');
+
+    card.addEventListener('click', () => {
+      logRepoClick(repo.full_name).then(() => renderVisitCounter());
+    });
 
     const langColor = getLanguageColor(repo.language);
     const cleanedDesc   = cleanReadmeSummary(repo.description || 'No description');
@@ -1098,6 +1112,11 @@ function initUI() {
   document.getElementById('settings-toggle-btn')?.addEventListener('click', openSettingsDrawer);
   document.getElementById('settings-close-btn')?.addEventListener('click', closeSettingsDrawer);
   overlay?.addEventListener('click', closeSettingsDrawer);
+
+  document.getElementById('analytics-enabled-checkbox')?.addEventListener('change', e => {
+    localStorage.setItem('analytics_paused', (!e.target.checked).toString());
+    Logger.log('info', 'analytics', 'Analytics toggle changed', { enabled: e.target.checked });
+  });
 
   // ── Apply Settings Button ──
   document.getElementById('apply-settings-btn')?.addEventListener('click', () => {
@@ -1947,6 +1966,7 @@ function renderStarsSparkline() {
   if (!container || !state.repos.length) return;
 
   const sample = state.repos.slice(0, 15).map(r => r.stars).reverse();
+  if (sample.length < 2) return;
   const max = Math.max(...sample);
   const min = Math.min(...sample);
   const range = max - min || 1;
@@ -1980,3 +2000,79 @@ function renderStarsSparkline() {
 window.addEventListener('resize', () => {
   renderStarsSparkline();
 });
+
+// ── Analytics ──────────────────────────────────────────────
+async function openAnalyticsDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('analytics_db', 1);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      const store = db.createObjectStore('visits', { keyPath: 'id', autoIncrement: true });
+      store.createIndex('timestamp', 'timestamp');
+      store.createIndex('repo_clicked', 'repo_clicked');
+    };
+    req.onsuccess = e => res(e.target.result);
+    req.onerror = e => rej(e.target.error);
+  });
+}
+
+function getOrCreateSessionId() {
+  let sid = sessionStorage.getItem('session_id');
+  if (!sid) { sid = crypto.randomUUID(); sessionStorage.setItem('session_id', sid); }
+  return sid;
+}
+
+async function logVisit() {
+  if (localStorage.getItem('analytics_paused') === 'true') return;
+  try {
+    const db = await openAnalyticsDB();
+    const tx = db.transaction('visits', 'readwrite');
+    tx.objectStore('visits').add({
+      timestamp: new Date().toISOString(),
+      repo_clicked: null,
+      theme: state.theme,
+      device: window.innerWidth < 768 ? 'mobile' : 'desktop',
+      referrer: document.referrer || 'direct',
+      session_id: getOrCreateSessionId(),
+      duration_ms: 0
+    });
+    Logger.log('info', 'analytics', 'logVisit success');
+  } catch(e) { Logger.log('error', 'analytics', 'logVisit failed', { error: e.message }); }
+}
+
+async function logRepoClick(repoFullName) {
+  if (localStorage.getItem('analytics_paused') === 'true') return;
+  try {
+    const db = await openAnalyticsDB();
+    const tx = db.transaction('visits', 'readwrite');
+    const store = tx.objectStore('visits');
+    const sid = getOrCreateSessionId();
+    const all = await new Promise(r => { const req = store.index('timestamp').getAll(); req.onsuccess = () => r(req.result); });
+    const last = all.filter(v => v.session_id === sid).pop();
+    if (last) {
+      last.repo_clicked = repoFullName;
+      last.duration_ms = Date.now() - new Date(last.timestamp).getTime();
+      store.put(last);
+      Logger.log('info', 'analytics', 'logRepoClick success', { repo: repoFullName });
+    }
+  } catch(e) { Logger.log('error', 'analytics', 'logRepoClick failed', { error: e.message }); }
+}
+
+async function renderVisitCounter() {
+  try {
+    const db = await openAnalyticsDB();
+    const all = await new Promise(r => {
+      const req = db.transaction('visits').objectStore('visits').getAll();
+      req.onsuccess = () => r(req.result);
+    });
+    const today = new Date().toDateString();
+    const todayCount = all.filter(v => new Date(v.timestamp).toDateString() === today).length;
+    
+    const countTodayEl = document.getElementById('visit-count-today');
+    const countTotalEl = document.getElementById('visit-count-total');
+    if (countTodayEl) countTodayEl.textContent = todayCount;
+    if (countTotalEl) countTotalEl.textContent = all.length;
+    
+    Logger.log('info', 'analytics', 'renderVisitCounter success', { today: todayCount, total: all.length });
+  } catch(e) { Logger.log('error', 'analytics', 'renderVisitCounter failed', { error: e.message }); }
+}

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-density="comfortable">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authenticating... | My Starred Repos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="../dashboard/style.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1.5rem;
+    }
+    .callback-wrapper {
+      width: 100%;
+      max-width: 420px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+    .spinner-icon {
+      animation: spin 1.5s linear infinite;
+      color: var(--primary-color);
+      width: 48px;
+      height: 48px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .status-title {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+    .status-text {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+    .error-icon {
+      color: var(--danger-color);
+      width: 48px;
+      height: 48px;
+    }
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #fff;
+      background: hsla(var(--card-h), var(--card-s), calc(var(--card-l) + 10%), 0.6);
+      border: 1px solid var(--border-color);
+      transition: all 0.2s;
+      text-decoration: none;
+      margin-top: 1rem;
+    }
+    .action-btn:hover {
+      background: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.15);
+      border-color: var(--border-glow);
+    }
+  </style>
+</head>
+<body>
+  <!-- Deep Glass Background Blobs -->
+  <div class="blob blob-1" style="width: 400px; height: 400px; top: -100px; left: -100px;"></div>
+  <div class="blob blob-2" style="width: 350px; height: 350px; bottom: -100px; right: -100px;"></div>
+
+  <div class="callback-wrapper glass-card" id="callback-card">
+    <div id="status-icon-container">
+      <i data-lucide="loader-2" class="spinner-icon"></i>
+    </div>
+    
+    <div>
+      <h1 class="status-title" id="status-title">Authenticating</h1>
+      <p class="status-text" id="status-text">Connecting to GitHub secure sign-in gateway. Please wait...</p>
+    </div>
+
+    <div id="action-btn-container" class="hidden">
+      <!-- Populated on error/denied -->
+    </div>
+  </div>
+
+  <script type="module">
+    import { ADMIN_CONFIG } from './config.js';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const state = urlParams.get('state');
+
+      const titleEl = document.getElementById('status-title');
+      const textEl = document.getElementById('status-text');
+      const iconContainer = document.getElementById('status-icon-container');
+      const actionContainer = document.getElementById('action-btn-container');
+
+      function showError(title, message, isAccessDenied = false) {
+        titleEl.textContent = title;
+        textEl.textContent = message;
+        iconContainer.innerHTML = '<i data-lucide="alert-triangle" class="error-icon"></i>';
+        
+        let linkHref = './index.html';
+        let btnText = 'Retry Login';
+        if (isAccessDenied) {
+          linkHref = '../dashboard/index.html';
+          btnText = 'Back to Portfolio';
+        }
+
+        actionContainer.innerHTML = `
+          <a href="${linkHref}" class="action-btn">
+            <i data-lucide="arrow-left"></i> ${btnText}
+          </a>
+        `;
+        actionContainer.classList.remove('hidden');
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }
+
+      // 1. Verify CSRF State Parameter
+      const storedState = sessionStorage.getItem('oauth_state');
+      if (!state || !storedState || state !== storedState) {
+        showError('CSRF Verification Failed', 'The state token returned from GitHub does not match the local token. Access denied for security reasons.');
+        return;
+      }
+      sessionStorage.removeItem('oauth_state'); // Clear state token immediately after check
+
+      if (!code) {
+        showError('Authorization Code Missing', 'No temporary authorization code was returned from GitHub. Please try signing in again.');
+        return;
+      }
+
+      try {
+        // 2. Exchange Temporary Code for Access Token via Netlify Serverless Function Proxy
+        titleEl.textContent = 'Verifying Code';
+        textEl.textContent = 'Exchanging temporary authorization code for GitHub session token...';
+
+        const tokenResponse = await fetch(ADMIN_CONFIG.NETLIFY_OAUTH_FN, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            code: code
+          })
+        });
+
+        if (!tokenResponse.ok) {
+          throw new Error(`Token proxy returned status ${tokenResponse.status}`);
+        }
+
+        const tokenData = await tokenResponse.json();
+        
+        if (tokenData.error) {
+          throw new Error(tokenData.error_description || tokenData.error);
+        }
+
+        const accessToken = tokenData.access_token;
+        if (!accessToken) {
+          throw new Error('No access_token returned in the response');
+        }
+
+        // 3. Fetch Authorized GitHub User Details
+        titleEl.textContent = 'Verifying User';
+        textEl.textContent = 'Checking developer identity authorizations on GitHub...';
+
+        const userResponse = await fetch('https://api.github.com/user', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+
+        if (!userResponse.ok) {
+          throw new Error(`GitHub User API returned status ${userResponse.status}`);
+        }
+
+        const userData = await userResponse.json();
+        const loginName = userData.login;
+
+        // 4. Access Control Check: Username must match GITHUB_USERNAME
+        if (!loginName || loginName.toLowerCase() !== ADMIN_CONFIG.GITHUB_USERNAME.toLowerCase()) {
+          showError('Access Denied', `Hello @${loginName || 'User'}. This admin dashboard is restricted. Only owner @${ADMIN_CONFIG.GITHUB_USERNAME} is authorized.`, true);
+          return;
+        }
+
+        // 5. Successful Auth: Store token and user in sessionStorage and redirect
+        sessionStorage.setItem('admin_token', accessToken);
+        sessionStorage.setItem('admin_user', JSON.stringify({ login: userData.login, avatar_url: userData.avatar_url }));
+        titleEl.textContent = 'Welcome Admin';
+        textEl.textContent = 'Authentication successful! Redirecting you to the analytics dashboard...';
+        iconContainer.innerHTML = '<i data-lucide="check-circle-2" style="color: var(--success-color); width: 48px; height: 48px;"></i>';
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+
+        setTimeout(() => {
+          window.location.href = './dashboard.html';
+        }, 1200);
+
+      } catch (err) {
+        showError('Authentication Failed', `An error occurred during authentication exchange: ${err.message}`);
+      }
+    });
+  </script>
+</body>
+</html>

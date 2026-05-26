@@ -2,21 +2,21 @@
   "name": "AkashPriyadarshii — Starred Repos",
   "short_name": "StarredRepos",
   "description": "Curated GitHub starred repositories dashboard — explore, filter, and track FOSS projects.",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/My-Starred-Repos/dashboard/index.html",
+  "scope": "/My-Starred-Repos/dashboard/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#0a0a0f",
   "theme_color": "#6d28d9",
   "icons": [
     {
-      "src": "icons/icon-192.png",
+      "src": "/My-Starred-Repos/dashboard/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "/My-Starred-Repos/dashboard/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -24,7 +24,7 @@
   ],
   "screenshots": [
     {
-      "src": "icons/icon-512.png",
+      "src": "/My-Starred-Repos/dashboard/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "form_factor": "narrow"

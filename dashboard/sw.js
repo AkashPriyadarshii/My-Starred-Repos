@@ -11,13 +11,13 @@ const DYNAMIC_CACHE = `starred-dynamic-${CACHE_VERSION}`;
 
 // App shell — pre-cached on SW install
 const APP_SHELL = [
-  './index.html',
-  './style.css',
-  './app.js',
-  './offline.html',
-  './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
+  '/My-Starred-Repos/dashboard/index.html',
+  '/My-Starred-Repos/dashboard/style.css',
+  '/My-Starred-Repos/dashboard/app.js',
+  '/My-Starred-Repos/dashboard/offline.html',
+  '/My-Starred-Repos/dashboard/manifest.json',
+  '/My-Starred-Repos/dashboard/icons/icon-192.png',
+  '/My-Starred-Repos/dashboard/icons/icon-512.png',
 ];
 
 // ─── Install ────────────────────────────────────────────────────────────────
@@ -116,7 +116,7 @@ async function networkFirst(request) {
     return response;
   } catch {
     const cached = await caches.match(request);
-    return caches.match('./offline.html');
+    return cached || caches.match('./offline.html');
   }
 }
 

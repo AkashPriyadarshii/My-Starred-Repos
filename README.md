@@ -42,3 +42,32 @@ An interactive Single Page Application (SPA) dashboard styled with modern glassm
 * **No Personal Secrets:** The workflow does **NOT** use your personal password or personal access tokens (PAT). It uses GitHub's built-in `GITHUB_TOKEN` which is temporary and expires as soon as the workflow finishes.
 * **Public Data Only:** The script fetches public starred repositories, which are already public on GitHub. No private information is accessed or leaked.
 * **Auto-Rotated Key:** The token used is scoped only to this repository, meaning it cannot be used to modify or access anything else on your account.
+
+---
+
+## Admin Analytics Setup
+
+### 1. Create GitHub OAuth App
+- GitHub → Settings → Developer settings → OAuth Apps → New OAuth App
+- Name: `My-Starred-Repos Analytics`
+- Homepage: `https://akashpriyadarshii.github.io/My-Starred-Repos/`
+- Callback URL: `https://akashpriyadarshii.github.io/My-Starred-Repos/admin/callback.html`
+- Copy Client ID → paste into `admin/config.js` as `OAUTH_CLIENT_ID`
+- Copy Client Secret → save for Netlify env var (never put in code)
+
+### 2. Deploy Netlify Function (OAuth token exchange)
+- Go to netlify.com → New site → Import from GitHub → select this repo
+- Site settings → Environment variables → add:
+  - `GITHUB_OAUTH_CLIENT_ID` = your OAuth App Client ID
+  - `GITHUB_OAUTH_CLIENT_SECRET` = your OAuth App Client Secret
+- Copy your Netlify site URL → update `NETLIFY_OAUTH_FN` in `admin/config.js`
+
+### 3. Access Admin
+- Visit: `https://akashpriyadarshii.github.io/My-Starred-Repos/admin/`
+- Login with GitHub (@AkashPriyadarshii only)
+
+## Legal
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
+- [Privacy Policy](./PRIVACY.md)
+- [Contributing](./CONTRIBUTING.md)

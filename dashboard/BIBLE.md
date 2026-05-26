@@ -237,7 +237,7 @@ You are an expert frontend engineering agent building a premium, high-performanc
 *   `dashboard/app.js` - Data handling, fuzzy search, and logger execution
 
 ## Constraints
-*   **₹0 Budget:** Must run completely free on GitHub Pages.
+*   **保持零成本 (₹0 Budget):** Must run completely free on GitHub Pages.
 *   **Zero Local Build Dependencies:** Do not import any local NPM packages, Tailwind CLI, compilers, or build scripts. Load approved libraries via CDN.
 *   **One User Mode:** Single-user design, optimized for high performance on 120Hz mobile (Realme GT 7) and desktop (MacBook Air).
 
@@ -245,4 +245,40 @@ You are an expert frontend engineering agent building a premium, high-performanc
 *   Never write placeholders or partial code blocks. All code must be complete.
 *   Use native custom elements or ES6 template strings for rendering.
 *   Always log network actions, sorting changes, search interactions, and error boundaries through the `AppLogger` singleton.
+
+---
+
+## 🔒 17. Sprint 5: Telemetry, OAuth, & Netlify Functions (Architecture)
+
+### Telemetry Storage Schema (IndexedDB)
+The local visitor statistics are stored in IndexedDB under the database name `analytics_db` (Version 1).
+- **Object Store:** `visits`
+  - **KeyPath:** `id` (auto-incrementing integer)
+  - **Indexes:**
+    - `timestamp`: ISO-8601 string of visit creation time.
+    - `repo_clicked`: Full repository name (e.g. `owner/repo-name`) or `null` if page-view only.
+  - **Record Structure:**
+    ```json
+    {
+      "id": 12,
+      "timestamp": "2026-05-26T04:00:00.000Z",
+      "repo_clicked": "AkashPriyadarshii/My-Starred-Repos",
+      "theme": "tokyo-midnight",
+      "device": "desktop",
+      "referrer": "github.com",
+      "session_id": "b7d87680-e768-45fa-bb19-01ea897a151b",
+      "duration_ms": 14200
+    }
+    ```
+
+### OAuth Authorization & Token Exchange Flow (Netlify Serverless)
+Due to CORS security limitations on client-side token exchanges, a serverless intermediary handles the authentication transaction:
+1. **Redirect:** The visitor clicks "Sign in with GitHub" on the admin portal redirecting to:
+   `https://github.com/login/oauth/authorize?client_id=<CLIENT_ID>&scope=read:user&state=<RANDOM_CSRF_STATE>`
+2. **Callback Handling:** The user is redirected back to `/admin/callback.html` with temporary `code` and `state`. The state is matched against the local session token to prevent CSRF attacks.
+3. **Netlify Functions Exchange:** The client posts `code` to the Netlify serverless endpoint:
+   `POST https://<site>.netlify.app/.netlify/functions/oauth`
+   The serverless function reads the `client_id` and `client_secret` from its secure environment variables and calls:
+   `POST https://github.com/login/oauth/access_token`
+4. **Access Control Check:** The returned `access_token` is used to request the user profile `https://api.github.com/user`. If the login name matches `@AkashPriyadarshii` exactly (case-insensitive), access is granted, the token is stored in `sessionStorage` (which auto-clears when closing the tab), and the user is redirected to the Chart.js Admin dashboard.
 ```

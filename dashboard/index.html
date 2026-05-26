@@ -379,6 +379,20 @@
         </div>
       </div>
 
+      <!-- Analytics -->
+      <div class="setting-group">
+        <label class="setting-label"><i data-lucide="bar-chart-2"></i> Analytics</label>
+        <div class="effects-toggles">
+          <label class="effects-toggle-label">
+            <input type="checkbox" id="analytics-enabled-checkbox" checked>
+            <span>Track visits &amp; clicks</span>
+          </label>
+        </div>
+        <a href="/My-Starred-Repos/admin/" class="settings-link-btn" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.75rem; text-decoration: none; padding: 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); font-size: 0.8rem; font-weight: 600; color: var(--text-color); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--border-glow)';" onmouseout="this.style.borderColor='var(--border-color)';">
+          Admin Dashboard →
+        </a>
+      </div>
+
       <!-- AppLogger Circular Buffer Console -->
       <div class="setting-group log-group">
         <div class="setting-label-row">
@@ -435,6 +449,13 @@
       <p id="error-message">Unable to fetch or parse repository configuration database.</p>
       <button class="retry-btn" onclick="window.location.reload();">Retry Loading</button>
     </div>
+  </div>
+
+  <!-- Floating Visit Counter Widget -->
+  <div class="visit-counter-widget" id="visit-counter-widget">
+    <span id="visit-count-today">0</span> today
+    <span class="vc-divider">·</span>
+    <span id="visit-count-total">0</span> total
   </div>
 
   <!-- SEO Attribution Footer (Crawler-visible) -->
