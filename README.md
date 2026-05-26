@@ -61,8 +61,8 @@ An interactive Single Page Application (SPA) dashboard styled with modern glassm
   - `GITHUB_OAUTH_CLIENT_ID` = your OAuth App Client ID
   - `GITHUB_OAUTH_CLIENT_SECRET` = your OAuth App Client Secret
   - `SUPABASE_URL` = your Supabase URL
-  - `SUPABASE_SERVICE_KEY` = your Supabase Service Key
-  - `ADMIN_SECRET` = your Admin Secret
+  - `SUPABASE_SERVICE_KEY` = your Supabase Service Key (service_role)
+  - `SALT_SECRET` = your rotating encryption salt
 - Copy your Vercel site URL → update `VERCEL_BASE` and endpoint URLs in `admin/config.js`
 
 ### 3. Access Admin
@@ -70,7 +70,7 @@ An interactive Single Page Application (SPA) dashboard styled with modern glassm
 - Login with GitHub (@AkashPriyadarshii only)
 
 ## Legal
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)](./LICENSE)
 
 - [Privacy Policy](./PRIVACY.md)
 - [Contributing](./CONTRIBUTING.md)
