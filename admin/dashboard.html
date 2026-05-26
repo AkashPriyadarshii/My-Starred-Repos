@@ -608,11 +608,6 @@
       // Initialize UI State
       initUIState();
       
-      // ── Prompt for ADMIN_SECRET if not stored ───────────────
-      if (!sessionStorage.getItem('admin_secret')) {
-        promptAdminSecret();
-      }
-
       // Load Analytics (cloud → local fallback)
       await reloadDashboardData();
 
@@ -727,88 +722,99 @@
     }
 
     async function reloadDashboardData() {
-      setCloudStatusBadge('loading');
-      const adminSecret = sessionStorage.getItem('admin_secret');
-      let cloudOk = false;
-      let cloudError = null;  // 'auth' | 'unconfigured' | 'network' | null
+      try {
+        setCloudStatusBadge('loading');
+        const adminSecret = sessionStorage.getItem('admin_secret');
+        let cloudOk = false;
+        let cloudError = null;  // 'auth' | 'unconfigured' | 'network' | null
 
-      // ── No secret stored → prompt then bail (auto-refresh will retry) ──
-      if (!adminSecret) {
-        setCloudStatusBadge('nosecret');
-        // Show prompt after badge update renders
-        setTimeout(() => promptAdminSecret(), 50);
-        rawVisitsList = await loadFromIndexedDB();
-        setCloudStatusBadge(rawVisitsList.length ? 'offline' : 'nosecret');
-        refreshDashboard();
-        return;
-      }
-
-      // ── Try Supabase (cloud) ──────────────────────────────────
-      if (GET_ANALYTICS_URL) {
-        try {
-          const dateFrom = document.getElementById('date-from')?.value;
-          const dateTo   = document.getElementById('date-to')?.value;
-          let url = GET_ANALYTICS_URL;
-          const qp = [];
-          if (dateFrom) qp.push(`from=${encodeURIComponent(dateFrom)}`);
-          if (dateTo)   qp.push(`to=${encodeURIComponent(dateTo)}`);
-          if (qp.length) url += '?' + qp.join('&');
-
-          const controller = new AbortController();
-          const timeoutId  = setTimeout(() => controller.abort(), 10000); // 10s timeout
-
-          const res = await fetch(url, {
-            headers: { 'x-admin-secret': adminSecret },
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
-
-          if (res.ok) {
-            rawVisitsList = await res.json();
-            cloudOk = true;
-            setCloudStatusBadge('live', `${rawVisitsList.length} records loaded from Supabase`);
-            console.log(`[analytics] ☁️ Loaded ${rawVisitsList.length} records from Supabase`);
-          } else if (res.status === 401) {
-            console.warn('[analytics] 401 — wrong ADMIN_SECRET');
-            sessionStorage.removeItem('admin_secret');
-            cloudError = 'auth';
-          } else if (res.status === 503) {
-            console.warn('[analytics] 503 — Netlify env vars not configured yet');
-            cloudError = 'unconfigured';
-          } else {
-            console.warn('[analytics] Cloud error:', res.status);
-            cloudError = 'network';
-          }
-        } catch (err) {
-          if (err.name === 'AbortError') {
-            console.warn('[analytics] Cloud fetch timed out');
-            cloudError = 'network';
-          } else {
-            console.warn('[analytics] Cloud fetch failed:', err.message);
-            cloudError = 'network';
-          }
+        // ── No secret stored → prompt then bail (auto-refresh will retry) ──
+        if (!adminSecret) {
+          setCloudStatusBadge('nosecret');
+          // Show prompt after badge update renders
+          setTimeout(() => promptAdminSecret(), 50);
+          rawVisitsList = await loadFromIndexedDB();
+          setCloudStatusBadge(rawVisitsList.length ? 'offline' : 'nosecret');
+          refreshDashboard();
+          return;
         }
-      }
 
-      // ── Fallback: IndexedDB ────────────────────────────────────
-      if (!cloudOk) {
-        rawVisitsList = await loadFromIndexedDB();
+        // ── Try Supabase (cloud) ──────────────────────────────────
+        if (GET_ANALYTICS_URL) {
+          try {
+            const dateFrom = document.getElementById('date-from')?.value;
+            const dateTo   = document.getElementById('date-to')?.value;
+            let url = GET_ANALYTICS_URL;
+            const qp = [];
+            if (dateFrom) qp.push(`from=${encodeURIComponent(dateFrom)}`);
+            if (dateTo)   qp.push(`to=${encodeURIComponent(dateTo)}`);
+            if (qp.length) url += '?' + qp.join('&');
 
-        if      (cloudError === 'auth')         setCloudStatusBadge('error');
-        else if (cloudError === 'unconfigured') setCloudStatusBadge('unconfigured');
-        else                                     setCloudStatusBadge('offline');
+            const controller = new AbortController();
+            const timeoutId  = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-        // Re-prompt only on auth error — don't loop on network/config issues
-        if (cloudError === 'auth') {
-          setTimeout(() => {
-            if (confirm('🔐 Admin secret was rejected. Enter a new ADMIN_SECRET?')) {
-              promptAdminSecret();
+            const res = await fetch(url, {
+              headers: { 'x-admin-secret': adminSecret },
+              signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+
+            if (res.ok) {
+              rawVisitsList = await res.json();
+              cloudOk = true;
+              setCloudStatusBadge('live', `${rawVisitsList.length} records loaded from Supabase`);
+              console.log(`[analytics] ☁️ Loaded ${rawVisitsList.length} records from Supabase`);
+            } else if (res.status === 401) {
+              console.warn('[analytics] 401 — wrong ADMIN_SECRET');
+              sessionStorage.removeItem('admin_secret');
+              cloudError = 'auth';
+            } else if (res.status === 503) {
+              console.warn('[analytics] 503 — Netlify env vars not configured yet');
+              cloudError = 'unconfigured';
+            } else {
+              console.warn('[analytics] Cloud error:', res.status);
+              cloudError = 'network';
             }
-          }, 200);
+          } catch (err) {
+            if (err.name === 'AbortError') {
+              console.warn('[analytics] Cloud fetch timed out');
+              cloudError = 'network';
+            } else {
+              console.warn('[analytics] Cloud fetch failed:', err.message);
+              cloudError = 'network';
+            }
+          }
         }
-      }
 
-      refreshDashboard();
+        // ── Fallback: IndexedDB ────────────────────────────────────
+        if (!cloudOk) {
+          rawVisitsList = await loadFromIndexedDB();
+
+          if      (cloudError === 'auth')         setCloudStatusBadge('error');
+          else if (cloudError === 'unconfigured') setCloudStatusBadge('unconfigured');
+          else                                     setCloudStatusBadge('offline');
+
+          // Re-prompt only on auth error — don't loop on network/config issues
+          if (cloudError === 'auth') {
+            setTimeout(() => {
+              if (confirm('🔐 Admin secret was rejected. Enter a new ADMIN_SECRET?')) {
+                promptAdminSecret();
+              }
+            }, 200);
+          }
+        }
+
+        refreshDashboard();
+
+      } catch (err) {
+        console.error('[analytics] reloadDashboardData error:', err);
+        setCloudStatusBadge('offline', `UI Crash: ${err.message}`);
+        // Attempt emergency offline render
+        try {
+          rawVisitsList = await loadFromIndexedDB();
+          refreshDashboard();
+        } catch {}
+      }
     }
 
     function promptAdminSecret() {
@@ -836,24 +842,34 @@
     }
 
     function refreshDashboard() {
-      const dateFromStr = document.getElementById('date-from').value;
-      const dateToStr = document.getElementById('date-to').value;
+      try {
+        const dateFromStr = document.getElementById('date-from').value;
+        const dateToStr = document.getElementById('date-to').value;
 
-      const dateFrom = dateFromStr ? new Date(dateFromStr + 'T00:00:00') : null;
-      const dateTo = dateToStr ? new Date(dateToStr + 'T23:59:59') : null;
+        const dateFrom = dateFromStr ? new Date(dateFromStr + 'T00:00:00') : null;
+        const dateTo = dateToStr ? new Date(dateToStr + 'T23:59:59') : null;
 
-      // Filter visits by date range
-      const filtered = rawVisitsList.filter(v => {
-        const date = new Date(v.timestamp);
-        if (dateFrom && date < dateFrom) return false;
-        if (dateTo && date > dateTo) return false;
-        return true;
-      });
+        // Filter visits by date range
+        const filtered = rawVisitsList.filter(v => {
+          const date = new Date(v.timestamp);
+          if (dateFrom && date < dateFrom) return false;
+          if (dateTo && date > dateTo) return false;
+          return true;
+        });
 
-      renderStats(filtered);
-      renderCharts(filtered);
-      renderHeatmap(filtered);
-      renderTableFeed(filtered);
+        renderStats(filtered);
+        renderCharts(filtered);
+        renderHeatmap(filtered);
+        renderTableFeed(filtered);
+      } catch (err) {
+        console.error('[analytics] refreshDashboard error:', err);
+        const badge = document.getElementById('cloud-status-badge');
+        if (badge) {
+          badge.textContent = '⚠️ UI Error';
+          badge.style.color = '#ef4444';
+          badge.title = `JS Crash: ${err.message}. Check console.`;
+        }
+      }
     }
 
     function renderStats(visits) {
@@ -883,6 +899,10 @@
     }
 
     function renderCharts(visits) {
+      if (!window.Chart) {
+        console.warn('[analytics] Chart.js not loaded yet');
+        return;
+      }
       // 1. Traffic over time (Line chart)
       const trafficData = {};
       visits.forEach(v => {
