@@ -11,10 +11,6 @@
   ],
   "redirects": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    },
-    {
       "source": "/((?!api/).*)",
       "destination": "https://akashpriyadarshii.github.io/My-Starred-Repos/$1",
       "permanent": false
