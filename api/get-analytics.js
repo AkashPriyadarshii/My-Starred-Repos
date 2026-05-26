@@ -17,12 +17,21 @@ const corsHeaders = {
 function makeRequest(url, options = {}, body = null) {
   return new Promise((resolve, reject) => {
     const parsedUrl = new URL(url);
+    
+    // Prepare headers and calculate content length if body exists
+    const headers = { ...(options.headers || {}) };
+    const reqBody = body ? (typeof body === 'string' ? body : JSON.stringify(body)) : null;
+    
+    if (reqBody) {
+      headers['Content-Length'] = Buffer.byteLength(reqBody);
+    }
+
     const reqOptions = {
       hostname: parsedUrl.hostname,
       path: parsedUrl.pathname + parsedUrl.search,
       port: 443,
       method: options.method || 'GET',
-      headers: options.headers || {}
+      headers: headers
     };
 
     const req = https.request(reqOptions, (res) => {
@@ -46,45 +55,46 @@ function makeRequest(url, options = {}, body = null) {
 
     req.on('error', (err) => reject(err));
 
-    if (body) {
-      req.write(typeof body === 'string' ? body : JSON.stringify(body));
+    if (reqBody) {
+      req.write(reqBody);
     }
     req.end();
   });
 }
 
 module.exports = async function handler(req, res) {
-  // Handle CORS Pre-flight
-  if (req.method === 'OPTIONS') {
-    return res.status(200).set(corsHeaders).end();
-  }
-
-  // Set response headers
-  Object.entries(corsHeaders).forEach(([key, val]) => res.setHeader(key, val));
-
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  // Env guard
-  const { SUPABASE_URL, SUPABASE_SERVICE_KEY, ADMIN_SECRET } = process.env;
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-    return res.status(503).json({ error: 'Analytics backend not configured' });
-  }
-
-  // Auth guard
-  const providedSecret = req.headers['x-admin-secret'] || req.headers['x-admin-secret'];
-  if (!ADMIN_SECRET || providedSecret !== ADMIN_SECRET) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  // Build Supabase query
-  const { from, to } = req.query || {};
-  let url = `${SUPABASE_URL}/rest/v1/visits?select=*&order=timestamp.desc&limit=10000`;
-  if (from) url += `&timestamp=gte.${encodeURIComponent(from + 'T00:00:00Z')}`;
-  if (to)   url += `&timestamp=lte.${encodeURIComponent(to   + 'T23:59:59Z')}`;
-
+  // Always wrap in try-catch to guarantee CORS headers on error
   try {
+    // Handle CORS Pre-flight
+    if (req.method === 'OPTIONS') {
+      return res.status(200).set(corsHeaders).end();
+    }
+
+    // Set response headers
+    Object.entries(corsHeaders).forEach(([key, val]) => res.setHeader(key, val));
+
+    if (req.method !== 'GET') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    // Env guard
+    const { SUPABASE_URL, SUPABASE_SERVICE_KEY, ADMIN_SECRET } = process.env;
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+      return res.status(503).json({ error: 'Analytics backend not configured' });
+    }
+
+    // Auth guard
+    const providedSecret = req.headers['x-admin-secret'] || req.headers['x-admin-secret'];
+    if (!ADMIN_SECRET || providedSecret !== ADMIN_SECRET) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Build Supabase query
+    const { from, to } = req.query || {};
+    let url = `${SUPABASE_URL}/rest/v1/visits?select=*&order=timestamp.desc&limit=10000`;
+    if (from) url += `&timestamp=gte.${encodeURIComponent(from + 'T00:00:00Z')}`;
+    if (to)   url += `&timestamp=lte.${encodeURIComponent(to   + 'T23:59:59Z')}`;
+
     const response = await makeRequest(url, {
       headers: {
         'apikey':        SUPABASE_SERVICE_KEY,
@@ -101,8 +111,15 @@ module.exports = async function handler(req, res) {
 
     const data = await response.json();
     return res.status(200).json(data);
+
   } catch (err) {
-    console.error('[get-analytics] Fetch error:', err.message);
-    return res.status(500).json({ error: 'Internal error' });
+    console.error('[get-analytics] Global handler error:', err);
+    // Guarantee CORS headers
+    Object.entries(corsHeaders).forEach(([key, val]) => res.setHeader(key, val));
+    return res.status(500).json({ 
+      error: 'Internal server error', 
+      message: err.message,
+      stack: err.stack
+    });
   }
 };
