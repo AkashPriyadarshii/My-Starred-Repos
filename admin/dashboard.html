@@ -654,13 +654,21 @@
       const text = document.getElementById('pause-btn-text');
       const btn = document.getElementById('pause-btn');
       
+      // Remove any existing icon (i or svg)
+      const existingIcon = btn.querySelector('i, svg');
+      if (existingIcon) existingIcon.remove();
+
+      // Create a fresh <i> element
+      const icon = document.createElement('i');
       if (isPaused) {
         text.textContent = 'Resume Tracking';
-        btn.querySelector('i').setAttribute('data-lucide', 'play-circle');
+        icon.setAttribute('data-lucide', 'play-circle');
       } else {
         text.textContent = 'Pause Tracking';
-        btn.querySelector('i').setAttribute('data-lucide', 'pause-circle');
+        icon.setAttribute('data-lucide', 'pause-circle');
       }
+      btn.insertBefore(icon, text);
+
       if (window.lucide) {
         window.lucide.createIcons();
       }
