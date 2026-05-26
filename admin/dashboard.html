@@ -380,6 +380,12 @@
         <p>Private telemetry dashboard for Owner <strong style="color: var(--text-color);">@AkashPriyadarshii</strong></p>
       </div>
       <div class="admin-actions">
+        <!-- Cloud sync status badge -->
+        <span id="cloud-status-badge" style="font-family: var(--font-mono); font-size: 0.77rem; padding: 0.3rem 0.75rem; border-radius: 999px; border: 1px solid var(--border-color); cursor: default; transition: color 0.3s;" title="Analytics data source">⏳ Loading…</span>
+        <button class="btn-secondary" id="refresh-btn" title="Refresh analytics data now">
+          <i data-lucide="refresh-cw"></i>
+          <span>Refresh</span>
+        </button>
         <button class="btn-secondary" id="pause-btn" title="Toggle analytics logging state">
           <i data-lucide="pause-circle"></i>
           <span id="pause-btn-text">Pause Tracking</span>
@@ -426,7 +432,7 @@
           <i data-lucide="eye" style="color: #38bdf8;"></i>
         </div>
         <h2 class="analytic-stat-val" id="val-total-visits">0</h2>
-        <p class="analytic-stat-desc">Total visits logged locally</p>
+        <p class="analytic-stat-desc">Across all devices &amp; browsers (cloud)</p>
       </div>
 
       <!-- stat card 2 -->
@@ -555,6 +561,10 @@
     let chartReposInstance = null;
     let chartThemesInstance = null;
     let rawVisitsList = [];
+    let autoRefreshTimer = null;
+
+    // ── Cloud data source (Supabase via Netlify function) ──────
+    const GET_ANALYTICS_URL = ADMIN_CONFIG.API_GET_ANALYTICS;
 
     document.addEventListener('DOMContentLoaded', async () => {
       // 1. Session verification & gate checks
@@ -598,12 +608,22 @@
       // Initialize UI State
       initUIState();
       
-      // Load Analytics
+      // ── Prompt for ADMIN_SECRET if not stored ───────────────
+      if (!sessionStorage.getItem('admin_secret')) {
+        promptAdminSecret();
+      }
+
+      // Load Analytics (cloud → local fallback)
       await reloadDashboardData();
+
+      // Start auto-refresh (every 30s)
+      startAutoRefresh();
 
       // Bind events
       document.getElementById('logout-btn').addEventListener('click', () => {
         sessionStorage.removeItem('admin_token');
+        sessionStorage.removeItem('admin_secret');
+        if (autoRefreshTimer) clearInterval(autoRefreshTimer);
         window.location.href = './index.html';
       });
 
@@ -613,22 +633,23 @@
         initUIState();
       });
 
-      document.getElementById('date-from').addEventListener('change', refreshDashboard);
-      document.getElementById('date-to').addEventListener('change', refreshDashboard);
+      document.getElementById('date-from').addEventListener('change', reloadDashboardData);
+      document.getElementById('date-to').addEventListener('change', reloadDashboardData);
       document.getElementById('reset-filters').addEventListener('click', () => {
         document.getElementById('date-from').value = '';
         document.getElementById('date-to').value = '';
-        refreshDashboard();
+        reloadDashboardData();
       });
 
       document.getElementById('export-json-btn').addEventListener('click', exportJSON);
       document.getElementById('export-csv-btn').addEventListener('click', exportCSV);
-      
+      document.getElementById('refresh-btn').addEventListener('click', () => reloadDashboardData());
+
       document.getElementById('clear-db-btn').addEventListener('click', async () => {
-        if (confirm('⚠️ WARNING: Are you absolutely sure you want to delete all analytics records from IndexedDB? This cannot be undone.')) {
+        if (confirm('⚠️ WARNING: Delete all analytics records from LOCAL IndexedDB? Cloud data in Supabase is NOT affected.')) {
           await clearIndexedDB();
           await reloadDashboardData();
-          alert('Analytics database has been cleared.');
+          alert('Local IndexedDB cleared. Cloud data in Supabase is intact.');
         }
       });
     });
@@ -650,6 +671,7 @@
       }
     }
 
+    // ── IndexedDB helpers (local fallback) ───────────────────────
     async function openAnalyticsDB() {
       return new Promise((res, rej) => {
         const req = indexedDB.open('analytics_db', 1);
@@ -667,28 +689,107 @@
         const db = await openAnalyticsDB();
         const tx = db.transaction('visits', 'readwrite');
         tx.objectStore('visits').clear();
-        return new Promise(res => {
-          tx.oncomplete = () => res();
-        });
+        return new Promise(res => { tx.oncomplete = () => res(); });
       } catch (err) {
         console.error('Failed to clear database:', err);
       }
     }
 
-    async function reloadDashboardData() {
+    async function loadFromIndexedDB() {
       try {
-        const db = await openAnalyticsDB();
-        const tx = db.transaction('visits', 'readonly');
+        const db    = await openAnalyticsDB();
+        const tx    = db.transaction('visits', 'readonly');
         const store = tx.objectStore('visits');
-        const req = store.getAll();
-        
-        req.onsuccess = () => {
-          rawVisitsList = req.result;
-          refreshDashboard();
-        };
-      } catch (err) {
-        console.error('Failed to fetch analytics:', err);
+        return await new Promise(res => {
+          const req = store.getAll();
+          req.onsuccess = () => res(req.result);
+          req.onerror   = () => res([]);
+        });
+      } catch { return []; }
+    }
+
+    // ── Primary: fetch from Supabase via Netlify function ────────
+    function setCloudStatusBadge(mode) {
+      const badge = document.getElementById('cloud-status-badge');
+      if (!badge) return;
+      if (mode === 'live') {
+        badge.textContent = '☁️ Live';
+        badge.style.color = '#10b981';
+        badge.title = 'Data from Supabase (real-time, all devices)';
+      } else if (mode === 'offline') {
+        badge.textContent = '📴 Local';
+        badge.style.color = '#f59e0b';
+        badge.title = 'Supabase unreachable — showing local IndexedDB data';
+      } else {
+        badge.textContent = '⏳ Loading…';
+        badge.style.color = '#6b7280';
       }
+    }
+
+    async function reloadDashboardData() {
+      setCloudStatusBadge('loading');
+      const adminSecret = sessionStorage.getItem('admin_secret');
+      let cloudOk = false;
+
+      // ── Try Supabase (cloud) ─────────────────────────────────
+      if (adminSecret && GET_ANALYTICS_URL) {
+        try {
+          const dateFrom = document.getElementById('date-from')?.value;
+          const dateTo   = document.getElementById('date-to')?.value;
+          let url = GET_ANALYTICS_URL;
+          const qp = [];
+          if (dateFrom) qp.push(`from=${encodeURIComponent(dateFrom)}`);
+          if (dateTo)   qp.push(`to=${encodeURIComponent(dateTo)}`);
+          if (qp.length) url += '?' + qp.join('&');
+
+          const res = await fetch(url, {
+            headers: { 'x-admin-secret': adminSecret }
+          });
+
+          if (res.ok) {
+            rawVisitsList = await res.json();
+            cloudOk = true;
+            setCloudStatusBadge('live');
+            console.log(`[analytics] Loaded ${rawVisitsList.length} records from Supabase`);
+          } else if (res.status === 401) {
+            console.warn('[analytics] Invalid admin secret — clearing and re-prompting');
+            sessionStorage.removeItem('admin_secret');
+            promptAdminSecret();
+            return;
+          } else {
+            console.warn('[analytics] Cloud responded non-OK:', res.status);
+          }
+        } catch (err) {
+          console.warn('[analytics] Cloud fetch failed:', err.message);
+        }
+      }
+
+      // ── Fallback: IndexedDB ──────────────────────────────────
+      if (!cloudOk) {
+        rawVisitsList = await loadFromIndexedDB();
+        setCloudStatusBadge('offline');
+        console.warn('[analytics] Using IndexedDB fallback, showing local data only');
+      }
+
+      refreshDashboard();
+    }
+
+    function promptAdminSecret() {
+      const secret = prompt(
+        '🔐 Enter your ADMIN_SECRET to load live analytics from Supabase.\n' +
+        '(This is the ADMIN_SECRET you set in Netlify environment variables.)'
+      );
+      if (secret) {
+        sessionStorage.setItem('admin_secret', secret.trim());
+        reloadDashboardData();
+      }
+    }
+
+    function startAutoRefresh() {
+      if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+      autoRefreshTimer = setInterval(() => {
+        reloadDashboardData();
+      }, 30000); // refresh every 30 seconds
     }
 
     function refreshDashboard() {

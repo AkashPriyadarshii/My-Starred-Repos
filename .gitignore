@@ -159,3 +159,11 @@ Thumbs.db
 # Local analyzer scripts (if executed locally, these are temporary as they are created inside GitHub Actions)
 github_analyzer.py
 generate_markdown.py
+
+# Environment variable files — NEVER commit secrets
+.env
+.env.*
+*.env
+
+# Local setup files (run in Supabase SQL Editor, not needed in repo)
+supabase_schema.sql

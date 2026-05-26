@@ -187,6 +187,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const t0 = performance.now();
   Logger.log('info', 'ui', 'AppInitializationStarted');
 
+  // Record session start time (used for duration_ms calculation in analytics)
+  if (!sessionStorage.getItem('session_start')) {
+    sessionStorage.setItem('session_start', Date.now().toString());
+  }
+
   registerServiceWorker();
   loadSettings();
   initUI();
@@ -2001,7 +2006,12 @@ window.addEventListener('resize', () => {
   renderStarsSparkline();
 });
 
-// ── Analytics ──────────────────────────────────────────────
+// ── Analytics (Supabase Cloud + IndexedDB local fallback) ──────
+
+/** Netlify function endpoint — served from the same Netlify deployment */
+const ANALYTICS_LOG_URL = 'https://my-starred-repos.netlify.app/.netlify/functions/log-visit';
+
+// ─── Local IndexedDB (offline / fallback only) ────────────────
 async function openAnalyticsDB() {
   return new Promise((res, rej) => {
     const req = indexedDB.open('analytics_db', 1);
@@ -2022,49 +2032,115 @@ function getOrCreateSessionId() {
   return sid;
 }
 
+/**
+ * Save a visit record.
+ * Priority: POST to Netlify/Supabase → fallback to IndexedDB if offline/failed.
+ * Deduplication is enforced:
+ *   - Client: sessionStorage flag prevents re-logging on same tab refresh
+ *   - Server: UPSERT on session_id so repeated POSTs don't create duplicate rows
+ */
 async function logVisit() {
   if (localStorage.getItem('analytics_paused') === 'true') return;
-  
+
   if (sessionStorage.getItem('visit_logged') === 'true') {
     Logger.log('info', 'analytics', 'logVisit skipped (duplicate session)');
     return;
   }
 
+  const payload = {
+    session_id:  getOrCreateSessionId(),
+    timestamp:   new Date().toISOString(),
+    theme:       state.theme,
+    device:      window.innerWidth < 768 ? 'mobile' : 'desktop',
+    referrer:    document.referrer || 'direct',
+    repo_clicked: null,
+    duration_ms: 0
+  };
+
+  // ── Try cloud first ───────────────────────────────────────
+  let cloudOk = false;
   try {
-    const db = await openAnalyticsDB();
-    const tx = db.transaction('visits', 'readwrite');
-    tx.objectStore('visits').add({
-      timestamp: new Date().toISOString(),
-      repo_clicked: null,
-      theme: state.theme,
-      device: window.innerWidth < 768 ? 'mobile' : 'desktop',
-      referrer: document.referrer || 'direct',
-      session_id: getOrCreateSessionId(),
-      duration_ms: 0
+    const res = await fetch(ANALYTICS_LOG_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      keepalive: true
     });
-    sessionStorage.setItem('visit_logged', 'true');
-    Logger.log('info', 'analytics', 'logVisit success');
-  } catch(e) { Logger.log('error', 'analytics', 'logVisit failed', { error: e.message }); }
+    cloudOk = res.ok;
+    if (cloudOk) {
+      Logger.log('info', 'analytics', 'logVisit → cloud OK');
+    } else {
+      Logger.log('warn', 'analytics', 'logVisit → cloud responded non-OK', { status: res.status });
+    }
+  } catch (networkErr) {
+    Logger.log('warn', 'analytics', 'logVisit → cloud offline, using local fallback', { error: networkErr.message });
+  }
+
+  // ── Local IndexedDB fallback ──────────────────────────────
+  if (!cloudOk) {
+    try {
+      const db = await openAnalyticsDB();
+      const tx = db.transaction('visits', 'readwrite');
+      tx.objectStore('visits').add({ ...payload, _local: true });
+      Logger.log('info', 'analytics', 'logVisit → saved to IndexedDB (offline fallback)');
+    } catch (dbErr) {
+      Logger.log('error', 'analytics', 'logVisit → IndexedDB also failed', { error: dbErr.message });
+    }
+  }
+
+  sessionStorage.setItem('visit_logged', 'true');
 }
 
+/**
+ * Update the visit record with the clicked repo.
+ * Sends an UPSERT patch with the same session_id to update the Supabase row.
+ */
 async function logRepoClick(repoFullName) {
   if (localStorage.getItem('analytics_paused') === 'true') return;
+
+  const sid = getOrCreateSessionId();
+  const patch = {
+    session_id:  sid,
+    repo_clicked: repoFullName,
+    duration_ms: Date.now() - (parseInt(sessionStorage.getItem('session_start') || Date.now(), 10))
+  };
+
+  // ── Try cloud first ───────────────────────────────────────
   try {
-    const db = await openAnalyticsDB();
-    const tx = db.transaction('visits', 'readwrite');
+    const res = await fetch(ANALYTICS_LOG_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch),
+      keepalive: true
+    });
+    if (res.ok) {
+      Logger.log('info', 'analytics', 'logRepoClick → cloud OK', { repo: repoFullName });
+      return;
+    }
+  } catch { /* fall through to local */ }
+
+  // ── Local IndexedDB fallback ──────────────────────────────
+  try {
+    const db  = await openAnalyticsDB();
+    const tx  = db.transaction('visits', 'readwrite');
     const store = tx.objectStore('visits');
-    const sid = getOrCreateSessionId();
     const all = await new Promise(r => { const req = store.index('timestamp').getAll(); req.onsuccess = () => r(req.result); });
     const last = all.filter(v => v.session_id === sid).pop();
     if (last) {
       last.repo_clicked = repoFullName;
-      last.duration_ms = Date.now() - new Date(last.timestamp).getTime();
+      last.duration_ms  = patch.duration_ms;
       store.put(last);
-      Logger.log('info', 'analytics', 'logRepoClick success', { repo: repoFullName });
+      Logger.log('info', 'analytics', 'logRepoClick → IndexedDB fallback OK', { repo: repoFullName });
     }
-  } catch(e) { Logger.log('error', 'analytics', 'logRepoClick failed', { error: e.message }); }
+  } catch (e) {
+    Logger.log('error', 'analytics', 'logRepoClick failed', { error: e.message });
+  }
 }
 
+/**
+ * Show local visit counter widget (always uses IndexedDB for instant display,
+ * since the cloud data is shown in the full admin dashboard).
+ */
 async function renderVisitCounter() {
   try {
     const db = await openAnalyticsDB();
@@ -2074,12 +2150,14 @@ async function renderVisitCounter() {
     });
     const today = new Date().toDateString();
     const todayCount = all.filter(v => new Date(v.timestamp).toDateString() === today).length;
-    
+
     const countTodayEl = document.getElementById('visit-count-today');
     const countTotalEl = document.getElementById('visit-count-total');
-    if (countTodayEl) countTodayEl.textContent = todayCount;
-    if (countTotalEl) countTotalEl.textContent = all.length;
-    
-    Logger.log('info', 'analytics', 'renderVisitCounter success', { today: todayCount, total: all.length });
-  } catch(e) { Logger.log('error', 'analytics', 'renderVisitCounter failed', { error: e.message }); }
+    if (countTodayEl) countTodayEl.textContent = todayCount || (sessionStorage.getItem('visit_logged') === 'true' ? 1 : 0);
+    if (countTotalEl) countTotalEl.textContent = all.length || (sessionStorage.getItem('visit_logged') === 'true' ? 1 : 0);
+
+    Logger.log('info', 'analytics', 'renderVisitCounter', { today: todayCount, total: all.length });
+  } catch (e) {
+    Logger.log('error', 'analytics', 'renderVisitCounter failed', { error: e.message });
+  }
 }
