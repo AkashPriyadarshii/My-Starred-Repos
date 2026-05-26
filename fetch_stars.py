@@ -5,6 +5,7 @@ import requests
 import json
 import re
 import base64
+import time
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict, Counter
 
@@ -22,14 +23,64 @@ class GitHubAnalyzer:
         self.repos = []
         self.session = requests.Session()
         self.session.headers.update(self.headers)
-    
+        
+        # Categorization keywords config
+        self.keywords = {
+            'AI & Agents': ['agent', 'openclaw', 'codex', 'claude', 'hermes', 'claw', 'opencode', 'grok', 'ai', 'copilot', 'assistant', 'gpt', 'llm', 'ollama', 'gemini', 'anthropic', 'openai', 'reasoning'],
+            'LLM & RAG': ['mem', 'rag', 'memory', 'knowledge', 'vector', 'embedding', 'chromadb', 'pinecone', 'milvus', 'qdrant', 'langchain', 'llama-index', 'semantic'],
+            'Web Automation': ['crawl', 'scrape', 'browser', 'selenium', 'playwright', 'puppeteer', 'firecrawl', 'scraping', 'crawler', 'headless'],
+            'Web Development': ['react', 'vue', 'nextjs', 'svelte', 'nuxt', 'angular', 'django', 'flask', 'fastapi', 'express', 'node', 'tailwind', 'bootstrap', 'solidjs', 'astro'],
+            'Databases & APIs': ['postgres', 'postgresql', 'mysql', 'sqlite', 'redis', 'mongodb', 'graphql', 'rest-api', 'trpc', 'supabase', 'prisma', 'drizzle', 'orm', 'nosql'],
+            'Design & UI/UX': ['design', 'ui', 'component', 'style', 'css', 'figma', 'animation', 'canvas', 'framer', 'shadcn', 'lucide', 'icon'],
+            'Systems & Dev Tools': ['editor', 'ide', 'git', 'code', 'cli', 'terminal', 'debug', 'linter', 'compiler', 'interpreter', 'rust', 'c-programming', 'cpp', 'gcc', 'llvm', 'assembler'],
+            'DevOps & Infra': ['docker', 'devops', 'k8s', 'kubernetes', 'infra', 'deploy', 'podman', 'terraform', 'aws', 'gcp', 'azure', 'ci-cd', 'github-actions', 'vercel', 'nginx'],
+            'Security & Pentesting': ['pentest', 'exploit', 'security', 'hack', 'cve', 'vuln', 'malware', 'attack', 'bypass', 'red-team', 'forensics', 'wireshark'],
+            'Mobile Development': ['android', 'ios', 'mobile', 'react-native', 'flutter', 'kotlin', 'swift', 'swiftui', 'gradle'],
+            'Media & Content': ['video', 'audio', 'image', 'media', 'streaming', 'content', 'ffmpeg', 'synthesis', 'speech-to-text', 'whisper']
+        }
+
+    def safe_get(self, url, timeout=10, retries=3):
+        """HTTP GET wrapper with automatic primary and secondary rate limit handling"""
+        backoff = 15
+        for attempt in range(retries):
+            try:
+                resp = self.session.get(url, timeout=timeout)
+                
+                # Check primary rate limit headers
+                remaining = resp.headers.get('X-RateLimit-Remaining')
+                if remaining is not None and int(remaining) == 0:
+                    reset_time = resp.headers.get('X-RateLimit-Reset')
+                    if reset_time:
+                        sleep_time = max(int(reset_time) - time.time() + 2, 5)
+                        print(f"⚠️ Primary GitHub rate limit reached. Sleeping for {sleep_time:.1f}s until reset...")
+                        time.sleep(sleep_time)
+                        continue
+                
+                # Check for secondary rate limits / abuse detection
+                if resp.status_code == 403 and any(x in resp.text.lower() for x in ["abuse", "rate limit", "retry"]):
+                    retry_after = resp.headers.get('Retry-After')
+                    sleep_time = int(retry_after) + 2 if retry_after else backoff
+                    print(f"⚠️ Secondary rate limit (abuse block) detected. Sleeping for {sleep_time}s...")
+                    time.sleep(sleep_time)
+                    backoff *= 2
+                    continue
+                    
+                return resp
+            except Exception as e:
+                print(f"⚠️ Network error on attempt {attempt+1}/{retries}: {e}")
+                if attempt == retries - 1:
+                    raise
+                time.sleep(3)
+        # Final retry attempt without catching
+        return self.session.get(url, timeout=timeout)
+
     def fetch_all_starred(self):
         """Fetch all starred repos with pagination"""
         page = 1
         while True:
             url = f"https://api.github.com/users/{self.username}/starred?per_page=100&page={page}"
             try:
-                resp = self.session.get(url, timeout=30)
+                resp = self.safe_get(url, timeout=30)
                 resp.raise_for_status()
                 data = resp.json()
                 
@@ -51,8 +102,6 @@ class GitHubAnalyzer:
     def fetch_readme(self, repo):
         """Fetch README from a repo with fallback"""
         owner, name = repo['full_name'].split('/')
-        
-        # Try different README formats
         readme_names = [
             'README.md', 'README.txt', 'README.rst', 'readme.md', 
             'readme.txt', 'Readme.md', 'README', 'readme'
@@ -61,7 +110,7 @@ class GitHubAnalyzer:
         for readme in readme_names:
             url = f"https://api.github.com/repos/{owner}/{name}/contents/{readme}"
             try:
-                resp = self.session.get(url, timeout=10)
+                resp = self.safe_get(url, timeout=10)
                 if resp.status_code == 200:
                     content = resp.json()
                     if 'content' in content:
@@ -73,7 +122,7 @@ class GitHubAnalyzer:
         return None, None
     
     def extract_summary(self, readme_text):
-        """Extract first 300 chars from README"""
+        """Extract first 300 chars from README (fallback)"""
         if not readme_text:
             return None
         
@@ -83,6 +132,94 @@ class GitHubAnalyzer:
         text = re.sub(r'\s+', ' ', text).strip()
         
         return text[:300] if text else None
+
+    def get_repo_category(self, name, description, language):
+        """Classifies a repo into a category based on predefined keywords"""
+        text = f"{name} {description or ''} {language or ''}".lower()
+        for category, words in self.keywords.items():
+            if any(word in text for word in words):
+                return category
+        return 'Other'
+
+    def ai_summarize_readme(self, repo_name, readme_text):
+        """Generates a professional 1-2 sentence summary of the repo using AI fallbacks"""
+        if not readme_text or len(readme_text.strip()) < 50:
+            return None
+            
+        readme_snippet = readme_text[:4000]
+        prompt = (
+            f"You are a technical documentation editor. Analyze this repository name: '{repo_name}' and its README content. "
+            f"Write a concise, professional 1 or 2 sentence summary explaining exactly what the repository does and the primary tech stack used. "
+            f"Do NOT use markdown headers, lists, or conversational filler. Output ONLY the raw summary text.\n\n"
+            f"README snippet:\n{readme_snippet}"
+        )
+        
+        # 1. Gemini Fallback Loop (tries 2.5, 1.5, and future models)
+        gemini_key = os.environ.get('GEMINI_API_KEY', '').strip()
+        if gemini_key:
+            models_to_try = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-3-flash", "gemini-3.5-flash", "gemini-3.1-flash"]
+            for model in models_to_try:
+                try:
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={gemini_key}"
+                    payload = {
+                        "contents": [{"parts": [{"text": prompt}]}],
+                        "generationConfig": {"maxOutputTokens": 120, "temperature": 0.2}
+                    }
+                    resp = requests.post(url, json=payload, timeout=10)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        summary = data['candidates'][0]['content']['parts'][0]['text'].strip()
+                        if summary:
+                            print(f"   ✨ Summarized {repo_name} using Gemini ({model})")
+                            return summary
+                except Exception as e:
+                    print(f"   ⚠️ Gemini {model} failed for {repo_name}: {e}")
+                
+        # 2. Groq Fallback
+        groq_key = os.environ.get('GROQ_API_KEY', '').strip()
+        if groq_key:
+            try:
+                url = "https://api.groq.com/openai/v1/chat/completions"
+                headers = {"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"}
+                payload = {
+                    "model": "llama-3.3-70b-versatile",
+                    "messages": [{"role": "user", "content": prompt}],
+                    "max_tokens": 120,
+                    "temperature": 0.2
+                }
+                resp = requests.post(url, json=payload, headers=headers, timeout=10)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    summary = data['choices'][0]['message']['content'].strip()
+                    if summary:
+                        print(f"   ✨ Summarized {repo_name} using Groq")
+                        return summary
+            except Exception as e:
+                print(f"   ⚠️ Groq failed for {repo_name}: {e}")
+
+        # 3. Nvidia Fallback
+        nvidia_key = os.environ.get('NVIDIA_API_KEY', '').strip()
+        if nvidia_key:
+            try:
+                url = "https://integrate.api.nvidia.com/v1/chat/completions"
+                headers = {"Authorization": f"Bearer {nvidia_key}", "Content-Type": "application/json"}
+                payload = {
+                    "model": "meta/llama-3.1-70b-instruct",
+                    "messages": [{"role": "user", "content": prompt}],
+                    "max_tokens": 120,
+                    "temperature": 0.2
+                }
+                resp = requests.post(url, json=payload, headers=headers, timeout=10)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    summary = data['choices'][0]['message']['content'].strip()
+                    if summary:
+                        print(f"   ✨ Summarized {repo_name} using Nvidia")
+                        return summary
+            except Exception as e:
+                print(f"   ⚠️ Nvidia failed for {repo_name}: {e}")
+
+        return None
     
     def process_repos(self):
         """Process each repo sequentially (rate limit friendly)"""
@@ -91,7 +228,16 @@ class GitHubAnalyzer:
         for i, repo in enumerate(self.repos, 1):
             try:
                 readme_text, readme_name = self.fetch_readme(repo)
-                summary = self.extract_summary(readme_text) if readme_text else None
+                
+                # Fetch AI summary with local regex fallback
+                summary = None
+                if readme_text:
+                    summary = self.ai_summarize_readme(repo['full_name'], readme_text)
+                    if not summary:
+                        summary = self.extract_summary(readme_text)
+                
+                # Generate category
+                category = self.get_repo_category(repo['full_name'], repo.get('description'), repo.get('language'))
                 
                 result = {
                     'full_name': repo['full_name'],
@@ -100,6 +246,7 @@ class GitHubAnalyzer:
                     'description': repo.get('description', 'No description'),
                     'readme_summary': summary if summary else repo.get('description', 'No README'),
                     'readme_found': readme_text is not None,
+                    'category': category,
                     'url': repo['html_url'],
                     'last_updated': repo.get('updated_at', 'Unknown'),
                     'license': repo.get('license', {}).get('spdx_id') if repo.get('license') else None,
@@ -108,7 +255,7 @@ class GitHubAnalyzer:
                     'topics': repo.get('topics', [])
                 }
                 results.append(result)
-                if i % 10 == 0:
+                if i % 10 == 0 or i == len(self.repos):
                     print(f"✓ [{i}/{len(self.repos)}] {repo['full_name']}")
             except Exception as e:
                 print(f"✗ Error processing {repo['full_name']}: {e}")
@@ -122,7 +269,7 @@ class GitHubAnalyzer:
         """Fetch full GitHub profile for the user"""
         url = f"https://api.github.com/users/{self.username}"
         try:
-            resp = self.session.get(url, timeout=15)
+            resp = self.safe_get(url, timeout=15)
             resp.raise_for_status()
             data = resp.json()
             profile = {
@@ -226,53 +373,16 @@ def generate_markdowns():
         
     repos = data['repos']
     
-    # Categorize repos
-    categories = {
-        'AI Agents': [],
-        'Web Automation': [],
-        'LLM Infrastructure': [],
-        'Design Systems': [],
-        'Dev Tools': [],
-        'Mobile': [],
-        'Infrastructure': [],
-        'Media & Content': [],
-        'Other': []
-    }
-    
-    keywords = {
-        'AI Agents': ['agent', 'openclaw', 'codex', 'claude', 'hermes', 'claw', 'opencode', 'grok'],
-        'Web Automation': ['crawl', 'scrape', 'browser', 'selenium', 'playwright', 'puppeteer', 'firecrawl'],
-        'LLM Infrastructure': ['mem', 'rag', 'llm', 'memory', 'knowledge', 'vector', 'embedding'],
-        'Design Systems': ['design', 'ui', 'component', 'style', 'css', 'tailwind', 'figma'],
-        'Dev Tools': ['editor', 'ide', 'git', 'code', 'cli', 'terminal', 'debug', 'linter'],
-        'Mobile': ['android', 'ios', 'mobile', 'react-native', 'flutter', 'kotlin'],
-        'Infrastructure': ['docker', 'devops', 'k8s', 'infra', 'deploy', 'podman', 'terraform'],
-        'Media & Content': ['video', 'audio', 'image', 'media', 'streaming', 'content']
-    }
-    
-    # Categorize each repo
+    # Categorize repos using pre-computed database fields
+    categories = defaultdict(list)
     for repo in repos:
-        full_name = repo['full_name'].lower()
-        description = (repo['description'] or '').lower()
-        language = (repo['language'] or '').lower()
-        
-        text = f"{full_name} {description} {language}"
-        
-        categorized = False
-        for category, words in keywords.items():
-            if any(word in text for word in words):
-                categories[category].append(repo)
-                categorized = True
-                break
-                
-        if not categorized:
-            categories['Other'].append(repo)
+        categories[repo.get('category', 'Other')].append(repo)
             
     # Generate STARRED_ANALYSIS.md
     now_ist = datetime.now(IST)
     
     def get_top_language(repos_list):
-        langs = [r['language'] for r in repos_list if r['language']]
+        langs = [r['language'] for r in repos_list if r['language'] and r['language'] != 'Unknown']
         return Counter(langs).most_common(1)[0][0] if langs else 'Unknown'
 
     analysis_md = (
@@ -284,7 +394,7 @@ def generate_markdowns():
         "---\n\n"
         "## 📊 Quick Stats\n\n"
         f"- **Total Starred:** {data['total_repos']}\n"
-        f"- **Categories:** {sum(1 for v in categories.values() if v)}\n"
+        f"- **Categories:** {len([v for v in categories.values() if v])}\n"
         f"- **Top Language:** {get_top_language(repos)}\n"
         f"- **Avg Stars:** {int(sum(r['stars'] for r in repos) / len(repos)) if repos else 0}\n\n"
         "## 🏆 Top 15 by Stars\n\n"
@@ -353,6 +463,7 @@ def generate_markdowns():
         "---\n\n"
         "## 📋 Full Repository List (Sorted by Stars Descending)\n\n"
         "| Rank | Repo | Stars | Language | Description |\n"
+        "|------|------|-------|----------|-------------|\n"
         "|------|------|-------|----------|-------------|\n"
     )
 

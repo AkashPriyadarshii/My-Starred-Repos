@@ -53,14 +53,17 @@ An interactive Single Page Application (SPA) dashboard styled with modern glassm
 - Homepage: `https://akashpriyadarshii.github.io/My-Starred-Repos/`
 - Callback URL: `https://akashpriyadarshii.github.io/My-Starred-Repos/admin/callback.html`
 - Copy Client ID → paste into `admin/config.js` as `OAUTH_CLIENT_ID`
-- Copy Client Secret → save for Netlify env var (never put in code)
+- Copy Client Secret → save for Vercel env var (never put in code)
 
-### 2. Deploy Netlify Function (OAuth token exchange)
-- Go to netlify.com → New site → Import from GitHub → select this repo
-- Site settings → Environment variables → add:
+### 2. Deploy Vercel Serverless Functions
+- Go to vercel.com → New Project → Import from GitHub → select this repo
+- Project Settings → Environment Variables → add:
   - `GITHUB_OAUTH_CLIENT_ID` = your OAuth App Client ID
   - `GITHUB_OAUTH_CLIENT_SECRET` = your OAuth App Client Secret
-- Copy your Netlify site URL → update `NETLIFY_OAUTH_FN` in `admin/config.js`
+  - `SUPABASE_URL` = your Supabase URL
+  - `SUPABASE_SERVICE_KEY` = your Supabase Service Key
+  - `ADMIN_SECRET` = your Admin Secret
+- Copy your Vercel site URL → update `VERCEL_BASE` and endpoint URLs in `admin/config.js`
 
 ### 3. Access Admin
 - Visit: `https://akashpriyadarshii.github.io/My-Starred-Repos/admin/`

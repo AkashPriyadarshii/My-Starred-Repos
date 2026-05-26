@@ -433,6 +433,7 @@ async function fetchData() {
     Logger.log('info', 'network', 'FetchResourcesCompleted', { repos: state.repos.length }, Math.round(performance.now() - t0));
 
     calculateStats(reposData);
+    populateCategoryTabs();
     populateLangFilter();
     renderStats();
     renderGrid();
@@ -663,7 +664,9 @@ function renderGrid() {
     card.setAttribute('data-name',     repo.full_name.toLowerCase());
     card.setAttribute('data-updated',  repo.last_updated || '');
 
-    card.addEventListener('click', () => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('a') || e.target.closest('.card-action-btn')) return;
+      openRepoDetailsDrawer(repo);
       logRepoClick(repo.full_name).then(() => renderVisitCounter());
     });
 
@@ -1003,16 +1006,8 @@ function applyFilters() {
 
     // Category filter
     if (state.activeCategory !== 'all') {
-      const kwMap = {
-        'ai agents':        ['agent', 'openclaw', 'codex', 'claude', 'hermes', 'claw', 'opencode', 'grok'],
-        'web automation':   ['crawl', 'scrape', 'browser', 'selenium', 'playwright', 'puppeteer', 'firecrawl'],
-        'llm infrastructure': ['mem', 'rag', 'llm', 'memory', 'knowledge', 'vector', 'embedding'],
-        'dev tools':        ['editor', 'ide', 'git', 'code', 'cli', 'terminal', 'debug', 'linter'],
-        'infrastructure':   ['docker', 'devops', 'k8s', 'infra', 'deploy', 'podman', 'terraform']
-      };
-      const kws  = kwMap[state.activeCategory] || [];
-      const text = `${repo.full_name} ${repo.description} ${repo.language}`.toLowerCase();
-      if (!kws.some(k => text.includes(k))) isMatch = false;
+      const repoCategory = (repo.category || 'Other').toLowerCase();
+      if (repoCategory !== state.activeCategory) isMatch = false;
     }
 
     // Language filter
@@ -1106,6 +1101,9 @@ function applyFilters() {
  */
 function initUI() {
   Logger.setUIConsole(document.getElementById('log-console'));
+
+  // Initialize bottom sheet gestures & compare listeners
+  initBottomSheetAndCompareListeners();
 
   // ── Tab Navigation ──
   document.querySelectorAll('.nav-tab').forEach(tab => {
@@ -2034,7 +2032,7 @@ function getOrCreateSessionId() {
 
 /**
  * Save a visit record.
- * Priority: POST to Netlify/Supabase → fallback to IndexedDB if offline/failed.
+ * Priority: POST to Vercel/Supabase → fallback to IndexedDB if offline/failed.
  * Deduplication is enforced:
  *   - Client: sessionStorage flag prevents re-logging on same tab refresh
  *   - Server: UPSERT on session_id so repeated POSTs don't create duplicate rows
@@ -2161,3 +2159,331 @@ async function renderVisitCounter() {
     Logger.log('error', 'analytics', 'renderVisitCounter failed', { error: e.message });
   }
 }
+
+
+// ============================================================================
+// 9. DYNAMIC CATEGORY TABS & BOTTOM-SHEET DETAILS / REPO COMPARISON
+// ============================================================================
+
+const compareList = [];
+
+function populateCategoryTabs() {
+  const container = document.getElementById('category-tabs');
+  if (!container) return;
+
+  const categories = new Set();
+  state.repos.forEach(r => {
+    if (r.category) categories.add(r.category);
+  });
+
+  const sortedCategories = Array.from(categories).sort();
+  const otherIndex = sortedCategories.indexOf('Other');
+  if (otherIndex > -1) {
+    sortedCategories.splice(otherIndex, 1);
+    sortedCategories.push('Other');
+  }
+
+  let html = `<button class="category-tab active" data-category="all" role="tab" aria-selected="true">All</button>`;
+  sortedCategories.forEach(cat => {
+    // Map visual names to matching display filters
+    let displayName = cat;
+    if (cat === 'LLM Infrastructure') displayName = 'LLM & RAG';
+    if (cat === 'Web Automation') displayName = 'Automation';
+    html += `<button class="category-tab" data-category="${cat.toLowerCase()}" role="tab" aria-selected="false">${displayName}</button>`;
+  });
+  container.innerHTML = html;
+
+  container.querySelectorAll('.category-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      container.querySelectorAll('.category-tab').forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+      state.activeCategory = tab.dataset.category;
+      applyFilters();
+    });
+  });
+}
+
+function initBottomSheetAndCompareListeners() {
+  // Drawer close listeners
+  document.getElementById('drawer-close-btn')?.addEventListener('click', closeRepoDetailsDrawer);
+  document.getElementById('drawer-overlay')?.addEventListener('click', closeRepoDetailsDrawer);
+  
+  // Tray close / minimize listener
+  document.getElementById('compare-close-btn')?.addEventListener('click', () => {
+    document.getElementById('comparison-tray')?.classList.add('hidden');
+  });
+
+  // Compare Now button click
+  document.getElementById('compare-now-btn')?.addEventListener('click', showComparisonModal);
+
+  // Close comparison modal
+  document.getElementById('comp-modal-close-btn')?.addEventListener('click', closeComparisonModal);
+  document.getElementById('comparison-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'comparison-modal') closeComparisonModal();
+  });
+
+  // Touch swipe gestures initialization
+  initBottomSheetGestures();
+}
+
+let activeDrawerRepo = null;
+
+function openRepoDetailsDrawer(repo) {
+  activeDrawerRepo = repo;
+  const drawer = document.getElementById('repo-details-drawer');
+  const overlay = document.getElementById('drawer-overlay');
+  if (!drawer || !overlay) return;
+
+  // Set data
+  drawer.querySelector('.drawer-rank').textContent = `#${repo.rank}`;
+  drawer.querySelector('.drawer-repo-name').textContent = repo.full_name;
+  drawer.querySelector('.drawer-description').textContent = repo.description || 'No description provided.';
+  drawer.querySelector('.drawer-stars').textContent = formatStarNumber(repo.stars);
+  drawer.querySelector('.drawer-forks').textContent = formatStarNumber(repo.forks || 0);
+  drawer.querySelector('.drawer-issues').textContent = formatStarNumber(repo.open_issues || 0);
+  drawer.querySelector('.drawer-lang').textContent = repo.language || 'N/A';
+  
+  // Format README summary
+  const readmeContentEl = drawer.querySelector('.drawer-readme-content');
+  if (readmeContentEl) {
+    readmeContentEl.textContent = repo.readme_summary || 'No README summary available.';
+  }
+
+  // Bind GitHub link
+  const ghLink = document.getElementById('drawer-github-link');
+  if (ghLink) ghLink.href = repo.url;
+
+  // Add to compare button setup
+  const compareBtn = document.getElementById('drawer-add-compare-btn');
+  if (compareBtn) {
+    const isAdded = compareList.some(r => r.full_name === repo.full_name);
+    compareBtn.innerHTML = isAdded 
+      ? `<i data-lucide="check"></i><span>Added to Compare</span>`
+      : `<i data-lucide="plus"></i><span>Add to Compare</span>`;
+    
+    // Remove old listeners by cloning and replacing
+    const newBtn = compareBtn.cloneNode(true);
+    compareBtn.parentNode.replaceChild(newBtn, compareBtn);
+    
+    newBtn.addEventListener('click', () => {
+      if (compareList.some(r => r.full_name === repo.full_name)) {
+        removeFromCompare(repo.full_name);
+        newBtn.innerHTML = `<i data-lucide="plus"></i><span>Add to Compare</span>`;
+        showToast('Removed from comparison list.', 'info');
+      } else {
+        if (addToCompare(repo)) {
+          newBtn.innerHTML = `<i data-lucide="check"></i><span>Added to Compare</span>`;
+        }
+      }
+      lucide.createIcons();
+    });
+  }
+
+  // Show
+  drawer.style.transform = 'translateY(100%)';
+  drawer.classList.remove('hidden');
+  overlay.classList.remove('hidden');
+  
+  // Trigger redraw reflow
+  drawer.offsetHeight; 
+  drawer.classList.add('open');
+  drawer.style.transform = '';
+
+  lucide.createIcons();
+  Logger.log('info', 'ui', 'RepoDetailsDrawerOpened', { repo: repo.full_name });
+}
+
+function closeRepoDetailsDrawer() {
+  const drawer = document.getElementById('repo-details-drawer');
+  const overlay = document.getElementById('drawer-overlay');
+  if (!drawer || !overlay) return;
+
+  drawer.classList.remove('open');
+  drawer.style.transform = 'translateY(100%)';
+  overlay.classList.add('hidden');
+  
+  setTimeout(() => {
+    if (!drawer.classList.contains('open')) {
+      drawer.classList.add('hidden');
+    }
+  }, 400);
+  
+  activeDrawerRepo = null;
+  Logger.log('info', 'ui', 'RepoDetailsDrawerClosed');
+}
+
+function initBottomSheetGestures() {
+  const drawer = document.getElementById('repo-details-drawer');
+  const handleBar = drawer?.querySelector('.drawer-handle-bar');
+  if (!drawer || !handleBar) return;
+
+  let startY = 0;
+  let currentY = 0;
+  let isDragging = false;
+
+  handleBar.addEventListener('touchstart', (e) => {
+    startY = e.touches[0].clientY;
+    isDragging = true;
+    drawer.style.transition = 'none'; // disable transitions during drag
+  }, { passive: true });
+
+  handleBar.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    currentY = e.touches[0].clientY;
+    const deltaY = currentY - startY;
+    if (deltaY > 0) {
+      // Only allow dragging downwards
+      drawer.style.transform = `translateY(${deltaY}px)`;
+    }
+  }, { passive: true });
+
+  handleBar.addEventListener('touchend', (e) => {
+    if (!isDragging) return;
+    isDragging = false;
+    drawer.style.transition = ''; // restore smooth transition
+    
+    const deltaY = currentY - startY;
+    if (deltaY > 120) {
+      // Dragged down past threshold, close it
+      closeRepoDetailsDrawer();
+    } else {
+      // Dragged a little, snap back to open position
+      drawer.style.transform = '';
+    }
+    startY = 0;
+    currentY = 0;
+  }, { passive: true });
+}
+
+function addToCompare(repo) {
+  if (compareList.some(r => r.full_name === repo.full_name)) {
+    showToast('Repository already added to compare list.', 'info');
+    return false;
+  }
+  if (compareList.length >= 3) {
+    showToast('You can compare a maximum of 3 repositories side-by-side.', 'warn');
+    return false;
+  }
+
+  compareList.push(repo);
+  updateCompareTrayUI();
+  showToast(`Added ${repo.full_name} to comparison.`, 'success');
+  return true;
+}
+
+function removeFromCompare(repoFullName) {
+  const index = compareList.findIndex(r => r.full_name === repoFullName);
+  if (index > -1) {
+    compareList.splice(index, 1);
+    updateCompareTrayUI();
+    
+    // Update button if details drawer is currently showing this repo
+    if (activeDrawerRepo && activeDrawerRepo.full_name === repoFullName) {
+      const compareBtn = document.getElementById('drawer-add-compare-btn');
+      if (compareBtn) {
+        compareBtn.innerHTML = `<i data-lucide="plus"></i><span>Add to Compare</span>`;
+        lucide.createIcons();
+      }
+    }
+  }
+}
+
+function updateCompareTrayUI() {
+  const tray = document.getElementById('comparison-tray');
+  const itemsContainer = document.getElementById('compare-tray-items');
+  const countBadge = document.getElementById('compare-count');
+  const compareBtn = document.getElementById('compare-now-btn');
+
+  if (!tray || !itemsContainer || !countBadge || !compareBtn) return;
+
+  // Update badge count
+  countBadge.textContent = compareList.length;
+  compareBtn.disabled = compareList.length < 2;
+
+  // Render items
+  itemsContainer.innerHTML = compareList.map(repo => `
+    <div class="compare-item">
+      <span class="compare-item-name" title="${repo.full_name}">${repo.full_name.split('/')[1]}</span>
+      <button class="compare-item-remove" onclick="removeFromCompare('${repo.full_name}')" title="Remove">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+  `).join('');
+
+  // Show/Hide tray
+  if (compareList.length > 0) {
+    tray.classList.remove('hidden');
+    tray.offsetHeight; // trigger reflow
+    tray.classList.add('visible');
+  } else {
+    tray.classList.remove('visible');
+    setTimeout(() => {
+      if (compareList.length === 0) tray.classList.add('hidden');
+    }, 400);
+  }
+
+  lucide.createIcons();
+}
+
+function showComparisonModal() {
+  const modal = document.getElementById('comparison-modal');
+  const table = document.getElementById('comp-table');
+  if (!modal || !table) return;
+
+  // Render comparison matrix
+  let html = `
+    <thead>
+      <tr>
+        <th class="comp-header-cell">Feature</th>
+        ${compareList.map(r => `
+          <th>
+            <span class="comp-header-name">${r.full_name}</span>
+            <span class="comp-stars-val"><i data-lucide="star"></i> ${formatStarNumber(r.stars)}</span>
+          </th>
+        `).join('')}
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Tech Stack / Language</strong></td>
+        ${compareList.map(r => `<td><span class="lang-chip"><span class="lang-dot" style="background-color: ${getLanguageColor(r.language)}"></span>${r.language || 'N/A'}</span></td>`).join('')}
+      </tr>
+      <tr>
+        <td><strong>Forks</strong></td>
+        ${compareList.map(r => `<td>${formatStarNumber(r.forks || 0)}</td>`).join('')}
+      </tr>
+      <tr>
+        <td><strong>Open Issues</strong></td>
+        ${compareList.map(r => `<td>${formatStarNumber(r.open_issues || 0)}</td>`).join('')}
+      </tr>
+      <tr>
+        <td><strong>Description</strong></td>
+        ${compareList.map(r => `<td class="comp-desc-val">${r.description || 'No description'}</td>`).join('')}
+      </tr>
+      <tr>
+        <td><strong>AI Summary</strong></td>
+        ${compareList.map(r => `<td class="comp-desc-val">${r.readme_summary || 'No README details'}</td>`).join('')}
+      </tr>
+      <tr>
+        <td><strong>Action</strong></td>
+        ${compareList.map(r => `<td><a class="drawer-action-link" href="${r.url}" target="_blank" rel="noopener" style="min-height: 36px; padding: 0.4rem 1rem; font-size: 0.8rem; width: 100%;">GitHub</a></td>`).join('')}
+      </tr>
+    </tbody>
+  `;
+  table.innerHTML = html;
+
+  modal.classList.remove('hidden');
+  lucide.createIcons();
+  Logger.log('info', 'ui', 'ComparisonModalOpened', { repos: compareList.map(r => r.full_name) });
+}
+
+function closeComparisonModal() {
+  document.getElementById('comparison-modal')?.classList.add('hidden');
+  Logger.log('info', 'ui', 'ComparisonModalClosed');
+}
+
+window.removeFromCompare = removeFromCompare;

@@ -17,7 +17,7 @@ Static read-only portfolio dashboard. No personal data collected, stored, or tra
 | Google Fonts | Typography | Font requests (Google's privacy policy applies) |
 | jsDelivr | CDN | Asset requests only |
 | GitHub API | Profile data | Public data, no auth required |
-| Netlify Functions | OAuth token exchange (admin only) | GitHub OAuth code, one-time per admin login |
+| Vercel Functions | OAuth token exchange (admin only) | GitHub OAuth code, one-time per admin login |
 
 ## Clear Local Data
 Browser DevTools → Application → IndexedDB → delete `analytics_db`
