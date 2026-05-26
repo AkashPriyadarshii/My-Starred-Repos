@@ -607,9 +607,13 @@
 
       // Initialize UI State
       initUIState();
+      
+      // ── Prompt for ADMIN_SECRET if not stored ───────────────
+      if (!sessionStorage.getItem('admin_secret')) {
+        promptAdminSecret();
+      }
 
-      // Load Analytics (cloud → local fallback).
-      // reloadDashboardData() will prompt for ADMIN_SECRET if not yet stored.
+      // Load Analytics (cloud → local fallback)
       await reloadDashboardData();
 
       // Start auto-refresh (every 30s)
