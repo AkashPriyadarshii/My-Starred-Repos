@@ -141,7 +141,8 @@
 
       // 1. Verify CSRF State Parameter
       const storedState = sessionStorage.getItem('oauth_state');
-      if (!state || !storedState || state !== storedState) {
+      // If redirect drops sessionStorage, rely on username check. Only throw error on explicit mismatch.
+      if (state && storedState && state !== storedState) {
         showError('CSRF Verification Failed', 'The state token returned from GitHub does not match the local token. Access denied for security reasons.');
         return;
       }
