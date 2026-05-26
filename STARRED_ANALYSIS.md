@@ -1,116 +1,134 @@
 # 🌟 GitHub Starred Repos Analysis
 
 **GitHub User:** `AkashPriyadarshii`  
-**Total Repositories:** 364
-**Last Generated:** 2026-05-26 12:13 IST
+**Total Repositories:** 365
+**Last Generated:** 2026-05-26 14:43 IST
 **Auto-Updated:** Daily @ 05:30 IST (00:00 UTC) via GitHub Actions
 
 ---
 
 ## 📊 Quick Stats
 
-- **Total Starred:** 364
-- **Categories:** 9
+- **Total Starred:** 365
+- **Categories:** 12
 - **Top Language:** Python
-- **Avg Stars:** 26756
+- **Avg Stars:** 26717
 
 ## 🏆 Top 15 by Stars
 
 | Rank | Repo | Stars | Language |
 |------|------|-------|----------|
-| 1 | [public-apis/public-apis](https://github.com/public-apis/public-apis) | 437,215 | Python |
-| 2 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | 374,704 | TypeScript |
-| 3 | [donnemartin/system-design-primer](https://github.com/donnemartin/system-design-primer) | 350,327 | Python |
-| 4 | [obra/superpowers](https://github.com/obra/superpowers) | 206,860 | Shell |
-| 5 | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 192,952 | JavaScript |
-| 6 | [ultraworkers/claw-code](https://github.com/ultraworkers/claw-code) | 192,529 | Rust |
-| 7 | [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | 167,670 | Python |
-| 8 | [anomalyco/opencode](https://github.com/anomalyco/opencode) | 165,386 | TypeScript |
-| 9 | [f/prompts.chat](https://github.com/f/prompts.chat) | 162,828 | HTML |
-| 10 | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) | 155,633 | N/A |
-| 11 | [open-webui/open-webui](https://github.com/open-webui/open-webui) | 138,669 | Python |
-| 12 | [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) | 124,387 | TypeScript |
-| 13 | [Hack-with-Github/Awesome-Hacking](https://github.com/Hack-with-Github/Awesome-Hacking) | 113,087 | N/A |
-| 14 | [Shubhamsaboo/awesome-llm-apps](https://github.com/Shubhamsaboo/awesome-llm-apps) | 111,762 | Python |
-| 15 | [github/spec-kit](https://github.com/github/spec-kit) | 105,946 | Python |
+| 1 | [public-apis/public-apis](https://github.com/public-apis/public-apis) | 437,229 | Python |
+| 2 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | 374,733 | TypeScript |
+| 3 | [donnemartin/system-design-primer](https://github.com/donnemartin/system-design-primer) | 350,346 | Python |
+| 4 | [obra/superpowers](https://github.com/obra/superpowers) | 207,151 | Shell |
+| 5 | [affaan-m/ECC](https://github.com/affaan-m/ECC) | 193,189 | JavaScript |
+| 6 | [ultraworkers/claw-code](https://github.com/ultraworkers/claw-code) | 192,547 | Rust |
+| 7 | [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | 167,881 | Python |
+| 8 | [anomalyco/opencode](https://github.com/anomalyco/opencode) | 165,448 | TypeScript |
+| 9 | [f/prompts.chat](https://github.com/f/prompts.chat) | 162,840 | HTML |
+| 10 | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) | 155,997 | N/A |
+| 11 | [open-webui/open-webui](https://github.com/open-webui/open-webui) | 138,684 | Python |
+| 12 | [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) | 124,442 | TypeScript |
+| 13 | [Hack-with-Github/Awesome-Hacking](https://github.com/Hack-with-Github/Awesome-Hacking) | 113,090 | N/A |
+| 14 | [Shubhamsaboo/awesome-llm-apps](https://github.com/Shubhamsaboo/awesome-llm-apps) | 111,772 | Python |
+| 15 | [mattpocock/skills](https://github.com/mattpocock/skills) | 106,007 | Shell |
 
 ---
 
 ## 📂 By Category
 
-### AI Agents (176 repos)
+### AI & Agents (245 repos)
 
-- **[openclaw/openclaw](https://github.com/openclaw/openclaw)** (374,704⭐) - Your own personal AI assistant. Any OS. Any Platform. The lobster way. 🦞 
-- **[obra/superpowers](https://github.com/obra/superpowers)** (206,860⭐) - An agentic skills framework & software development methodology that works.
-- **[affaan-m/ECC](https://github.com/affaan-m/ECC)** (192,952⭐) - The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond.
-- **[ultraworkers/claw-code](https://github.com/ultraworkers/claw-code)** (192,529⭐) - The repo is finally unlocked. enjoy the party! The fastest repo in history to surpass 100K stars ⭐. Join Discord: https://discord.gg/5TUQKqFWd Built in Rust using oh-my-codex.
-- **[NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)** (167,670⭐) - The agent that grows with you
-  *... and 171 more*
+- **[openclaw/openclaw](https://github.com/openclaw/openclaw)** (374,733⭐) - Your own personal AI assistant. Any OS. Any Platform. The lobster way. 🦞 
+- **[obra/superpowers](https://github.com/obra/superpowers)** (207,151⭐) - An agentic skills framework & software development methodology that works.
+- **[affaan-m/ECC](https://github.com/affaan-m/ECC)** (193,189⭐) - The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond.
+- **[ultraworkers/claw-code](https://github.com/ultraworkers/claw-code)** (192,547⭐) - The repo is finally unlocked. enjoy the party! The fastest repo in history to surpass 100K stars ⭐. Join Discord: https://discord.gg/5TUQKqFWd Built in Rust using oh-my-codex.
+- **[NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)** (167,881⭐) - The agent that grows with you
+  *... and 240 more*
 
-### Other (71 repos)
+### Other (33 repos)
 
-- **[public-apis/public-apis](https://github.com/public-apis/public-apis)** (437,215⭐) - A collective list of free APIs
-- **[f/prompts.chat](https://github.com/f/prompts.chat)** (162,828⭐) - f.k.a. Awesome ChatGPT Prompts. Share, discover, and collect prompts from the community. Free and open source — self-host for your organization with complete privacy.
-- **[syncthing/syncthing](https://github.com/syncthing/syncthing)** (84,538⭐) - Open Source Continuous File Synchronization
-- **[localsend/localsend](https://github.com/localsend/localsend)** (82,080⭐) - An open-source cross-platform alternative to AirDrop
-- **[666ghj/MiroFish](https://github.com/666ghj/MiroFish)** (62,548⭐) - A Simple and Universal Swarm Intelligence Engine, Predicting Anything. 简洁通用的群体智能引擎，预测万物
-  *... and 66 more*
-
-### Dev Tools (33 repos)
-
-- **[Hack-with-Github/Awesome-Hacking](https://github.com/Hack-with-Github/Awesome-Hacking)** (113,087⭐) - A collection of various awesome lists for hackers, pentesters and security researchers
-- **[github/spec-kit](https://github.com/github/spec-kit)** (105,946⭐) - 💫 Toolkit to help you get started with Spec-Driven Development
-- **[zed-industries/zed](https://github.com/zed-industries/zed)** (83,790⭐) - Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
-- **[Stirling-Tools/Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF)** (79,542⭐) - #1 PDF Application on GitHub that lets you edit PDFs on any device anywhere
-- **[BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep)** (64,220⭐) - ripgrep recursively searches directories for a regex pattern while respecting your gitignore
+- **[public-apis/public-apis](https://github.com/public-apis/public-apis)** (437,229⭐) - A collective list of free APIs
+- **[syncthing/syncthing](https://github.com/syncthing/syncthing)** (84,544⭐) - Open Source Continuous File Synchronization
+- **[666ghj/MiroFish](https://github.com/666ghj/MiroFish)** (62,570⭐) - A Simple and Universal Swarm Intelligence Engine, Predicting Anything. 简洁通用的群体智能引擎，预测万物
+- **[pocketbase/pocketbase](https://github.com/pocketbase/pocketbase)** (58,611⭐) - Open Source realtime backend in 1 file
+- **[ageitgey/face_recognition](https://github.com/ageitgey/face_recognition)** (56,402⭐) - The world's simplest facial recognition api for Python and the command line
   *... and 28 more*
 
-### Design Systems (30 repos)
+### Systems & Dev Tools (26 repos)
 
-- **[donnemartin/system-design-primer](https://github.com/donnemartin/system-design-primer)** (350,327⭐) - Learn how to design large-scale systems. Prep for the system design interview.  Includes Anki flashcards.
-- **[open-webui/open-webui](https://github.com/open-webui/open-webui)** (138,669⭐) - User-friendly AI Interface (Supports Ollama, OpenAI API, ...)
-- **[nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)** (82,792⭐) - An AI SKILL that provide design intelligence for building professional UI/UX multiple platforms
-- **[penpot/penpot](https://github.com/penpot/penpot)** (48,436⭐) - Penpot: The open-source design tool for design and code collaboration
-- **[pbakaus/impeccable](https://github.com/pbakaus/impeccable)** (30,279⭐) - The design language that makes your AI harness better at design.
-  *... and 25 more*
+- **[Hack-with-Github/Awesome-Hacking](https://github.com/Hack-with-Github/Awesome-Hacking)** (113,090⭐) - A collection of various awesome lists for hackers, pentesters and security researchers
+- **[github/spec-kit](https://github.com/github/spec-kit)** (105,977⭐) - 💫 Toolkit to help you get started with Spec-Driven Development
+- **[Stirling-Tools/Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF)** (79,553⭐) - #1 PDF Application on GitHub that lets you edit PDFs on any device anywhere
+- **[BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep)** (64,223⭐) - ripgrep recursively searches directories for a regex pattern while respecting your gitignore
+- **[coollabsio/coolify](https://github.com/coollabsio/coolify)** (55,954⭐) - An open-source, self-hostable PaaS alternative to Vercel, Heroku & Netlify that lets you easily deploy static sites, databases, full-stack applications and 280+ one-click services on your own servers.
+  *... and 21 more*
 
-### LLM Infrastructure (20 repos)
+### Design & UI/UX (15 repos)
 
-- **[vllm-project/vllm](https://github.com/vllm-project/vllm)** (81,022⭐) - A high-throughput and memory-efficient inference and serving engine for LLMs
-- **[rtk-ai/rtk](https://github.com/rtk-ai/rtk)** (54,216⭐) - CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
-- **[TryGhost/Ghost](https://github.com/TryGhost/Ghost)** (53,672⭐) - Independent technology for modern publishing, memberships, subscriptions and newsletters.
-- **[HKUDS/RAG-Anything](https://github.com/HKUDS/RAG-Anything)** (20,648⭐) - "RAG-Anything: All-in-One RAG Framework"
-- **[karpathy/llm-council](https://github.com/karpathy/llm-council)** (19,331⭐) - LLM Council works together to answer your hardest questions
-  *... and 15 more*
+- **[donnemartin/system-design-primer](https://github.com/donnemartin/system-design-primer)** (350,346⭐) - Learn how to design large-scale systems. Prep for the system design interview.  Includes Anki flashcards.
+- **[penpot/penpot](https://github.com/penpot/penpot)** (48,443⭐) - Penpot: The open-source design tool for design and code collaboration
+- **[Fincept-Corporation/FinceptTerminal](https://github.com/Fincept-Corporation/FinceptTerminal)** (24,070⭐) - FinceptTerminal is a modern finance application offering advanced market analytics, investment research, and economic data tools, designed for interactive exploration and data-driven decision-making in a user-friendly environment.
+- **[frida/frida](https://github.com/frida/frida)** (20,744⭐) - Clone this repo to build Frida
+- **[MustardChef/WSABuilds](https://github.com/MustardChef/WSABuilds)** (17,422⭐) - Run Windows Subsystem For Android on your Windows 10 and Windows 11 PC using prebuilt binaries with Google Play Store (MindTheGapps) and/or Magisk or KernelSU (root solutions) built in. 
+  *... and 10 more*
 
-### Web Automation (17 repos)
+### Web Automation (12 repos)
 
-- **[unclecode/crawl4ai](https://github.com/unclecode/crawl4ai)** (66,274⭐) - 🚀🤖 Crawl4AI: Open-source LLM Friendly Web Crawler & Scraper. Don't be shy, join here: https://discord.gg/jP8KfhDhyN
-- **[D4Vinci/Scrapling](https://github.com/D4Vinci/Scrapling)** (54,216⭐) - 🕷️ An adaptive Web Scraping framework that handles everything from a single request to a full-scale crawl!
-- **[zen-browser/desktop](https://github.com/zen-browser/desktop)** (42,217⭐) - Welcome to a calmer internet
-- **[lightpanda-io/browser](https://github.com/lightpanda-io/browser)** (30,582⭐) - Lightpanda: the headless browser designed for AI and automation
-- **[ScrapeGraphAI/Scrapegraph-ai](https://github.com/ScrapeGraphAI/Scrapegraph-ai)** (26,056⭐) - Python scraper based on AI
-  *... and 12 more*
-
-### Mobile (12 repos)
-
-- **[pppscn/SmsForwarder](https://github.com/pppscn/SmsForwarder)** (25,817⭐) - 短信转发器——监控Android手机短信、来电、APP通知，并根据指定规则转发到其他手机：钉钉群自定义机器人、钉钉企业内机器人、企业微信群机器人、飞书机器人、企业微信应用消息、邮箱、bark、webhook、Telegram机器人、Server酱、PushPlus、手机短信等。包括主动控制服务端与客户端，让你轻松远程发短信、查短信、查通话、查话簿、查电量等。（V3.0 新增）PS.这个APK主要是学习与自用，如有BUG请提ISSUE，同时欢迎大家提PR指正
-- **[iBotPeaches/Apktool](https://github.com/iBotPeaches/Apktool)** (24,621⭐) - A tool for reverse engineering Android apk files
-- **[amir1376/ab-download-manager](https://github.com/amir1376/ab-download-manager)** (15,633⭐) - A Download Manager that speeds up your downloads
-- **[HunxByts/GhostTrack](https://github.com/HunxByts/GhostTrack)** (13,343⭐) - Useful tool to track location or mobile number
-- **[offa/android-foss](https://github.com/offa/android-foss)** (10,175⭐) - A list of Free and Open Source Software (FOSS) for Android – saving Freedom and Privacy.
+- **[D4Vinci/Scrapling](https://github.com/D4Vinci/Scrapling)** (54,250⭐) - 🕷️ An adaptive Web Scraping framework that handles everything from a single request to a full-scale crawl!
+- **[zen-browser/desktop](https://github.com/zen-browser/desktop)** (42,218⭐) - Welcome to a calmer internet
+- **[CloakHQ/CloakBrowser](https://github.com/CloakHQ/CloakBrowser)** (21,191⭐) - Stealth Chromium that passes every bot detection test. Drop-in Playwright replacement with source-level fingerprint patches. 30/30 tests passed.
+- **[browserless/browserless](https://github.com/browserless/browserless)** (13,225⭐) - Deploy headless browsers in Docker. Run on our cloud or bring your own. Free for non-commercial uses.
+- **[pinchtab/pinchtab](https://github.com/pinchtab/pinchtab)** (9,129⭐) - High-performance browser automation bridge and multi-instance orchestrator with advanced stealth injection and real-time dashboard.
   *... and 7 more*
 
-### Media & Content (3 repos)
+### Mobile Development (10 repos)
 
-- **[sherlock-project/sherlock](https://github.com/sherlock-project/sherlock)** (83,906⭐) - Hunt down social media accounts by username across social networks
-- **[Robbyant/lingbot-map](https://github.com/Robbyant/lingbot-map)** (6,786⭐) - A feed-forward 3D foundation model for reconstructing scenes from streaming data
-- **[brightbeanxyz/brightbean-studio](https://github.com/brightbeanxyz/brightbean-studio)** (1,709⭐) - Open-source, self-hostable social media management platform. Schedule, publish, and manage content across 10+ platforms from a single dashboard. Free alternative to Buffer, Sendible, and SocialPilot.
+- **[pppscn/SmsForwarder](https://github.com/pppscn/SmsForwarder)** (25,819⭐) - 短信转发器——监控Android手机短信、来电、APP通知，并根据指定规则转发到其他手机：钉钉群自定义机器人、钉钉企业内机器人、企业微信群机器人、飞书机器人、企业微信应用消息、邮箱、bark、webhook、Telegram机器人、Server酱、PushPlus、手机短信等。包括主动控制服务端与客户端，让你轻松远程发短信、查短信、查通话、查话簿、查电量等。（V3.0 新增）PS.这个APK主要是学习与自用，如有BUG请提ISSUE，同时欢迎大家提PR指正
+- **[iBotPeaches/Apktool](https://github.com/iBotPeaches/Apktool)** (24,620⭐) - A tool for reverse engineering Android apk files
+- **[amir1376/ab-download-manager](https://github.com/amir1376/ab-download-manager)** (15,634⭐) - A Download Manager that speeds up your downloads
+- **[HunxByts/GhostTrack](https://github.com/HunxByts/GhostTrack)** (13,345⭐) - Useful tool to track location or mobile number
+- **[offa/android-foss](https://github.com/offa/android-foss)** (10,178⭐) - A list of Free and Open Source Software (FOSS) for Android – saving Freedom and Privacy.
+  *... and 5 more*
 
-### Infrastructure (2 repos)
+### Databases & APIs (8 repos)
 
-- **[calcom/cal.diy](https://github.com/calcom/cal.diy)** (44,578⭐) - Scheduling infrastructure for absolutely everyone.
-- **[containers/podman](https://github.com/containers/podman)** (31,799⭐) - Podman: A tool for managing OCI containers and pods.
+- **[zed-industries/zed](https://github.com/zed-industries/zed)** (83,798⭐) - Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
+- **[medusajs/medusa](https://github.com/medusajs/medusa)** (33,958⭐) - The world's most flexible commerce platform.
+- **[0x192/universal-android-debloater](https://github.com/0x192/universal-android-debloater)** (19,384⭐) - Cross-platform GUI written in Rust using ADB to debloat non-rooted android devices. Improve your privacy, the security and battery life of your device.
+- **[originalankur/maptoposter](https://github.com/originalankur/maptoposter)** (13,382⭐) - Transform your favorite cities into beautiful, minimalist designs. MapToPoster lets you create and export visually striking map posters with code.
+- **[Universal-Debloater-Alliance/universal-android-debloater-next-generation](https://github.com/Universal-Debloater-Alliance/universal-android-debloater-next-generation)** (6,678⭐) - Cross-platform GUI written in Rust using ADB to debloat non-rooted Android devices. Improve your privacy, the security and battery life of your device.
+  *... and 3 more*
+
+### LLM & RAG (8 repos)
+
+- **[TryGhost/Ghost](https://github.com/TryGhost/Ghost)** (53,675⭐) - Independent technology for modern publishing, memberships, subscriptions and newsletters.
+- **[HKUDS/RAG-Anything](https://github.com/HKUDS/RAG-Anything)** (20,653⭐) - "RAG-Anything: All-in-One RAG Framework"
+- **[iamgio/quarkdown](https://github.com/iamgio/quarkdown)** (15,105⭐) - 🪐 Markdown with superpowers: from ideas to papers, presentations, websites, books, and knowledge bases.
+- **[refactoringhq/tolaria](https://github.com/refactoringhq/tolaria)** (11,503⭐) - Desktop app to manage markdown knowledge bases
+- **[sleuthkit/autopsy](https://github.com/sleuthkit/autopsy)** (3,160⭐) - Autopsy® is a digital forensics platform and graphical interface to The Sleuth Kit® and other digital forensics tools. It can be used by law enforcement, military, and corporate examiners to investigate what happened on a computer. You can even use it to recover photos from your camera's memory card. 
+  *... and 3 more*
+
+### Web Development (3 repos)
+
+- **[remotion-dev/remotion](https://github.com/remotion-dev/remotion)** (48,057⭐) - 🎥      Make videos programmatically with React
+- **[imputnet/cobalt](https://github.com/imputnet/cobalt)** (40,545⭐) - best way to save what you love
+- **[quiet-node/thuki](https://github.com/quiet-node/thuki)** (520⭐) - context-ware floating secretary
+
+### Media & Content (2 repos)
+
+- **[sherlock-project/sherlock](https://github.com/sherlock-project/sherlock)** (83,915⭐) - Hunt down social media accounts by username across social networks
+- **[Robbyant/lingbot-map](https://github.com/Robbyant/lingbot-map)** (6,792⭐) - A feed-forward 3D foundation model for reconstructing scenes from streaming data
+
+### DevOps & Infra (2 repos)
+
+- **[calcom/cal.diy](https://github.com/calcom/cal.diy)** (44,587⭐) - Scheduling infrastructure for absolutely everyone.
+- **[HQarroum/docker-android](https://github.com/HQarroum/docker-android)** (5,707⭐) - 🤖 A minimal and customizable Docker image running the Android emulator as a service.
+
+### Security & Pentesting (1 repos)
+
+- **[trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog)** (26,506⭐) - Find, verify, and analyze leaked credentials
 
 ---
 
@@ -118,8 +136,8 @@
 
 | Language | Count | % |
 |----------|-------|---|
-| Python | 112 | 30.8% |
-| TypeScript | 100 | 27.5% |
+| Python | 112 | 30.7% |
+| TypeScript | 100 | 27.4% |
 | Rust | 36 | 9.9% |
 | JavaScript | 27 | 7.4% |
 | Unknown | 21 | 5.8% |
@@ -127,7 +145,7 @@
 | Shell | 13 | 3.6% |
 | C | 6 | 1.6% |
 | Swift | 6 | 1.6% |
-| Java | 5 | 1.4% |
+| HTML | 5 | 1.4% |
 
 ---
 
@@ -136,6 +154,6 @@
 - Auto-generated by GitHub Actions
 - Updated daily at 05:30 IST (00:00 UTC)
 - Source: GitHub API
-- Last run: 2026-05-26 12:13 IST
+- Last run: 2026-05-26 14:43 IST
 
 **Want to add/remove starred repos?** Star/unstar on GitHub, and this report auto-updates tomorrow!
