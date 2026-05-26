@@ -6,13 +6,29 @@
 
 const https = require('https');
 
-const CORS_ORIGIN = 'https://akashpriyadarshii.github.io';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin':  CORS_ORIGIN,
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS'
-};
+function getCorsHeaders(req) {
+  const allowedOrigins = [
+    'https://akashpriyadarshii.github.io',
+    'http://localhost',
+    'http://127.0.0.1'
+  ];
+  const origin = req.headers.origin;
+  let corsOrigin = 'https://akashpriyadarshii.github.io'; // fallback
+  
+  if (origin) {
+    const isAllowed = allowedOrigins.some(ao => origin.startsWith(ao)) || origin === 'null';
+    if (isAllowed) {
+      corsOrigin = origin;
+    }
+  }
+  
+  return {
+    'Access-Control-Allow-Origin':  corsOrigin,
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Credentials': 'true'
+  };
+}
 
 function makeRequest(url, options = {}, body = null) {
   return new Promise((resolve, reject) => {
@@ -63,11 +79,13 @@ function makeRequest(url, options = {}, body = null) {
 }
 
 module.exports = async function handler(req, res) {
-  // Always wrap in try-catch to guarantee CORS headers are sent on failure (preventing CORS-related "Failed to Fetch")
+  const corsHeaders = getCorsHeaders(req);
+
   try {
     // Handle CORS Pre-flight
     if (req.method === 'OPTIONS') {
-      return res.status(200).set(corsHeaders).end();
+      Object.entries(corsHeaders).forEach(([key, val]) => res.setHeader(key, val));
+      return res.status(200).end();
     }
 
     // Set response headers
@@ -118,7 +136,6 @@ module.exports = async function handler(req, res) {
 
   } catch (err) {
     console.error('[oauth] Global handler error:', err);
-    // Explicitly write headers on error response so browser doesn't block the actual error message with CORS errors
     Object.entries(corsHeaders).forEach(([key, val]) => res.setHeader(key, val));
     return res.status(500).json({ 
       error: 'Internal server error', 
