@@ -1,42 +1,12 @@
 {
-  "version": 2,
-  "builds": [
+  "headers": [
     {
-      "src": "api/*.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/log-visit",
-      "dest": "/api/log-visit.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://akashpriyadarshii.github.io",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "POST, OPTIONS"
-      }
-    },
-    {
-      "src": "/api/get-analytics",
-      "dest": "/api/get-analytics.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://akashpriyadarshii.github.io",
-        "Access-Control-Allow-Headers": "Content-Type, x-admin-secret",
-        "Access-Control-Allow-Methods": "GET, OPTIONS"
-      }
-    },
-    {
-      "src": "/api/oauth",
-      "dest": "/api/oauth.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://akashpriyadarshii.github.io",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "POST, OPTIONS"
-      }
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/api/:path*",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "https://akashpriyadarshii.github.io" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, x-admin-secret" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" }
+      ]
     }
   ]
 }
