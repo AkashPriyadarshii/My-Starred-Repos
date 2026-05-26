@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-density="comfortable">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | My Starred Repos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <link rel="stylesheet" href="../dashboard/style.css">
+  
+  <style>
+    :root {
+      --danger-color: #ef4444;
+      --danger-glow: rgba(239, 68, 68, 0.45);
+    }
+    body {
+      padding: 2rem 1.5rem;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .admin-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Header styling */
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .admin-title-area h1 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 0;
+      background: linear-gradient(135deg, #fff 40%, var(--primary-color) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .admin-title-area p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin: 0.25rem 0 0 0;
+    }
+    .admin-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .btn-secondary {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-color);
+      background: hsla(var(--card-h), var(--card-s), calc(var(--card-l) + 5%), 0.5);
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn-secondary:hover {
+      border-color: var(--border-glow);
+      background: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.15);
+    }
+    .btn-danger {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #fff;
+      background: hsla(0, 84%, 60%, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-danger:hover {
+      border-color: var(--danger-color);
+      background: hsla(0, 84%, 60%, 0.35);
+      box-shadow: 0 0 15px var(--danger-glow);
+    }
+
+    /* Filters Bar */
+    .filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-md);
+    }
+    .filter-inputs {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .filter-group label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .date-input {
+      background: hsla(var(--card-h), var(--card-s), calc(var(--card-l) + 2%), 0.6);
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 0.4rem 0.60rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-family: var(--font-mono);
+      outline: none;
+      transition: border 0.2s;
+    }
+    .date-input:focus {
+      border-color: var(--border-glow);
+    }
+
+    /* Bento Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.5rem;
+    }
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-6 { grid-column: span 6; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+
+    @media (max-width: 1024px) {
+      .span-3 { grid-column: span 6; }
+      .span-4 { grid-column: span 6; }
+      .span-8 { grid-column: span 12; }
+    }
+    @media (max-width: 768px) {
+      .span-3 { grid-column: span 12; }
+      .span-4 { grid-column: span 12; }
+      .span-6 { grid-column: span 12; }
+    }
+
+    /* Bento Cards */
+    .bento-analytic-card {
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      position: relative;
+    }
+    .analytic-stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-muted);
+    }
+    .analytic-stat-header i {
+      width: 18px;
+      height: 18px;
+    }
+    .analytic-stat-header span {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .analytic-stat-val {
+      font-family: var(--font-mono);
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin: 0;
+      color: var(--text-color);
+    }
+    .analytic-stat-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* Chart Bento Cards */
+    .chart-container-card {
+      min-height: 320px;
+    }
+    .card-header-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0 0 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card-header-title i {
+      width: 16px;
+      height: 16px;
+      color: var(--primary-color);
+    }
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      flex-grow: 1;
+      min-height: 240px;
+    }
+
+    /* Heatmap Grid */
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: auto repeat(24, 1fr);
+      gap: 2px;
+      margin-top: 1rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+    .heatmap-header-hour {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-align: center;
+      font-family: var(--font-mono);
+      min-width: 14px;
+    }
+    .heatmap-day-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding-right: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      min-width: 32px;
+      font-family: var(--font-display);
+    }
+    .heatmap-cell {
+      aspect-ratio: 1;
+      min-width: 14px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.03);
+      transition: all 0.2s;
+    }
+    .heatmap-cell:hover {
+      transform: scale(1.2);
+      z-index: 2;
+      box-shadow: 0 0 10px var(--border-glow);
+    }
+
+    /* Heatmap legend */
+    .heatmap-legend {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      justify-content: flex-end;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+    }
+    .legend-box {
+      width: 10px;
+      height: 10px;
+      border-radius: 1px;
+    }
+
+    /* Visit Feed Table */
+    .table-wrapper {
+      overflow-x: auto;
+      max-height: 400px;
+      margin-top: 0.5rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+    }
+    table.visit-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.82rem;
+    }
+    table.visit-table th, table.visit-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    table.visit-table th {
+      background: hsla(var(--card-h), var(--card-s), calc(var(--card-l) + 3%), 0.8);
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--text-muted);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    table.visit-table tbody tr:hover {
+      background: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.04);
+    }
+    .badge-device {
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+    }
+    .badge-device.desktop {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .badge-device.mobile {
+      background: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    .badge-theme {
+      background: hsla(var(--card-h), var(--card-s), calc(var(--card-l) + 10%), 0.5);
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+    }
+    
+    /* Loading overlay */
+    .loader-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #030712;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      z-index: 1000;
+      transition: opacity 0.4s ease;
+    }
+    .loader-spinner {
+      animation: spin 1s linear infinite;
+      color: var(--primary-color);
+      width: 48px;
+      height: 48px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Loader Screen -->
+  <div class="loader-overlay" id="loading-overlay">
+    <i data-lucide="loader-2" class="loader-spinner"></i>
+    <p style="font-family: var(--font-display); font-weight: 600; font-size: 0.95rem;">Checking Admin Session Authorization...</p>
+  </div>
+
+  <!-- Deep Glass Background Blobs -->
+  <div class="blob blob-1" style="width: 500px; height: 500px; top: -150px; left: -100px;"></div>
+  <div class="blob blob-2" style="width: 450px; height: 450px; bottom: -150px; right: -100px;"></div>
+
+  <div class="admin-wrapper">
+    <!-- Header -->
+    <header class="admin-header">
+      <div class="admin-title-area">
+        <h1>Admin Analytics Portal</h1>
+        <p>Private telemetry dashboard for Owner <strong style="color: var(--text-color);">@AkashPriyadarshii</strong></p>
+      </div>
+      <div class="admin-actions">
+        <button class="btn-secondary" id="pause-btn" title="Toggle analytics logging state">
+          <i data-lucide="pause-circle"></i>
+          <span id="pause-btn-text">Pause Tracking</span>
+        </button>
+        <button class="btn-secondary" id="export-json-btn" title="Export visit records to JSON">
+          <i data-lucide="download"></i>
+          <span>Export JSON</span>
+        </button>
+        <button class="btn-secondary" id="export-csv-btn" title="Export visit records to CSV">
+          <i data-lucide="file-spreadsheet"></i>
+          <span>Export CSV</span>
+        </button>
+        <button class="btn-danger" id="logout-btn" title="Sign out from admin session">
+          <i data-lucide="log-out"></i>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Filters Bar -->
+    <div class="filter-bar glass-card">
+      <div class="filter-inputs">
+        <div class="filter-group">
+          <label for="date-from">From:</label>
+          <input type="date" id="date-from" class="date-input">
+        </div>
+        <div class="filter-group">
+          <label for="date-to">To:</label>
+          <input type="date" id="date-to" class="date-input">
+        </div>
+        <button class="btn-secondary" id="reset-filters" style="padding: 0.35rem 0.75rem; font-size: 0.77rem;">Reset</button>
+      </div>
+      <div style="font-size: 0.77rem; color: var(--text-muted); font-family: var(--font-mono);">
+        Timezone: <strong style="color: var(--text-color);">IST (UTC+5:30)</strong>
+      </div>
+    </div>
+
+    <!-- Stats & Analytics Bento Grid -->
+    <div class="dashboard-grid">
+      <!-- stat card 1 -->
+      <div class="bento-analytic-card glass-card span-3">
+        <div class="analytic-stat-header">
+          <span>Total Pageviews</span>
+          <i data-lucide="eye" style="color: #38bdf8;"></i>
+        </div>
+        <h2 class="analytic-stat-val" id="val-total-visits">0</h2>
+        <p class="analytic-stat-desc">Total visits logged locally</p>
+      </div>
+
+      <!-- stat card 2 -->
+      <div class="bento-analytic-card glass-card span-3">
+        <div class="analytic-stat-header">
+          <span>Today's Visits</span>
+          <i data-lucide="zap" style="color: #fbbf24;"></i>
+        </div>
+        <h2 class="analytic-stat-val" id="val-today-visits">0</h2>
+        <p class="analytic-stat-desc">Visits logged today (IST)</p>
+      </div>
+
+      <!-- stat card 3 -->
+      <div class="bento-analytic-card glass-card span-3">
+        <div class="analytic-stat-header">
+          <span>Unique Sessions</span>
+          <i data-lucide="users" style="color: #a855f7;"></i>
+        </div>
+        <h2 class="analytic-stat-val" id="val-unique-sessions">0</h2>
+        <p class="analytic-stat-desc">Distinct browser session IDs</p>
+      </div>
+
+      <!-- stat card 4 -->
+      <div class="bento-analytic-card glass-card span-3">
+        <div class="analytic-stat-header">
+          <span>Avg Session Duration</span>
+          <i data-lucide="clock" style="color: #4ade80;"></i>
+        </div>
+        <h2 class="analytic-stat-val" id="val-avg-duration" style="font-size: 1.95rem;">0s</h2>
+        <p class="analytic-stat-desc">Mean interaction duration</p>
+      </div>
+
+      <!-- chart 1: traffic over time -->
+      <div class="bento-analytic-card glass-card span-8 chart-container-card">
+        <h3 class="card-header-title"><i data-lucide="trending-up"></i> Traffic Over Time</h3>
+        <div class="chart-wrapper">
+          <canvas id="chart-traffic"></canvas>
+        </div>
+      </div>
+
+      <!-- chart 2: device profile -->
+      <div class="bento-analytic-card glass-card span-4 chart-container-card">
+        <h3 class="card-header-title"><i data-lucide="smartphone"></i> Device Distribution</h3>
+        <div class="chart-wrapper">
+          <canvas id="chart-devices"></canvas>
+        </div>
+      </div>
+
+      <!-- chart 3: top clicked repos -->
+      <div class="bento-analytic-card glass-card span-8 chart-container-card">
+        <h3 class="card-header-title"><i data-lucide="mouse-pointer-click"></i> Top Clicked Repositories</h3>
+        <div class="chart-wrapper">
+          <canvas id="chart-repos"></canvas>
+        </div>
+      </div>
+
+      <!-- chart 4: theme breakdown -->
+      <div class="bento-analytic-card glass-card span-4 chart-container-card">
+        <h3 class="card-header-title"><i data-lucide="palette"></i> Theme Popularity</h3>
+        <div class="chart-wrapper">
+          <canvas id="chart-themes"></canvas>
+        </div>
+      </div>
+
+      <!-- heatmap grid panel -->
+      <div class="bento-analytic-card glass-card span-12">
+        <h3 class="card-header-title"><i data-lucide="calendar-days"></i> Traffic Heatmap (Day of Week × Hour of Day IST)</h3>
+        <div class="heatmap-grid" id="heatmap-grid-container">
+          <!-- Row headings and grids injected dynamically -->
+        </div>
+        <div class="heatmap-legend">
+          <span>Fewer visits</span>
+          <div class="legend-box" style="background: rgba(99, 102, 241, 0.05)"></div>
+          <div class="legend-box" style="background: rgba(99, 102, 241, 0.25)"></div>
+          <div class="legend-box" style="background: rgba(99, 102, 241, 0.5)"></div>
+          <div class="legend-box" style="background: rgba(99, 102, 241, 0.75)"></div>
+          <div class="legend-box" style="background: rgba(99, 102, 241, 1)"></div>
+          <span>More visits</span>
+        </div>
+      </div>
+
+      <!-- feed table -->
+      <div class="bento-analytic-card glass-card span-12" style="min-height: 480px;">
+        <h3 class="card-header-title"><i data-lucide="activity"></i> Raw Analytics Stream (Last 50 Visits)</h3>
+        <div class="table-wrapper">
+          <table class="visit-table" id="visit-feed-table">
+            <thead>
+              <tr>
+                <th>Date &amp; Time (IST)</th>
+                <th>Theme</th>
+                <th>Device</th>
+                <th>Referrer</th>
+                <th>Clicked Repo</th>
+                <th>Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Row logs populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- admin danger zone -->
+      <div class="bento-analytic-card glass-card span-12" style="border: 1px solid rgba(239, 68, 68, 0.2); background: hsla(0, 84%, 5%, 0.15);">
+        <h3 class="card-header-title" style="color: var(--danger-color);"><i data-lucide="shield-alert"></i> Admin Danger Zone</h3>
+        <p class="analytic-stat-desc" style="margin-bottom: 1rem;">Permanently wipe all analytic logs, page views, and repo clicks recorded in local IndexedDB. This action is irreversible.</p>
+        <div>
+          <button class="btn-danger" id="clear-db-btn">
+            <i data-lucide="trash-2"></i>
+            <span>Wipe Local Analytics Data</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { ADMIN_CONFIG } from './config.js';
+
+    // IST Offsets: UTC+5:30
+    const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+
+    let chartTrafficInstance = null;
+    let chartDevicesInstance = null;
+    let chartReposInstance = null;
+    let chartThemesInstance = null;
+    let rawVisitsList = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Session verification & gate checks
+      const token = sessionStorage.getItem('admin_token');
+      if (!token) {
+        window.location.href = './index.html';
+        return;
+      }
+
+      try {
+        const userResp = await fetch('https://api.github.com/user', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        if (!userResp.ok) {
+          throw new Error('Github validation failed');
+        }
+        const user = await userResp.json();
+        if (user.login.toLowerCase() !== ADMIN_CONFIG.GITHUB_USERNAME.toLowerCase()) {
+          sessionStorage.removeItem('admin_token');
+          window.location.href = './index.html';
+          return;
+        }
+      } catch {
+        sessionStorage.removeItem('admin_token');
+        window.location.href = './index.html';
+        return;
+      }
+
+      // Successful auth - remove loading curtain
+      const loader = document.getElementById('loading-overlay');
+      loader.style.opacity = 0;
+      setTimeout(() => loader.remove(), 400);
+
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+
+      // Initialize UI State
+      initUIState();
+      
+      // Load Analytics
+      await reloadDashboardData();
+
+      // Bind events
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        sessionStorage.removeItem('admin_token');
+        window.location.href = './index.html';
+      });
+
+      document.getElementById('pause-btn').addEventListener('click', () => {
+        const currentlyPaused = localStorage.getItem('analytics_paused') === 'true';
+        localStorage.setItem('analytics_paused', (!currentlyPaused).toString());
+        initUIState();
+      });
+
+      document.getElementById('date-from').addEventListener('change', refreshDashboard);
+      document.getElementById('date-to').addEventListener('change', refreshDashboard);
+      document.getElementById('reset-filters').addEventListener('click', () => {
+        document.getElementById('date-from').value = '';
+        document.getElementById('date-to').value = '';
+        refreshDashboard();
+      });
+
+      document.getElementById('export-json-btn').addEventListener('click', exportJSON);
+      document.getElementById('export-csv-btn').addEventListener('click', exportCSV);
+      
+      document.getElementById('clear-db-btn').addEventListener('click', async () => {
+        if (confirm('⚠️ WARNING: Are you absolutely sure you want to delete all analytics records from IndexedDB? This cannot be undone.')) {
+          await clearIndexedDB();
+          await reloadDashboardData();
+          alert('Analytics database has been cleared.');
+        }
+      });
+    });
+
+    function initUIState() {
+      const isPaused = localStorage.getItem('analytics_paused') === 'true';
+      const text = document.getElementById('pause-btn-text');
+      const btn = document.getElementById('pause-btn');
+      
+      if (isPaused) {
+        text.textContent = 'Resume Tracking';
+        btn.querySelector('i').setAttribute('data-lucide', 'play-circle');
+      } else {
+        text.textContent = 'Pause Tracking';
+        btn.querySelector('i').setAttribute('data-lucide', 'pause-circle');
+      }
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    }
+
+    async function openAnalyticsDB() {
+      return new Promise((res, rej) => {
+        const req = indexedDB.open('analytics_db', 1);
+        req.onupgradeneeded = e => {
+          const db = e.target.result;
+          db.createObjectStore('visits', { keyPath: 'id', autoIncrement: true });
+        };
+        req.onsuccess = e => res(e.target.result);
+        req.onerror = e => rej(e.target.error);
+      });
+    }
+
+    async function clearIndexedDB() {
+      try {
+        const db = await openAnalyticsDB();
+        const tx = db.transaction('visits', 'readwrite');
+        tx.objectStore('visits').clear();
+        return new Promise(res => {
+          tx.oncomplete = () => res();
+        });
+      } catch (err) {
+        console.error('Failed to clear database:', err);
+      }
+    }
+
+    async function reloadDashboardData() {
+      try {
+        const db = await openAnalyticsDB();
+        const tx = db.transaction('visits', 'readonly');
+        const store = tx.objectStore('visits');
+        const req = store.getAll();
+        
+        req.onsuccess = () => {
+          rawVisitsList = req.result;
+          refreshDashboard();
+        };
+      } catch (err) {
+        console.error('Failed to fetch analytics:', err);
+      }
+    }
+
+    function refreshDashboard() {
+      const dateFromStr = document.getElementById('date-from').value;
+      const dateToStr = document.getElementById('date-to').value;
+
+      const dateFrom = dateFromStr ? new Date(dateFromStr + 'T00:00:00') : null;
+      const dateTo = dateToStr ? new Date(dateToStr + 'T23:59:59') : null;
+
+      // Filter visits by date range
+      const filtered = rawVisitsList.filter(v => {
+        const date = new Date(v.timestamp);
+        if (dateFrom && date < dateFrom) return false;
+        if (dateTo && date > dateTo) return false;
+        return true;
+      });
+
+      renderStats(filtered);
+      renderCharts(filtered);
+      renderHeatmap(filtered);
+      renderTableFeed(filtered);
+    }
+
+    function renderStats(visits) {
+      document.getElementById('val-total-visits').textContent = visits.length;
+
+      // Calculate today's visits (IST)
+      const nowIST = new Date(Date.now() + IST_OFFSET_MS);
+      const todayStr = nowIST.toISOString().split('T')[0];
+      const todayVisits = visits.filter(v => {
+        const vIST = new Date(new Date(v.timestamp).getTime() + IST_OFFSET_MS);
+        return vIST.toISOString().split('T')[0] === todayStr;
+      }).length;
+      document.getElementById('val-today-visits').textContent = todayVisits;
+
+      // Unique sessions
+      const sessions = new Set(visits.map(v => v.session_id));
+      document.getElementById('val-unique-sessions').textContent = sessions.size;
+
+      // Avg duration (filter out 0 duration cases or clicks that updated immediately)
+      const durationRecords = visits.filter(v => v.duration_ms && v.duration_ms > 0);
+      let avgSec = 0;
+      if (durationRecords.length) {
+        const totalMs = durationRecords.reduce((sum, v) => sum + v.duration_ms, 0);
+        avgSec = Math.round((totalMs / durationRecords.length) / 1000);
+      }
+      document.getElementById('val-avg-duration').textContent = `${avgSec}s`;
+    }
+
+    function renderCharts(visits) {
+      // 1. Traffic over time (Line chart)
+      const trafficData = {};
+      visits.forEach(v => {
+        const istDate = new Date(new Date(v.timestamp).getTime() + IST_OFFSET_MS);
+        const dayKey = istDate.toISOString().split('T')[0];
+        trafficData[dayKey] = (trafficData[dayKey] || 0) + 1;
+      });
+      
+      const sortedDays = Object.keys(trafficData).sort();
+      const trafficCounts = sortedDays.map(day => trafficData[day]);
+
+      if (chartTrafficInstance) chartTrafficInstance.destroy();
+      const ctxTraffic = document.getElementById('chart-traffic').getContext('2d');
+      chartTrafficInstance = new Chart(ctxTraffic, {
+        type: 'line',
+        data: {
+          labels: sortedDays.map(day => {
+            const parts = day.split('-');
+            return `${parts[1]}/${parts[2]}`;
+          }),
+          datasets: [{
+            label: 'Page Views',
+            data: trafficCounts,
+            borderColor: '#6d28d9',
+            backgroundColor: 'rgba(109, 40, 217, 0.1)',
+            fill: true,
+            tension: 0.35,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: '#9ca3af', font: { family: 'JetBrains Mono', size: 10 } } },
+            x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { family: 'JetBrains Mono', size: 10 } } }
+          }
+        }
+      });
+
+      // 2. Devices (Donut Chart)
+      const devices = { mobile: 0, desktop: 0 };
+      visits.forEach(v => {
+        if (v.device === 'mobile') devices.mobile++;
+        else devices.desktop++;
+      });
+
+      if (chartDevicesInstance) chartDevicesInstance.destroy();
+      const ctxDevices = document.getElementById('chart-devices').getContext('2d');
+      chartDevicesInstance = new Chart(ctxDevices, {
+        type: 'doughnut',
+        data: {
+          labels: ['Mobile', 'Desktop'],
+          datasets: [{
+            data: [devices.mobile, devices.desktop],
+            backgroundColor: ['#c084fc', '#38bdf8'],
+            borderColor: 'rgba(255,255,255,0.05)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#9ca3af', font: { family: 'IBM Plex Sans', weight: '600' } }
+            }
+          }
+        }
+      });
+
+      // 3. Top Clicked Repos (Horizontal Bar)
+      const repoClicks = {};
+      visits.forEach(v => {
+        if (v.repo_clicked) {
+          repoClicks[v.repo_clicked] = (repoClicks[v.repo_clicked] || 0) + 1;
+        }
+      });
+
+      const topRepos = Object.entries(repoClicks)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+
+      if (chartReposInstance) chartReposInstance.destroy();
+      const ctxRepos = document.getElementById('chart-repos').getContext('2d');
+      chartReposInstance = new Chart(ctxRepos, {
+        type: 'bar',
+        data: {
+          labels: topRepos.map(r => r[0].split('/')[1] || r[0]),
+          datasets: [{
+            data: topRepos.map(r => r[1]),
+            backgroundColor: '#38bdf8',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: '#9ca3af', font: { family: 'JetBrains Mono', size: 10 } } },
+            y: { grid: { display: false }, ticks: { color: '#9ca3af', font: { family: 'IBM Plex Sans', size: 11, weight: '600' } } }
+          }
+        }
+      });
+
+      // 4. Theme popularity (Pie Chart)
+      const themes = {};
+      visits.forEach(v => {
+        if (v.theme) {
+          themes[v.theme] = (themes[v.theme] || 0) + 1;
+        }
+      });
+
+      if (chartThemesInstance) chartThemesInstance.destroy();
+      const ctxThemes = document.getElementById('chart-themes').getContext('2d');
+      chartThemesInstance = new Chart(ctxThemes, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(themes).map(t => t.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')),
+          datasets: [{
+            data: Object.values(themes),
+            backgroundColor: [
+              '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#6366f1', '#14b8a6'
+            ],
+            borderColor: 'rgba(255,255,255,0.05)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#9ca3af', boxWidth: 12, font: { family: 'IBM Plex Sans', size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    function renderHeatmap(visits) {
+      const container = document.getElementById('heatmap-grid-container');
+      container.innerHTML = '';
+
+      // Grid: hour headers row
+      const spaceHeader = document.createElement('div');
+      container.appendChild(spaceHeader);
+
+      for (let h = 0; h < 24; h++) {
+        const hLabel = document.createElement('div');
+        hLabel.className = 'heatmap-header-hour';
+        hLabel.textContent = h.toString().padStart(2, '0');
+        container.appendChild(hLabel);
+      }
+
+      // Initialize hour matrices
+      // index: 0=Sun, 1=Mon, ..., 6=Sat
+      const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const matrix = Array.from({ length: 7 }, () => Array(24).fill(0));
+
+      visits.forEach(v => {
+        const istDate = new Date(new Date(v.timestamp).getTime() + IST_OFFSET_MS);
+        const dayIndex = istDate.getUTCDay();
+        const hour = istDate.getUTCHours();
+        matrix[dayIndex][hour]++;
+      });
+
+      // Find max count to normalize opacity
+      let maxCount = 0;
+      for (let d = 0; d < 7; d++) {
+        for (let h = 0; h < 24; h++) {
+          if (matrix[d][h] > maxCount) maxCount = matrix[d][h];
+        }
+      }
+      if (maxCount === 0) maxCount = 1;
+
+      // Inject cells
+      for (let d = 0; d < 7; d++) {
+        const dayLabel = document.createElement('div');
+        dayLabel.className = 'heatmap-day-label';
+        dayLabel.textContent = weekDays[d];
+        container.appendChild(dayLabel);
+
+        for (let h = 0; h < 24; h++) {
+          const cell = document.createElement('div');
+          cell.className = 'heatmap-cell';
+          const count = matrix[d][h];
+          cell.title = `${weekDays[d]} at ${h.toString().padStart(2, '0')}:00 IST: ${count} views`;
+          
+          if (count > 0) {
+            const opacity = count / maxCount;
+            // indigo base rgb(99, 102, 241)
+            cell.style.background = `rgba(99, 102, 241, ${0.1 + opacity * 0.9})`;
+            cell.style.borderColor = `rgba(99, 102, 241, ${0.2 + opacity * 0.5})`;
+            cell.style.borderStyle = 'solid';
+            cell.style.borderWidth = '1px';
+          }
+          container.appendChild(cell);
+        }
+      }
+    }
+
+    function renderTableFeed(visits) {
+      const tbody = document.querySelector('#visit-feed-table tbody');
+      tbody.innerHTML = '';
+
+      // Sort visits descending
+      const sorted = [...visits].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      const slice = sorted.slice(0, 50);
+
+      if (!slice.length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No records found in selected range.</td></tr>`;
+        return;
+      }
+
+      slice.forEach(v => {
+        const tr = document.createElement('tr');
+        
+        // Date formatting (IST)
+        const dateIST = new Date(new Date(v.timestamp).getTime() + IST_OFFSET_MS);
+        const dateFormatted = dateIST.toISOString().replace('T', ' ').slice(0, 19);
+
+        // Referrer cleanup
+        let referrer = v.referrer || 'direct';
+        if (referrer.startsWith('http')) {
+          try { referrer = new URL(referrer).hostname; } catch {}
+        }
+
+        // Duration formatting
+        let durationText = '0s';
+        if (v.duration_ms && v.duration_ms > 0) {
+          const sec = Math.round(v.duration_ms / 1000);
+          if (sec < 60) durationText = `${sec}s`;
+          else durationText = `${Math.floor(sec/60)}m ${sec%60}s`;
+        }
+
+        const themeName = v.theme ? v.theme.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Unknown';
+
+        tr.innerHTML = `
+          <td style="font-family: var(--font-mono); font-size: 0.77rem;">${dateFormatted}</td>
+          <td><span class="badge-theme">${themeName}</span></td>
+          <td><span class="badge-device ${v.device}">${v.device}</span></td>
+          <td style="color: var(--text-muted); font-size: 0.77rem;" title="${v.referrer}">${referrer}</td>
+          <td><strong style="color: #38bdf8;">${v.repo_clicked || '—'}</strong></td>
+          <td style="font-family: var(--font-mono); font-size: 0.77rem;">${durationText}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function exportJSON() {
+      if (!rawVisitsList.length) return alert('No data to export.');
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(rawVisitsList, null, 2));
+      const a = document.createElement('a');
+      a.href = dataStr;
+      a.download = `my_starred_repos_telemetry_${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function exportCSV() {
+      if (!rawVisitsList.length) return alert('No data to export.');
+      let csv = 'ID,Timestamp_UTC,Theme,Device,Referrer,Session_ID,Clicked_Repo,Duration_ms\n';
+      
+      rawVisitsList.forEach(v => {
+        const repo = v.repo_clicked ? `"${v.repo_clicked.replace(/"/g, '""')}"` : '';
+        const ref = v.referrer ? `"${v.referrer.replace(/"/g, '""')}"` : '';
+        csv += `${v.id},${v.timestamp},"${v.theme}",${v.device},${ref},${v.session_id},${repo},${v.duration_ms || 0}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `my_starred_repos_telemetry_${Date.now()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+  </script>
+</body>
+</html>
