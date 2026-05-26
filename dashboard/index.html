@@ -31,6 +31,25 @@
   <!-- Canonical Link -->
   <link rel="canonical" href="https://akashpriyadarshii.github.io/My-Starred-Repos/dashboard/index.html">
 
+  <!-- Structured Data / JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "mainEntity": {
+      "@type": "Person",
+      "name": "Akash Priyadarshi",
+      "alternateName": "AkashPriyadarshii",
+      "description": "Software engineer specializing in AI agents, web automation, and dev tools. Starred repositories tracker.",
+      "image": "https://akashpriyadarshii.github.io/My-Starred-Repos/dashboard/icons/icon-512.png",
+      "sameAs": [
+        "https://github.com/AkashPriyadarshii",
+        "https://twitter.com/AkashPriyadarshii"
+      ]
+    }
+  }
+  </script>
+
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#6d28d9">
@@ -456,6 +475,75 @@
     <span id="visit-count-today">0</span> today
     <span class="vc-divider">·</span>
     <span id="visit-count-total">0</span> total
+  </div>
+
+  <!-- Repository Details Bottom-Sheet Drawer -->
+  <div class="bottom-sheet-drawer hidden" id="repo-details-drawer" role="dialog" aria-modal="true">
+    <div class="drawer-handle-bar"><div class="drawer-handle"></div></div>
+    <div class="drawer-content glass-card">
+      <div class="drawer-header">
+        <div class="drawer-title-group">
+          <span class="drawer-rank">#1</span>
+          <h2 class="drawer-repo-name">owner/repo</h2>
+        </div>
+        <button class="drawer-close-btn" id="drawer-close-btn" aria-label="Close details">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="drawer-body">
+        <p class="drawer-description">Loading description...</p>
+        <div class="drawer-stats-grid">
+          <div class="drawer-stat-item"><i data-lucide="star"></i><span class="drawer-stars">-</span> Stars</div>
+          <div class="drawer-stat-item"><i data-lucide="git-fork"></i><span class="drawer-forks">-</span> Forks</div>
+          <div class="drawer-stat-item"><i data-lucide="alert-circle"></i><span class="drawer-issues">-</span> Issues</div>
+          <div class="drawer-stat-item"><i data-lucide="code-2"></i><span class="drawer-lang">-</span> Language</div>
+        </div>
+        <div class="drawer-section">
+          <h3><i data-lucide="file-text"></i> README Summary (AI-Generated)</h3>
+          <div class="drawer-readme-content">Loading...</div>
+        </div>
+        <div class="drawer-actions">
+          <a class="drawer-action-link" id="drawer-github-link" href="#" target="_blank" rel="noopener">
+            <span>View on GitHub</span>
+            <i data-lucide="external-link"></i>
+          </a>
+          <button class="drawer-action-btn" id="drawer-add-compare-btn">
+            <i data-lucide="plus"></i>
+            <span>Add to Compare</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-overlay hidden" id="drawer-overlay"></div>
+
+  <!-- Repository Comparison Tray -->
+  <div class="comparison-tray hidden" id="comparison-tray">
+    <div class="tray-header">
+      <h3><i data-lucide="columns"></i> Repository Comparison (<span id="compare-count">0</span>/3)</h3>
+      <div class="tray-header-actions">
+        <button class="tray-action-btn" id="compare-now-btn" disabled>Compare</button>
+        <button class="tray-close-btn" id="compare-close-btn"><i data-lucide="chevron-down"></i></button>
+      </div>
+    </div>
+    <div class="tray-items" id="compare-tray-items">
+      <!-- Added repos go here -->
+    </div>
+  </div>
+
+  <!-- Comparison Modal Window -->
+  <div class="comparison-modal hidden" id="comparison-modal" role="dialog" aria-modal="true">
+    <div class="comp-modal-card glass-card">
+      <div class="comp-modal-header">
+        <h2><i data-lucide="columns"></i> Side-by-Side Comparison</h2>
+        <button class="comp-modal-close-btn" id="comp-modal-close-btn"><i data-lucide="x"></i></button>
+      </div>
+      <div class="comp-table-container">
+        <table class="comp-table" id="comp-table">
+          <!-- Populated by JS -->
+        </table>
+      </div>
+    </div>
   </div>
 
   <!-- SEO Attribution Footer (Crawler-visible) -->

@@ -30,16 +30,18 @@ jobs:
           GITHUB_USERNAME: AkashPriyadarshii
         run: python fetch_stars.py
 
-      - name: Bump SW cache version
+      - name: Bump SW cache version & Bust browser cache
         run: |
           TS=$(date +%Y%m%d%H%M)
           sed -i "s/const CACHE_VERSION = .*/const CACHE_VERSION = 'v${TS}';/" dashboard/sw.js
+          sed -i "s/href=\"style.css[^\"]*\"/href=\"style.css?v=${TS}\"/" dashboard/index.html
+          sed -i "s/src=\"app.js[^\"]*\"/src=\"app.js?v=${TS}\"/" dashboard/index.html
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add repos_output.json CHANGELOG.md dashboard/sw.js ALL_STARRED_REPOS.md STARRED_ANALYSIS.md
+          git add repos_output.json CHANGELOG.md dashboard/sw.js dashboard/index.html ALL_STARRED_REPOS.md STARRED_ANALYSIS.md
           git diff --staged --quiet || git commit -m "[auto] Sync starred repos $(date -u +'%Y-%m-%d %H:%M UTC')"
           git push
 
@@ -54,3 +56,23 @@ jobs:
               title: `[auto] Sync failed ${new Date().toISOString()}`,
               body: `Check: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
             })
+
+      - name: Send Resend failure email
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+        run: |
+          if [ -n "$RESEND_API_KEY" ] && [ -n "$NOTIFICATION_EMAIL" ]; then
+            curl -X POST https://api.resend.com/emails \
+              -H "Authorization: Bearer $RESEND_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"from\": \"Starred Repos Sync Alert <onboarding@resend.dev>\",
+                \"to\": \"$NOTIFICATION_EMAIL\",
+                \"subject\": \"⚠️ Starred Repos Sync Failure\",
+                \"html\": \"<h3>Starred Repos Sync Failed</h3><p>The daily sync repository runner failed. Check logs at: https://github.com/AkashPriyadarshii/My-Starred-Repos/actions/runs/${{ github.run_id }}</p>\"
+              }"
+          else
+            echo "Resend credentials missing. Skipping failure email."
+          fi

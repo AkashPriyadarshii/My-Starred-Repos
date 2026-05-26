@@ -566,7 +566,7 @@
     let rawVisitsList = [];
     let autoRefreshTimer = null;
 
-    // ── Cloud data source (Supabase via Netlify function) ──────
+    // ── Cloud data source (Supabase via Vercel function) ──────
     const GET_ANALYTICS_URL = ADMIN_CONFIG.API_GET_ANALYTICS;
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -723,7 +723,7 @@
         live:          { text: '☁️ Live',            color: '#10b981', tip: 'Real-time data from Supabase (all devices)' },
         offline:       { text: '📴 Local only',      color: '#f59e0b', tip: 'Supabase unreachable — showing local IndexedDB data only' },
         error:         { text: '🔐 Auth Error',      color: '#ef4444', tip: 'Wrong ADMIN_SECRET — click Refresh and try again' },
-        unconfigured:  { text: '⚙️ Not configured', color: '#f59e0b', tip: 'Netlify env vars (SUPABASE_URL / SUPABASE_SERVICE_KEY / ADMIN_SECRET) not set yet' },
+        unconfigured:  { text: '⚙️ Not configured', color: '#f59e0b', tip: 'Vercel env vars (SUPABASE_URL / SUPABASE_SERVICE_KEY / ADMIN_SECRET) not set yet' },
         nosecret:      { text: '🔑 Need secret',    color: '#8b5cf6', tip: 'Click Refresh and enter your ADMIN_SECRET when prompted' }
       };
       const s = states[mode] || states.loading;
@@ -780,7 +780,7 @@
               sessionStorage.removeItem('admin_secret');
               cloudError = 'auth';
             } else if (res.status === 503) {
-              console.warn('[analytics] 503 — Netlify env vars not configured yet');
+              console.warn('[analytics] 503 — Vercel env vars not configured yet');
               cloudError = 'unconfigured';
             } else {
               console.warn('[analytics] Cloud error:', res.status);
@@ -831,7 +831,7 @@
     function promptAdminSecret() {
       const secret = prompt(
         '🔐 Enter your ADMIN_SECRET\n' +
-        '(Set this in Netlify → Site config → Environment variables)'
+        '(Set this in Vercel → Project Settings → Environment Variables)'
       );
       if (secret && secret.trim()) {
         sessionStorage.setItem('admin_secret', secret.trim());

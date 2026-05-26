@@ -102,6 +102,7 @@ module.exports = async function handler(req, res) {
       return res.status(503).json({ error: 'Analytics backend not configured' });
     }
 
+    const crypto = require('crypto');
     const {
       session_id,
       timestamp,
@@ -116,8 +117,23 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'session_id is required' });
     }
 
+    // Extract client IP address for anonymized visitor hashing
+    const rawIp = req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+    const clientIp = rawIp.split(',')[0].trim();
+    
+    // Generate daily-rotating salt
+    const saltSecret = process.env.SALT_SECRET || 'fallback_secret_salt_2026';
+    const dailyDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    const salt = `${saltSecret}-${dailyDate}`;
+    
+    // Compute 16-character IP signature hash
+    const ipHash = crypto.createHmac('sha256', salt).update(clientIp).digest('hex').slice(0, 16);
+    
+    // Append signature to session_id (format: clientSessionId.visitorSignature)
+    const secureSessionId = `${session_id.split('.')[0]}.${ipHash}`;
+
     const payload = {
-      session_id,
+      session_id: secureSessionId,
       timestamp: timestamp || new Date().toISOString(),
       theme,
       device,
