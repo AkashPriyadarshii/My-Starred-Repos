@@ -2024,6 +2024,12 @@ function getOrCreateSessionId() {
 
 async function logVisit() {
   if (localStorage.getItem('analytics_paused') === 'true') return;
+  
+  if (sessionStorage.getItem('visit_logged') === 'true') {
+    Logger.log('info', 'analytics', 'logVisit skipped (duplicate session)');
+    return;
+  }
+
   try {
     const db = await openAnalyticsDB();
     const tx = db.transaction('visits', 'readwrite');
@@ -2036,6 +2042,7 @@ async function logVisit() {
       session_id: getOrCreateSessionId(),
       duration_ms: 0
     });
+    sessionStorage.setItem('visit_logged', 'true');
     Logger.log('info', 'analytics', 'logVisit success');
   } catch(e) { Logger.log('error', 'analytics', 'logVisit failed', { error: e.message }); }
 }
