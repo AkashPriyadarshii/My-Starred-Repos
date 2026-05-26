@@ -4,6 +4,29 @@ Track history of starred and unstarred repositories.
 
 ---
 
+## [2026-05-26 06:50 IST]
+
+### ➕ Added
+- **[zen-browser/desktop](https://github.com/zen-browser/desktop)** (42,215⭐) - Welcome to a calmer internet
+- **[frida/frida](https://github.com/frida/frida)** (20,740⭐) - Clone this repo to build Frida
+- **[nmap/nmap](https://github.com/nmap/nmap)** (12,948⭐) - Nmap - the Network Mapper. Github mirror of official SVN repository.
+- **[abus-aikorea/voice-pro](https://github.com/abus-aikorea/voice-pro)** (10,201⭐) - Gradio WebUI for creators and developers, featuring key TTS (Edge-TTS, kokoro) and zero-shot Voice Cloning (E2 & F5-TTS, CosyVoice), with Whisper audio processing, YouTube download, Demucs vocal isolation, and multilingual translation.
+- **[the-open-agent/openagent](https://github.com/the-open-agent/openagent)** (4,947⭐) - ⚡️next-generation personal AI assistant powered by LLM, RAG and agent loops, supporting computer-use, browser-use and coding agent, demo: https://demo.openagentai.org
+- **[openagents-org/openagents](https://github.com/openagents-org/openagents)** (3,565⭐) - OpenAgents - AI Agent Networks for Open Collaboration
+- **[sleuthkit/autopsy](https://github.com/sleuthkit/autopsy)** (3,159⭐) - Autopsy® is a digital forensics platform and graphical interface to The Sleuth Kit® and other digital forensics tools. It can be used by law enforcement, military, and corporate examiners to investigate what happened on a computer. You can even use it to recover photos from your camera's memory card. 
+- **[unitedbyai/droidclaw](https://github.com/unitedbyai/droidclaw)** (1,496⭐) - turn old phones into ai agents - give it a goal in plain english. it reads the screen, thinks about what to do, taps and types via adb, and repeats until the job is done. 
+- **[abrignoni/ALEAPP](https://github.com/abrignoni/ALEAPP)** (822⭐) - Android Logs Events And Protobuf Parser
+- **[ssalggnikool/Navic](https://github.com/ssalggnikool/Navic)** (643⭐) - A modern Navidrome client for Android and iOS
+- **[ReviewStage/stage-cli](https://github.com/ReviewStage/stage-cli)** (200⭐) - A viewer for reviewing local code changes in small individual chapters. Works with any AI agent.
+- **[jackielfu/moodboard](https://github.com/jackielfu/moodboard)** (26⭐) - Moodboard is a drag-and-drop photo aggregator for curating visual inspiration.
+
+### ➖ Removed
+- paigely/Navic
+
+**Total Repositories:** 359 (+12 / -1)
+
+---
+
 ## [2026-05-25 20:16 IST]
 
 ### ➕ Added
