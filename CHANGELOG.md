@@ -4,6 +4,25 @@ Track history of starred and unstarred repositories.
 
 ---
 
+## [2026-05-27 07:17 IST]
+
+### ➕ Added
+- **[RikkaApps/Shizuku](https://github.com/RikkaApps/Shizuku)** (25,569⭐) - Using system APIs directly with adb/root privileges from normal apps through a Java process started with app_process.
+- **[rohitg00/ai-engineering-from-scratch](https://github.com/rohitg00/ai-engineering-from-scratch)** (20,810⭐) - Learn it. Build it. Ship it for others.
+- **[cosscom/coss](https://github.com/cosscom/coss)** (9,792⭐) - coss.com/ui is the official design system of Cal.com
+- **[francescopace/espectre](https://github.com/francescopace/espectre)** (7,446⭐) - 🛜 ESPectre 👻  - Motion detection system based on Wi-Fi spectre analysis (CSI), with Home Assistant integration.
+- **[piotrkulpinski/openalternative](https://github.com/piotrkulpinski/openalternative)** (6,106⭐) - Curated list of open source alternatives to proprietary software.
+- **[NVlabs/LongLive](https://github.com/NVlabs/LongLive)** (2,046⭐) - LongLive 2.0: Infra - Long Video Gen
+- **[AndroidCSOfficial/android-code-studio](https://github.com/AndroidCSOfficial/android-code-studio)** (895⭐) - Android Code Studio is an IDE for Android to develop full featured Android apps.
+- **[denoland/clawpatrol](https://github.com/denoland/clawpatrol)** (338⭐) - Security firewall for agents
+
+### ➖ Removed
+- jackielfu/moodboard
+
+**Total Repositories:** 372 (+8 / -1)
+
+---
+
 ## [2026-05-26 14:43 IST]
 
 ### ➕ Added
