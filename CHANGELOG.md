@@ -4,6 +4,16 @@ Track history of starred and unstarred repositories.
 
 ---
 
+## [2026-05-27 09:48 IST]
+
+### ➕ Added
+- **[bradautomates/claude-video](https://github.com/bradautomates/claude-video)** (1,435⭐) - Give Claude the ability to watch any video. /watch downloads, extracts frames, transcribes, hands it all to Claude.
+- **[microsoft/Lens](https://github.com/microsoft/Lens)** (161⭐) - Lens is a 3.8B-parameter text-to-image diffusion model that achieves quality competitive with and in several cases surpassing models like FLUX and SD3, while requiring significantly less training compute. Key ideas include maximizing data information density per batch and accelerating convergence. 
+
+**Total Repositories:** 374 (+2 / -0)
+
+---
+
 ## [2026-05-27 07:17 IST]
 
 ### ➕ Added
