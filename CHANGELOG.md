@@ -4,6 +4,19 @@ Track history of starred and unstarred repositories.
 
 ---
 
+## [2026-05-27 20:28 IST]
+
+### ➕ Added
+- **[anuraghazra/github-readme-stats](https://github.com/anuraghazra/github-readme-stats)** (79,529⭐) - :zap: Dynamically generated stats for your github readmes
+- **[twentyhq/twenty](https://github.com/twentyhq/twenty)** (47,150⭐) - The open alternative to Salesforce, designed for AI.
+- **[eugeneyan/applied-ml](https://github.com/eugeneyan/applied-ml)** (29,494⭐) - 📚 Papers & tech blogs by companies sharing their work on data science & machine learning in production.
+- **[shrimqy/Sefirah](https://github.com/shrimqy/Sefirah)** (2,442⭐) - Phone Link / KDE Connect alternative
+- **[silvertakana/worldwideview](https://github.com/silvertakana/worldwideview)** (1,326⭐) - None
+
+**Total Repositories:** 379 (+5 / -0)
+
+---
+
 ## [2026-05-27 09:48 IST]
 
 ### ➕ Added
