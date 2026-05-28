@@ -4,6 +4,18 @@ Track history of starred and unstarred repositories.
 
 ---
 
+## [2026-05-28 09:36 IST]
+
+### ➕ Added
+- **[DigitalPlatDev/FreeDomain](https://github.com/DigitalPlatDev/FreeDomain)** (169,385⭐) - DigitalPlat FreeDomain: Free Domain For Everyone
+- **[microsoft/markitdown](https://github.com/microsoft/markitdown)** (126,047⭐) - Python tool for converting files and office documents to Markdown.
+- **[prassanna-ravishankar/repowire](https://github.com/prassanna-ravishankar/repowire)** (133⭐) - Peer-to-peer mesh for AI coding agents - connect Claude Code, Opencode, Codex, Gemini CLI, Pi across projects
+- **[jake-stewart/tuie](https://github.com/jake-stewart/tuie)** (123⭐) - A rich, performant TUI library for Rust.
+
+**Total Repositories:** 383 (+4 / -0)
+
+---
+
 ## [2026-05-27 20:28 IST]
 
 ### ➕ Added
