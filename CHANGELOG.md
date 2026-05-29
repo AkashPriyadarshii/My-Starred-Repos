@@ -4,6 +4,17 @@ Track history of starred and unstarred repositories.
 
 ---
 
+## [2026-05-29 09:39 IST]
+
+### ➕ Added
+- **[oblador/hush](https://github.com/oblador/hush)** (3,647⭐) - 🤫 Noiseless Browsing – Content Blocker for Safari
+- **[Andyyyy64/whichllm](https://github.com/Andyyyy64/whichllm)** (2,028⭐) - Find the local LLM that actually runs and performs best on your hardware. Ranked by real, recency-aware benchmarks, not parameter count. One command, run it instantly.
+- **[hushhq/hush](https://github.com/hushhq/hush)** (290⭐) - End-to-end encrypted messaging, voice, and video. Entry point that orchestrates every public component.
+
+**Total Repositories:** 389 (+3 / -0)
+
+---
+
 ## [2026-05-28 19:22 IST]
 
 ### ➕ Added
