@@ -4,6 +4,20 @@ Track history of starred and unstarred repositories.
 
 ---
 
+## [2026-05-30 09:25 IST]
+
+### ➕ Added
+- **[walkinglabs/awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering)** (2,833⭐) - 🛠️ Awesome tools & guides for harness engineering.
+- **[FareedKhan-dev/train-llm-from-scratch](https://github.com/FareedKhan-dev/train-llm-from-scratch)** (1,864⭐) - A straightforward method for training your LLM, from downloading data to generating text.
+- **[Dominux/Pentaract](https://github.com/Dominux/Pentaract)** (1,807⭐) - Unlimited file cloud storage based on using Telegram API
+- **[BishopFox/GitGot](https://github.com/BishopFox/GitGot)** (1,562⭐) - Semi-automated, feedback-driven tool to rapidly search through troves of public data on GitHub for sensitive secrets.
+- **[ai-boost/awesome-harness-engineering](https://github.com/ai-boost/awesome-harness-engineering)** (1,352⭐) - Awesome list for AI agent harness engineering: tools, patterns, evals, memory, MCP, permissions, observability, and orchestration.
+- **[paywallpro/paywall-gallery](https://github.com/paywallpro/paywall-gallery)** (371⭐) - Top iOS app subscription paywall and onboarding gallery with screenshots, videos, pricing models, patterns, and monetization signals.
+
+**Total Repositories:** 395 (+6 / -0)
+
+---
+
 ## [2026-05-29 09:39 IST]
 
 ### ➕ Added
