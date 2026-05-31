@@ -4,6 +4,22 @@ Track history of starred and unstarred repositories.
 
 ---
 
+## [2026-05-31 09:50 IST]
+
+### ➕ Added
+- **[bradtraversy/design-resources-for-developers](https://github.com/bradtraversy/design-resources-for-developers)** (65,887⭐) - Curated list of design and UI resources from stock photos, web templates, CSS frameworks, UI libraries, tools and much more
+- **[tdlib/td](https://github.com/tdlib/td)** (8,816⭐) - Cross-platform library for building Telegram clients
+- **[tashfeenahmed/freellmapi](https://github.com/tashfeenahmed/freellmapi)** (6,554⭐) - OpenAI-compatible proxy that aggregates free-tier keys from ~14 AI providers with automatic failover. For personal experimentation only.
+- **[punitarani/fli](https://github.com/punitarani/fli)** (2,751⭐) - Google Flights MCP, CLI and Python Library
+- **[runkids/skillshare](https://github.com/runkids/skillshare)** (2,070⭐) - 📚 Sync skills across all AI CLI tools with one command and simplify team sharing. Supporting Codex, Claude Code, OpenClaw & more
+- **[jmaczan/tiny-vllm](https://github.com/jmaczan/tiny-vllm)** (591⭐) - Build your own high performance LLM inference engine in C++ and CUDA - a smaller version of vLLM
+- **[scanaislop/aislop](https://github.com/scanaislop/aislop)** (246⭐) - Catch the slop AI coding agents leave in your code: narrative comments, swallowed exceptions, as-any casts, dead code, oversized functions. 50+ rules across 7 languages (TypeScript, JavaScript, Python, Go, Rust, Ruby, PHP). Sub-second, deterministic, no LLM at runtime. MIT-licensed.
+- **[0xhimanshu/governor](https://github.com/0xhimanshu/governor)** (90⭐) - Claude Code usage governor: compact professional output, context slimming, tool-output filtering, telemetry, and drift guardrails.
+
+**Total Repositories:** 403 (+8 / -0)
+
+---
+
 ## [2026-05-30 09:25 IST]
 
 ### ➕ Added
