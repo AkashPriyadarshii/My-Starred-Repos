@@ -5,7 +5,7 @@
  * ============================================================================
  */
 
-const CACHE_VERSION = 'v202605310420';
+const CACHE_VERSION = 'v202606170324';
 const STATIC_CACHE  = `starred-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `starred-dynamic-${CACHE_VERSION}`;
 
