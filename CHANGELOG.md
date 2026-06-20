@@ -4,6 +4,18 @@ Track history of starred and unstarred repositories.
 
 ---
 
+## [2026-06-20 10:40 IST]
+
+### ➕ Added
+- **[Imbad0202/academic-research-skills](https://github.com/Imbad0202/academic-research-skills)** (32,948⭐) - Academic Research Skills for Claude Code: research → write → review → revise → finalize
+- **[assafelovic/gpt-researcher](https://github.com/assafelovic/gpt-researcher)** (27,795⭐) - An autonomous agent that conducts deep research on any data using any LLM providers
+- **[Waishnav/devspace](https://github.com/Waishnav/devspace)** (1,457⭐) - Turn ChatGPT into Codex
+- **[braincrew-lab/STORM-Research-Assistant](https://github.com/braincrew-lab/STORM-Research-Assistant)** (64⭐) - 🌪️ AI research assistant that generates Wikipedia-quality articles through multi-perspective analysis. Based on Stanford's STORM methodology.
+
+**Total Repositories:** 558 (+4 / -0)
+
+---
+
 ## [2026-06-19 13:23 IST]
 
 ### ➕ Added
