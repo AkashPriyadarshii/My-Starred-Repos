@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://my-starred-repos.vercel.app/sitemap.xml
