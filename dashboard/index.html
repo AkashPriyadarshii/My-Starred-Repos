@@ -1,37 +1,33 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" data-density="comfortable">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Auto-updating tracker and interactive dashboard for GitHub starred repos by Akash Priyadarshi. Glassmorphism SPA, PWA, 6 themes, particle canvas, daily GitHub Actions sync. Built by Akash Priyadarshi (@AkashPriyadarshii).">
-  <title>Akash Priyadarshi (@AkashPriyadarshii) | GitHub Starred Repos Dashboard</title>
+  <title>Starred Repos — Akash Priyadarshi</title>
 
-  <!-- SEO Meta -->
-  <meta name="keywords" content="AkashPriyadarshii, Akash Priyadarshi, GitHub starred repos, dashboard, glassmorphism, PWA, SPA, developer tools, portfolio, auto-updating starred repos, GitHub stars tracker">
+  <!-- SEO -->
+  <meta name="description" content="Curated GitHub starred repositories by Akash Priyadarshi. 386+ repos audited across AI agents, dev tools, systems, and web dev. Auto-updated daily.">
+  <meta name="keywords" content="GitHub starred repos, developer tools, AI agents, open source, Akash Priyadarshi, AkashPriyadarshii">
   <meta name="author" content="Akash Priyadarshi">
-  <meta name="robots" content="index, follow">
-  <meta name="language" content="English">
-  <meta name="creator" content="Akash Priyadarshi">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <link rel="canonical" href="https://akashpriyadarshii.github.io/My-Starred-Repos/">
 
-  <!-- Open Graph / Social Share -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://akashpriyadarshii.github.io/My-Starred-Repos/dashboard/index.html">
-  <meta property="og:title" content="Akash Priyadarshi | GitHub Starred Repos Dashboard">
-  <meta property="og:description" content="Auto-updating tracker and interactive dashboard for GitHub starred repos — glassmorphism SPA, PWA, 6 themes, particle canvas, daily GitHub Actions sync.">
+  <meta property="og:url" content="https://akashpriyadarshii.github.io/My-Starred-Repos/">
+  <meta property="og:title" content="Starred Repos — Akash Priyadarshi">
+  <meta property="og:description" content="Curated GitHub starred repositories. AI agents, dev tools, systems, web dev. Auto-updated daily.">
   <meta property="og:image" content="https://akashpriyadarshii.github.io/My-Starred-Repos/dashboard/icons/icon-512.png">
-  <meta property="og:site_name" content="Starred Repos Dashboard">
+  <meta property="og:site_name" content="Akash Priyadarshi">
 
-  <!-- Twitter Card -->
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Akash Priyadarshi | GitHub Starred Repos Dashboard">
-  <meta name="twitter:description" content="Auto-updating GitHub starred repos dashboard with glassmorphism design, PWA support, 6 premium themes, and particle effects.">
+  <meta name="twitter:title" content="Starred Repos — Akash Priyadarshi">
+  <meta name="twitter:description" content="Curated GitHub starred repositories. AI agents, dev tools, systems, web dev.">
   <meta name="twitter:image" content="https://akashpriyadarshii.github.io/My-Starred-Repos/dashboard/icons/icon-512.png">
-  <meta name="twitter:creator" content="@AkashPriyadarshii">
+  <meta name="twitter:creator" content="@Akash__ydv001">
 
-  <!-- Canonical Link -->
-  <link rel="canonical" href="https://akashpriyadarshii.github.io/My-Starred-Repos/dashboard/index.html">
-
-  <!-- Structured Data / JSON-LD -->
+  <!-- JSON-LD -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -40,519 +36,145 @@
       "@type": "Person",
       "name": "Akash Priyadarshi",
       "alternateName": "AkashPriyadarshii",
-      "description": "Software engineer specializing in AI agents, web automation, and dev tools. Starred repositories tracker.",
+      "description": "Self-taught developer and open-source builder. TypeScript, Python, Kotlin, Rust, Go.",
       "image": "https://akashpriyadarshii.github.io/My-Starred-Repos/dashboard/icons/icon-512.png",
       "sameAs": [
         "https://github.com/AkashPriyadarshii",
-        "https://twitter.com/AkashPriyadarshii"
+        "https://x.com/Akash__ydv001"
       ]
     }
   }
   </script>
 
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#6d28d9">
-  <meta name="mobile-web-app-capable" content="yes">
-  <!-- iOS Safari PWA -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="StarredRepos">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-192.png">
 
-  <!-- Modern Typography -->
+  <!-- Fonts: Geist (display) + JetBrains Mono (mono) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Doto:wght@100..900&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Approved CDN Dependencies -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-  <link rel="stylesheet" href="style.css?v=202606200510">
-  <script defer src="app.js?v=202606200510"></script>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="app.js"></script>
 </head>
 <body>
-  <!-- Constellation Canvas Background -->
-  <canvas id="canvas-particles"></canvas>
 
-  <!-- Deep Glass Background Elements -->
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-  <div class="blob blob-3"></div>
-
-  <div class="app-container">
+  <div class="page">
     <!-- Header -->
-    <header class="app-header">
-      <div class="header-profile">
-        <a href="https://github.com/AkashPriyadarshii" target="_blank" rel="noopener" class="avatar-link" id="profile-link" aria-label="Open GitHub profile for Akash Priyadarshi">
-          <div class="avatar-glow" id="avatar-container">
-            <img id="profile-avatar" src="" alt="Akash Priyadarshi GitHub avatar" class="profile-avatar-img hidden">
-            <svg class="avatar-icon" id="avatar-fallback-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path></svg>
-          </div>
-        </a>
-        <div class="profile-info">
-          <div class="profile-name-row">
-            <h1 id="profile-display-name">Akash Priyadarshi</h1>
-            <a href="https://github.com/AkashPriyadarshii" target="_blank" rel="noopener" class="github-profile-link" id="github-profile-link" title="View Akash Priyadarshi GitHub profile">
-              <i data-lucide="external-link"></i>
-            </a>
-          </div>
-          <p class="subtitle" id="profile-bio">Curated Starred Repositories &amp; Tech Stack</p>
-          <div class="profile-meta-row" id="profile-meta-row">
-            <!-- Populated by JS: location, company, blog, twitter -->
-          </div>
-          <div class="profile-stats-row" id="profile-stats-row">
-            <div class="profile-stat">
-              <span class="profile-stat-val" id="profile-followers">-</span>
-              <span class="profile-stat-label">Followers</span>
+    <header class="header">
+      <div class="header-content">
+        <div class="header-left">
+          <a href="https://github.com/AkashPriyadarshii" target="_blank" rel="noopener" class="avatar-link" aria-label="GitHub profile">
+            <img id="profile-avatar" src="" alt="Akash Priyadarshi" class="avatar-img hidden">
+            <div class="avatar-fallback" id="avatar-fallback">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path></svg>
             </div>
-            <div class="profile-stat-divider"></div>
-            <div class="profile-stat">
-              <span class="profile-stat-val" id="profile-following">-</span>
-              <span class="profile-stat-label">Following</span>
-            </div>
-            <div class="profile-stat-divider"></div>
-            <div class="profile-stat">
-              <span class="profile-stat-val" id="profile-public-repos">-</span>
-              <span class="profile-stat-label">Public Repos</span>
-            </div>
-          </div>
-          <div class="header-badges-row">
-            <div class="last-updated-badge">
-              <i data-lucide="clock"></i>
-              <span>Updated: <strong id="last-updated-time">-</strong></span>
-            </div>
-            <span class="profile-sync-badge" id="profile-sync-badge" title="Profile synced from GitHub API">
-              <i data-lucide="refresh-cw"></i>
-              <span>Live Sync</span>
-            </span>
-            <button class="share-btn" id="share-btn" title="Share this dashboard">
-              <i data-lucide="share-2"></i>
-              <span>Share</span>
-            </button>
+          </a>
+          <div class="header-text">
+            <h1 id="profile-name">Akash Priyadarshi</h1>
+            <p class="header-bio" id="profile-bio">Curated starred repositories</p>
           </div>
         </div>
-      </div>
-
-      <!-- Stats Container (Bento Grid) -->
-      <div class="stats-container" id="stats-container">
-        <div class="stat-card bento-card-stars">
-          <div class="bento-card-content">
-            <div class="stat-icon"><i data-lucide="star"></i></div>
-            <div class="stat-content">
-              <span class="stat-val" id="stat-total-stars">-</span>
-              <span class="stat-label">Total Stars</span>
+        <div class="header-right">
+          <div class="header-stats" id="header-stats">
+            <div class="stat">
+              <span class="stat-val" id="stat-followers">—</span>
+              <span class="stat-label">followers</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+              <span class="stat-val" id="stat-repos">—</span>
+              <span class="stat-label">repos</span>
             </div>
           </div>
-          <div class="bento-sparkline" id="stars-sparkline"></div>
-        </div>
-        <div class="stat-card bento-card-repos">
-          <div class="stat-icon"><i data-lucide="folder-open"></i></div>
-          <div class="stat-content">
-            <span class="stat-val" id="stat-total-repos">-</span>
-            <span class="stat-label">Repositories</span>
-          </div>
-        </div>
-        <div class="stat-card bento-card-lang">
-          <div class="stat-icon"><i data-lucide="code"></i></div>
-          <div class="stat-content">
-            <span class="stat-val" id="stat-top-lang">-</span>
-            <span class="stat-label">Top Language</span>
-          </div>
-        </div>
-        <div class="stat-card bento-card-avg">
-          <div class="stat-icon"><i data-lucide="award"></i></div>
-          <div class="stat-content">
-            <span class="stat-val" id="stat-avg-stars">-</span>
-            <span class="stat-label">Avg Stars</span>
-          </div>
+          <span class="sync-badge" id="sync-badge" title="Profile synced live from GitHub API">
+            <span class="sync-dot"></span>
+            <span id="sync-label">syncing</span>
+          </span>
         </div>
       </div>
     </header>
 
-    <!-- Main Navigation -->
-    <nav class="app-nav" role="navigation" aria-label="Main tabs">
-      <button class="nav-tab active" data-tab="grid" id="nav-grid" aria-label="Repository Grid view">
-        <i data-lucide="grid"></i>
-        <span>Repository Grid</span>
-      </button>
-      <button class="nav-tab" data-tab="stats" id="nav-stats" aria-label="Language Statistics view">
-        <i data-lucide="bar-chart-2"></i>
-        <span>Lang Stats</span>
-      </button>
-      <button class="nav-tab" data-tab="changelog" id="nav-changelog" aria-label="Changelog History view">
-        <i data-lucide="history"></i>
-        <span>Changelog</span>
-      </button>
-    </nav>
+    <!-- Metrics -->
+    <section class="metrics" id="metrics">
+      <div class="metric-card">
+        <span class="metric-val" id="metric-stars">—</span>
+        <span class="metric-label">total stars tracked</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-val" id="metric-repos">—</span>
+        <span class="metric-label">starred repos</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-val" id="metric-lang">—</span>
+        <span class="metric-label">top language</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-val" id="metric-avg">—</span>
+        <span class="metric-label">avg stars</span>
+      </div>
+    </section>
 
-    <!-- Content Sections -->
-    <main class="app-main">
-
-      <!-- Repository Grid View -->
-      <section id="view-grid" class="tab-view active" role="main" aria-label="Repository list">
-        <!-- Control Panel -->
-        <div class="control-panel">
-          <div class="search-bar">
-            <i data-lucide="search" class="search-icon"></i>
-            <input type="text" id="search-input" placeholder="Search repos, descriptions, readme summaries..." autocomplete="off" aria-label="Search repositories">
-            <button id="search-clear-btn" class="search-clear-btn hidden" aria-label="Clear search">
-              <i data-lucide="x"></i>
-            </button>
-          </div>
-
-          <div class="filters-row">
-            <div class="category-tabs" id="category-tabs" role="tablist" aria-label="Filter by category">
-              <button class="category-tab active" data-category="all" role="tab" aria-selected="true">All</button>
-              <button class="category-tab" data-category="ai agents" role="tab" aria-selected="false">AI Agents</button>
-              <button class="category-tab" data-category="web automation" role="tab" aria-selected="false">Automation</button>
-              <button class="category-tab" data-category="llm infrastructure" role="tab" aria-selected="false">LLM &amp; RAG</button>
-              <button class="category-tab" data-category="dev tools" role="tab" aria-selected="false">Dev Tools</button>
-              <button class="category-tab" data-category="infrastructure" role="tab" aria-selected="false">Infrastructure</button>
-            </div>
-
-            <div class="filter-controls-right">
-              <!-- Language Filter -->
-              <div class="lang-filter-wrap">
-                <i data-lucide="code-2"></i>
-                <select id="lang-filter-select" aria-label="Filter by language">
-                  <option value="all">All Languages</option>
-                </select>
-              </div>
-
-              <div class="sort-selector">
-                <i data-lucide="arrow-up-down"></i>
-                <select id="sort-select" aria-label="Sort repositories">
-                  <option value="stars-desc">Stars: High to Low</option>
-                  <option value="stars-asc">Stars: Low to High</option>
-                  <option value="rank-asc">Rank: 1 to N</option>
-                  <option value="name-asc">Name: A to Z</option>
-                  <option value="updated-desc">Recently Updated</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Result count badge -->
-          <div class="result-count-row">
-            <span class="result-count-badge" id="result-count-badge">Loading...</span>
-            <span class="keyboard-hint">Press <kbd>/</kbd> to search &nbsp;·&nbsp; <kbd>?</kbd> for shortcuts</span>
-          </div>
+    <!-- Controls -->
+    <section class="controls">
+      <div class="controls-top">
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="search" placeholder="Search repos..." autocomplete="off" aria-label="Search repositories">
+          <button id="search-clear" class="search-clear hidden" aria-label="Clear search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
         </div>
-
-        <!-- Repository Cards Grid -->
-        <div class="cards-grid" id="cards-grid" role="list" aria-label="Repository cards">
-          <div class="loading-state">
-            <div class="spinner"></div>
-            <p>Fetching curated database...</p>
-          </div>
+        <div class="controls-right">
+          <select id="lang-filter" aria-label="Filter by language">
+            <option value="all">All languages</option>
+          </select>
+          <select id="sort" aria-label="Sort repositories">
+            <option value="stars-desc">Stars: high to low</option>
+            <option value="stars-asc">Stars: low to high</option>
+            <option value="name-asc">Name: A to Z</option>
+            <option value="updated-desc">Recently updated</option>
+          </select>
         </div>
-      </section>
-
-      <!-- Language Stats View -->
-      <section id="view-stats" class="tab-view" role="main" aria-label="Language statistics">
-        <div class="stats-page glass-card">
-          <div class="stats-page-header">
-            <h2><i data-lucide="bar-chart-2"></i> Language Breakdown</h2>
-            <p class="stats-subtitle">Distribution of programming languages across all starred repositories</p>
-          </div>
-          <div id="lang-chart-container" class="lang-chart-container">
-            <div class="loading-state">
-              <div class="spinner"></div>
-              <p>Calculating language distribution...</p>
-            </div>
-          </div>
+      </div>
+      <div class="controls-bottom">
+        <div class="category-tabs" id="category-tabs" role="tablist" aria-label="Filter by category">
+          <button class="cat-tab active" data-cat="all" role="tab" aria-selected="true">All</button>
         </div>
-      </section>
+        <span class="result-count" id="result-count"></span>
+      </div>
+    </section>
 
-      <!-- Changelog View -->
-      <section id="view-changelog" class="tab-view" role="main" aria-label="Changelog history">
-        <div class="changelog-container glass-card">
-          <div class="changelog-markdown" id="changelog-markdown">
-            <div class="loading-state">
-              <div class="spinner"></div>
-              <p>Compiling updates history...</p>
-            </div>
-          </div>
-        </div>
-      </section>
+    <!-- Grid -->
+    <main class="grid" id="grid" role="list" aria-label="Repository cards">
+      <div class="skeleton-grid" id="skeleton">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
     </main>
+
+    <!-- Empty state -->
+    <div class="empty-state hidden" id="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <p>No repos match your filters</p>
+      <button class="empty-reset" id="empty-reset">Clear filters</button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <p class="footer-text">Built by <a href="https://github.com/AkashPriyadarshii" target="_blank" rel="noopener">Akash Priyadarshi</a>. Auto-updated daily via GitHub Actions.</p>
+        <div class="visitor-counter" id="visitor-counter">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="visitor-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          <span id="visitor-count">—</span> views
+        </div>
+      </div>
+    </footer>
   </div>
-
-  <!-- Settings FAB -->
-  <button class="settings-toggle-btn" id="settings-toggle-btn" title="Open Dashboard Settings" aria-label="Open settings">
-    <i data-lucide="settings"></i>
-  </button>
-
-  <!-- Scroll to Top FAB -->
-  <button class="scroll-top-btn hidden" id="scroll-top-btn" title="Scroll to top" aria-label="Scroll to top">
-    <i data-lucide="chevron-up"></i>
-  </button>
-
-  <!-- PWA Install FAB -->
-  <button class="install-btn hidden" id="install-btn" title="Install app" aria-label="Install this app">
-    <i data-lucide="download"></i>
-    <span>Install App</span>
-  </button>
-
-  <!-- Settings Drawer / Sidebar -->
-  <aside class="settings-drawer" id="settings-drawer" aria-label="Settings panel">
-    <div class="settings-header">
-      <h2>Dashboard Settings</h2>
-      <button class="settings-close-btn" id="settings-close-btn" aria-label="Close settings">
-        <i data-lucide="x"></i>
-      </button>
-    </div>
-
-    <div class="settings-body">
-      <!-- Experience Mode (Simplified vs Tech) -->
-      <div class="setting-group">
-        <label class="setting-label"><i data-lucide="user"></i> Experience Mode</label>
-        <div class="density-buttons">
-          <button class="density-btn active" data-usermode="developer" id="mode-dev" title="Full developer portfolio view">Developer</button>
-          <button class="density-btn" data-usermode="non-tech" id="mode-simple" title="Simplified layout for non-technical users">Simple</button>
-        </div>
-      </div>
-
-      <!-- Device Profile Preset (High vs Low-End) -->
-      <div class="setting-group">
-        <label class="setting-label"><i data-lucide="cpu"></i> Device Profile</label>
-        <div class="density-buttons">
-          <button class="density-btn active" data-deviceprofile="high" id="profile-high" title="Enable particles, 3D tilts and glows">High Performance</button>
-          <button class="density-btn" data-deviceprofile="low" id="profile-low" title="Battery saver, disable heavy background effects">Low-End / Battery Saver</button>
-        </div>
-      </div>
-
-      <!-- Layout Density -->
-      <div class="setting-group">
-        <label class="setting-label">Layout Density</label>
-        <div class="density-buttons">
-          <button class="density-btn active" data-density="comfortable">Comfortable</button>
-          <button class="density-btn" data-density="compact">Compact</button>
-        </div>
-      </div>
-
-      <!-- Theme Selector -->
-      <div class="setting-group">
-        <label class="setting-label">Theme</label>
-        <div class="theme-grid">
-          <button class="theme-btn active" data-theme="tokyo-midnight" id="theme-tokyo" title="Tokyo Midnight theme">
-             Tokyo Midnight
-          </button>
-          <button class="theme-btn" data-theme="cyber-punk" id="theme-cyber" title="Cyber Punk theme">
-             Cyber Punk
-          </button>
-          <button class="theme-btn" data-theme="nordic-frost" id="theme-nordic" title="Nordic Frost theme">
-             Nordic Frost
-          </button>
-          <button class="theme-btn" data-theme="forest-tech" id="theme-forest" title="Forest Tech theme">
-             Forest Tech
-          </button>
-          <button class="theme-btn" data-theme="aura-light" id="theme-aura" title="Aura Light theme">
-             Aura Light
-          </button>
-          <button class="theme-btn" data-theme="amoled-pure" id="theme-amoled" title="AMOLED Pure theme">
-              AMOLED Pure
-          </button>
-          <button class="theme-btn" data-theme="nothing-design" id="theme-nothing" title="Nothing Design theme">
-              Nothing Design
-          </button>
-        </div>
-      </div>
-
-      <!-- Max Visible Cards -->
-      <div class="setting-group">
-        <div class="setting-label-row">
-          <label class="setting-label">Max Visible Cards</label>
-          <span class="setting-val-badge" id="max-cards-badge">All</span>
-        </div>
-        <input type="range" id="max-cards-slider" min="10" max="350" step="10" value="350" aria-label="Max visible cards">
-      </div>
-
-      <!-- Font Size -->
-      <div class="setting-group">
-        <div class="setting-label-row">
-          <label class="setting-label">Font Size</label>
-          <span class="setting-val-badge" id="font-size-badge">Medium</span>
-        </div>
-        <div class="density-buttons">
-          <button class="density-btn" data-fontsize="small" id="font-small">Small</button>
-          <button class="density-btn active" data-fontsize="medium" id="font-medium">Medium</button>
-          <button class="density-btn" data-fontsize="large" id="font-large">Large</button>
-        </div>
-      </div>
-
-      <!-- Visual Effects -->
-      <div class="setting-group">
-        <label class="setting-label"><i data-lucide="sparkles"></i> Visual Effects</label>
-        <div class="effects-toggles">
-          <label class="effects-toggle-label">
-            <input type="checkbox" id="effects-particles-checkbox" checked>
-            <span>Particle Canvas</span>
-          </label>
-          <label class="effects-toggle-label">
-            <input type="checkbox" id="effects-tilt-checkbox" checked>
-            <span>3D Card Tilt</span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Analytics -->
-      <div class="setting-group">
-        <label class="setting-label"><i data-lucide="bar-chart-2"></i> Analytics</label>
-        <div class="effects-toggles">
-          <label class="effects-toggle-label">
-            <input type="checkbox" id="analytics-enabled-checkbox" checked>
-            <span>Track visits &amp; clicks</span>
-          </label>
-        </div>
-        <a href="/My-Starred-Repos/admin/" class="settings-link-btn" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.75rem; text-decoration: none; padding: 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); font-size: 0.8rem; font-weight: 600; color: var(--text-color); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--border-glow)';" onmouseout="this.style.borderColor='var(--border-color)';">
-          Admin Dashboard →
-        </a>
-      </div>
-
-      <!-- AppLogger Circular Buffer Console -->
-      <div class="setting-group log-group">
-        <div class="setting-label-row">
-          <label class="setting-label"><i data-lucide="terminal"></i> System Diagnostics</label>
-          <button class="log-download-btn" id="log-download-btn" title="Download Logs JSON" aria-label="Download diagnostic logs">
-            <i data-lucide="download"></i>
-          </button>
-        </div>
-        <div class="log-console" id="log-console" aria-live="polite"></div>
-      </div>
-    </div>
-
-    <!-- Settings Drawer Apply Changes Button -->
-    <div class="settings-footer">
-      <button class="apply-settings-btn" id="apply-settings-btn" aria-label="Apply dashboard changes">
-        <i data-lucide="check"></i>
-        <span>Apply Changes</span>
-      </button>
-    </div>
-  </aside>
-
-  <div class="settings-overlay" id="settings-overlay" aria-hidden="true"></div>
-
-  <!-- Keyboard Shortcuts Modal -->
-  <div class="shortcuts-modal hidden" id="shortcuts-modal" role="dialog" aria-label="Keyboard shortcuts" aria-modal="true">
-    <div class="shortcuts-card glass-card">
-      <div class="shortcuts-header">
-        <h2><i data-lucide="keyboard"></i> Keyboard Shortcuts</h2>
-        <button class="shortcuts-close-btn" id="shortcuts-close-btn" aria-label="Close shortcuts modal">
-          <i data-lucide="x"></i>
-        </button>
-      </div>
-      <div class="shortcuts-body">
-        <div class="shortcut-row"><kbd>/</kbd> <span>Focus search</span></div>
-        <div class="shortcut-row"><kbd>Esc</kbd> <span>Clear search / close modal</span></div>
-        <div class="shortcut-row"><kbd>G</kbd> <span>Go to Grid view</span></div>
-        <div class="shortcut-row"><kbd>S</kbd> <span>Go to Stats view</span></div>
-        <div class="shortcut-row"><kbd>C</kbd> <span>Go to Changelog view</span></div>
-        <div class="shortcut-row"><kbd>?</kbd> <span>Show this shortcuts panel</span></div>
-        <div class="shortcut-row"><kbd>T</kbd> <span>Scroll to top</span></div>
-        <div class="shortcut-row"><kbd>I</kbd> <span>Install PWA</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toast Notification -->
-  <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
-
-  <!-- Error Overlay -->
-  <div class="error-overlay hidden" id="error-overlay" role="alert">
-    <div class="error-card glass-card">
-      <i data-lucide="alert-triangle" class="error-icon"></i>
-      <h2>Initialization Failed</h2>
-      <p id="error-message">Unable to fetch or parse repository configuration database.</p>
-      <button class="retry-btn" onclick="window.location.reload();">Retry Loading</button>
-    </div>
-  </div>
-
-  <!-- Floating Visit Counter Widget -->
-  <div class="visit-counter-widget" id="visit-counter-widget">
-    <span id="visit-count-today">0</span> today
-    <span class="vc-divider">·</span>
-    <span id="visit-count-total">0</span> total
-  </div>
-
-  <!-- Repository Details Bottom-Sheet Drawer -->
-  <div class="bottom-sheet-drawer hidden" id="repo-details-drawer" role="dialog" aria-modal="true">
-    <div class="drawer-handle-bar"><div class="drawer-handle"></div></div>
-    <div class="drawer-content glass-card">
-      <div class="drawer-header">
-        <div class="drawer-title-group">
-          <span class="drawer-rank">#1</span>
-          <h2 class="drawer-repo-name">owner/repo</h2>
-        </div>
-        <button class="drawer-close-btn" id="drawer-close-btn" aria-label="Close details">
-          <i data-lucide="x"></i>
-        </button>
-      </div>
-      <div class="drawer-body">
-        <p class="drawer-description">Loading description...</p>
-        <div class="drawer-stats-grid">
-          <div class="drawer-stat-item"><i data-lucide="star"></i><span class="drawer-stars">-</span> Stars</div>
-          <div class="drawer-stat-item"><i data-lucide="git-fork"></i><span class="drawer-forks">-</span> Forks</div>
-          <div class="drawer-stat-item"><i data-lucide="alert-circle"></i><span class="drawer-issues">-</span> Issues</div>
-          <div class="drawer-stat-item"><i data-lucide="code-2"></i><span class="drawer-lang">-</span> Language</div>
-        </div>
-        <div class="drawer-section">
-          <h3><i data-lucide="file-text"></i> README Summary (AI-Generated)</h3>
-          <div class="drawer-readme-content">Loading...</div>
-        </div>
-        <div class="drawer-actions">
-          <a class="drawer-action-link" id="drawer-github-link" href="#" target="_blank" rel="noopener">
-            <span>View on GitHub</span>
-            <i data-lucide="external-link"></i>
-          </a>
-          <button class="drawer-action-btn" id="drawer-add-compare-btn">
-            <i data-lucide="plus"></i>
-            <span>Add to Compare</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="drawer-overlay hidden" id="drawer-overlay"></div>
-
-  <!-- Repository Comparison Tray -->
-  <div class="comparison-tray hidden" id="comparison-tray">
-    <div class="tray-header">
-      <h3><i data-lucide="columns"></i> Repository Comparison (<span id="compare-count">0</span>/3)</h3>
-      <div class="tray-header-actions">
-        <button class="tray-action-btn" id="compare-now-btn" disabled>Compare</button>
-        <button class="tray-close-btn" id="compare-close-btn"><i data-lucide="chevron-down"></i></button>
-      </div>
-    </div>
-    <div class="tray-items" id="compare-tray-items">
-      <!-- Added repos go here -->
-    </div>
-  </div>
-
-  <!-- Comparison Modal Window -->
-  <div class="comparison-modal hidden" id="comparison-modal" role="dialog" aria-modal="true">
-    <div class="comp-modal-card glass-card">
-      <div class="comp-modal-header">
-        <h2><i data-lucide="columns"></i> Side-by-Side Comparison</h2>
-        <button class="comp-modal-close-btn" id="comp-modal-close-btn"><i data-lucide="x"></i></button>
-      </div>
-      <div class="comp-table-container">
-        <table class="comp-table" id="comp-table">
-          <!-- Populated by JS -->
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- SEO Attribution Footer (Crawler-visible) -->
-  <footer style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;">
-    <p>Built by Akash Priyadarshi (@AkashPriyadarshii) | GitHub Starred Repos Dashboard | Auto-Updating Starred Repos Tracker with Glassmorphism Design, PWA Support, and Daily GitHub Actions Sync</p>
-  </footer>
 
 </body>
 </html>
