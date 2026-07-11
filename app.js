@@ -52,7 +52,7 @@ async function fetchData() {
   try {
     const cb = `?t=${Date.now()}`;
     const [reposRes, changelogRes] = await Promise.allSettled([
-      fetch(`../repos_output.json${cb}`),
+      fetch(`./repos_output.json${cb}`),
     ]);
 
     if (reposRes.status !== 'fulfilled' || !reposRes.value.ok) {
