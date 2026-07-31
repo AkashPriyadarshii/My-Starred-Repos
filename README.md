@@ -2,7 +2,7 @@
 
 A curated dashboard of 550+ GitHub starred repositories — categorized, searchable, and auto-updated daily.
 
-**[Live Site](https://my-starred-repos.vercel.app/dashboard/)**
+**[Live Site](https://my-starred-repos.vercel.app/)**
 
 ## What
 
@@ -39,7 +39,7 @@ No backend. No database. No auth. Just a site.
 
 ```bash
 python3 -m http.server 8080
-# open http://localhost:8080/dashboard/
+# open http://localhost:8080/
 ```
 
 ## License
