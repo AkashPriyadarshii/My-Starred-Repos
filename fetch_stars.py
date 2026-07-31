@@ -52,7 +52,7 @@ def categorize(name, desc, lang):
 
 def main():
     token = os.environ.get('GITHUB_TOKEN', '').strip()
-    username = os.environ.get('GITHUB_USERNAME', 'AkashPriyadarshii').strip()
+    username = os.environ.get('GITHUB_USERNAME', '').strip() or 'AkashPriyadarshii'
 
     if not token:
         print("Error: GITHUB_TOKEN not set")

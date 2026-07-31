@@ -51,15 +51,13 @@ function highlight(text, q) {
 async function fetchData() {
   try {
     const cb = `?t=${Date.now()}`;
-    const [reposRes, changelogRes] = await Promise.allSettled([
-      fetch(`./repos_output.json${cb}`),
-    ]);
+    const reposRes = await fetch(`./repos_output.json${cb}`);
 
-    if (reposRes.status !== 'fulfilled' || !reposRes.value.ok) {
+    if (!reposRes.ok) {
       throw new Error('Failed to load repos_output.json');
     }
 
-    const data = await reposRes.value.json();
+    const data = await reposRes.json();
     state.repos = data.repos || [];
 
     renderProfile(data.profile);
@@ -170,7 +168,6 @@ function buildLangFilter() {
 // ── Grid ────────────────────────────────────────────────────────────────────
 
 function renderGrid() {
-  const t0 = performance.now();
   const grid = $('grid');
   grid.innerHTML = '';
 
@@ -218,7 +215,7 @@ function renderGrid() {
 
     card.innerHTML = `
       <div class="card-top">
-        <a href="${repo.url}" target="_blank" rel="noopener" class="card-name">${highlight(repo.full_name, state.query)}</a>
+        <a href="${escapeHTML(repo.url)}" target="_blank" rel="noopener" class="card-name">${highlight(repo.full_name, state.query)}</a>
         <div class="card-stars">
           <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
           ${formatNum(repo.stars)}
@@ -231,7 +228,7 @@ function renderGrid() {
           ${repo.language || 'N/A'}
         </span>
         <span class="card-date">${formatDate(repo.last_updated)}</span>
-        <a href="${repo.url}" target="_blank" rel="noopener" class="card-link" onclick="event.stopPropagation()">
+        <a href="${escapeHTML(repo.url)}" target="_blank" rel="noopener" class="card-link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
         </a>
       </div>
@@ -241,7 +238,6 @@ function renderGrid() {
   });
 
   grid.appendChild(frag);
-  console.log(`Rendered ${filtered.length} cards in ${Math.round(performance.now() - t0)}ms`);
 }
 
 // ── Events ──────────────────────────────────────────────────────────────────
