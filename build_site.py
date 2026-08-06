@@ -18,7 +18,7 @@ LLMS = ROOT / "llms.txt"
 LLMS_FULL = ROOT / "llms-full.txt"
 
 CSS_V = "2"
-JS_V = "2"
+JS_V = "3"
 
 GITHUB = "https://github.com/AkashPriyadarshii"
 
