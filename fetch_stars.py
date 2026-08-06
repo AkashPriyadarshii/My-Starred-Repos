@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, sys, requests, json, time
+import os, re, sys, requests, json, time
 from datetime import datetime, timezone, timedelta
 
 IST = timezone(timedelta(hours=5, minutes=30))
@@ -43,10 +43,18 @@ def safe_get(session, url, timeout=10, retries=3):
             time.sleep(3)
     return session.get(url, timeout=timeout)
 
+# Short keywords ("ai", "git", "cli"...) need word boundaries — bare "ai"
+# must not match "gmail"/"main"/"container". Longer keywords keep substring
+# matching so compounds still work ("ioredis" -> redis, "playwright-ai" -> playwright).
+_CAT_RE = {
+    cat: [re.compile(rf"\b{re.escape(w)}\b" if len(w) < 4 else re.escape(w)) for w in words]
+    for cat, words in CATEGORIES.items()
+}
+
 def categorize(name, desc, lang):
     text = f"{name} {desc or ''} {lang or ''}".lower()
-    for cat, words in CATEGORIES.items():
-        if any(w in text for w in words):
+    for cat, pats in _CAT_RE.items():
+        if any(p.search(text) for p in pats):
             return cat
     return 'Other'
 
