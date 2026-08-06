@@ -2,6 +2,23 @@
 
 All notable changes to My-Starred-Repos. Auto-generated daily sync commits are summarized; only meaningful changes are itemized.
 
+## [2026-08-06] — SEO rebuild + taxonomy fix
+
+### Fixed
+- **Taxonomy bug**: `fetch_stars.py` matched keywords as bare substrings — `"ai"` matched "gmail", "main", "container", "perform", etc., dumping ~120 repos into **AI & Agents**. Word-boundary matching for short keywords (len < 4) fixes it; longer keywords keep substring matching so compounds still work. AI & Agents 500 → 465.
+- **JSON-LD `about` bug**: `itemListElement` was serialized to a string (double-encoded) → schema invalid. Now a real array of 20 items.
+
+### Added
+- **`build_site.py`** — generates `index.html` from data: accurate title/count, real `dateModified` from `generated_at`, ItemList JSON-LD, cache-busted assets, baked crawlable content section (non-JS crawlers + AI answer engines get real content)
+- **`llms.txt`** + **`llms-full.txt`** — for LLM/answer-engine consumption
+- **`generate_assets.py`** — real brand icons (`icons/icon-192.png`, `icon-512.png`), `favicon.ico` (multi-size), 1200×630 `og-image.png`, `manifest.webmanifest`. Matches `style.css` design tokens (bg `#09090b`, accent `#34d399`)
+
+### Infrastructure
+- **`sync-stars.yml`**: runs `build_site.py` after fetch; commits `index.html` + `llms.txt` + `llms-full.txt` alongside data
+- **`vercel.json`**: long-lived `immutable` cache for `/icons/*`, 1-day cache for `llms.txt`/`llms-full.txt`, short cache for `manifest.webmanifest`
+
+---
+
 ## [2026-07-31] — Fix stale site + cleanup
 
 **Shipped**: `6374b6a`

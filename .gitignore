@@ -168,3 +168,8 @@ generate_markdown.py
 # Local setup files (run in Supabase SQL Editor, not needed in repo)
 supabase_schema.sql
 .vercel
+
+.vercel
+
+# Local SEO audit output — never commit
+*-audit/
