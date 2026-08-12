@@ -21,8 +21,8 @@
 - [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl): The context API to search, scrape, and interact with the web at scale
 - [open-webui/open-webui](https://github.com/open-webui/open-webui): User-friendly AI Interface (Supports Ollama, OpenAI API,
 - [Genymobile/scrcpy](https://github.com/Genymobile/scrcpy): Display and control your Android device
-- [x1xhlol/system-prompts-and-models-of-ai-tools](https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools): FULL Augment Code, Claude Code, Cluely, CodeBuddy, Comet, Cursor, Devin AI, Juni
 - [msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents): A complete AI agency at your fingertips
+- [x1xhlol/system-prompts-and-models-of-ai-tools](https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools): FULL Augment Code, Claude Code, Cluely, CodeBuddy, Comet, Cursor, Devin AI, Juni
 - [anthropics/claude-code](https://github.com/anthropics/claude-code): Claude Code is an agentic coding tool that lives in your terminal, understands y
 - [Shubhamsaboo/awesome-llm-apps](https://github.com/Shubhamsaboo/awesome-llm-apps): 100+ AI Agents, Agent Skills and RAG Apps
 - [garrytan/gstack](https://github.com/garrytan/gstack): Use Garry Tan's exact Claude Code setup: 23 opinionated tools that serve as CEO,
@@ -39,19 +39,19 @@
 - [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail): Makes your AI agent think like the laziest senior dev in the room
 - [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman): 🪨 why use many token when few token do trick
 - [karpathy/autoresearch](https://github.com/karpathy/autoresearch): AI agents running research on single-GPU nanochat training automatically
-- [opencv/opencv](https://github.com/opencv/opencv): Open Source Computer Vision Library
 - [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem): Persistent Context Across Sessions for Every Agent –  Captures everything your a
-- [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers): Model Context Protocol Servers
+- [opencv/opencv](https://github.com/opencv/opencv): Open Source Computer Vision Library
 - [ruvnet/RuView](https://github.com/ruvnet/RuView): π RuView turns commodity WiFi signals into real-time spatial intelligence, vital
+- [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers): Model Context Protocol Servers
 - [Stirling-Tools/Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF): #1 PDF Application on GitHub that lets you edit PDFs on any device anywhere
 - [sherlock-project/sherlock](https://github.com/sherlock-project/sherlock): Hunt down social media accounts by username across social networks
 - [vllm-project/vllm](https://github.com/vllm-project/vllm): A high-throughput and memory-efficient inference and serving engine for LLMs
 - [zed-industries/zed](https://github.com/zed-industries/zed): Code at the speed of thought – Zed is a high-performance, multiplayer code edito
+- [earendil-works/pi](https://github.com/earendil-works/pi): AI agent toolkit: unified LLM API, agent loop, TUI, coding agent CLI
 - [syncthing/syncthing](https://github.com/syncthing/syncthing): Open Source Continuous File Synchronization
 - [PaddlePaddle/PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR): Turn any PDF or image document into structured data for your AI
 - [localsend/localsend](https://github.com/localsend/localsend): An open-source cross-platform alternative to AirDrop
 - [infiniflow/ragflow](https://github.com/infiniflow/ragflow): RAGFlow is a leading open-source Retrieval-Augmented Generation (RAG) engine tha
-- [earendil-works/pi](https://github.com/earendil-works/pi): AI agent toolkit: unified LLM API, agent loop, TUI, coding agent CLI
 - [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills): Production-grade engineering skills for AI coding agents
 - [odysseus-dev/odysseus](https://github.com/odysseus-dev/odysseus): Self-hosted AI workspace
 - [nexu-io/open-design](https://github.com/nexu-io/open-design): 🎨 The open-source Claude Design alternative
@@ -66,8 +66,8 @@
 - [unclecode/crawl4ai](https://github.com/unclecode/crawl4ai): 🚀🤖 Crawl4AI: Open-source LLM Friendly Web Crawler & Scraper
 - [dair-ai/Prompt-Engineering-Guide](https://github.com/dair-ai/Prompt-Engineering-Guide): 🐙 Guides, papers, lessons, notebooks and resources for prompt engineering, conte
 - [paperclipai/paperclip](https://github.com/paperclipai/paperclip): The open-source app everyone uses to manage agents at work
-- [ocornut/imgui](https://github.com/ocornut/imgui): Dear ImGui: Bloat-free Graphical User interface for C++ with minimal dependencie
 - [rtk-ai/rtk](https://github.com/rtk-ai/rtk): CLI proxy that reduces LLM token consumption by 60-90% on common dev commands
+- [ocornut/imgui](https://github.com/ocornut/imgui): Dear ImGui: Bloat-free Graphical User interface for C++ with minimal dependencie
 - [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill): Taste-Skill
 - [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code): Bash is all you need
 - [D4Vinci/Scrapling](https://github.com/D4Vinci/Scrapling): 🕷️ An adaptive Web Scraping framework that handles everything from a single requ
@@ -93,15 +93,15 @@
 - [virattt/ai-hedge-fund](https://github.com/virattt/ai-hedge-fund): An AI Hedge Fund Team
 - [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks): Extracted system prompts from Anthropic
 - [karpathy/nanoGPT](https://github.com/karpathy/nanoGPT): The simplest, fastest repository for training/finetuning medium-sized GPTs
-- [pocketbase/pocketbase](https://github.com/pocketbase/pocketbase): Open Source realtime backend in 1 file
 - [upstash/context7](https://github.com/upstash/context7): Context7 Platform -- Up-to-date code documentation for LLMs and AI code editors
+- [pocketbase/pocketbase](https://github.com/pocketbase/pocketbase): Open Source realtime backend in 1 file
 - [tw93/Pake](https://github.com/tw93/Pake): 🤱🏻 Turn any webpage into a desktop app with one command
 - [coollabsio/coolify](https://github.com/coollabsio/coolify): An open-source, self-hostable PaaS alternative to Vercel, Heroku & Netlify that 
 - [ghostty-org/ghostty](https://github.com/ghostty-org/ghostty): 👻 Ghostty is a fast, feature-rich, and cross-platform terminal emulator that use
 - [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch): A lightning-fast search engine API bringing AI-powered hybrid search to your sit
 - [rust-unofficial/awesome-rust](https://github.com/rust-unofficial/awesome-rust): A curated list of Rust code and resources
 - [penpot/penpot](https://github.com/penpot/penpot): Penpot: The open-source design platform for Product teams that need scalable col
-- [mvanhorn/last30days-skill](https://github.com/mvanhorn/last30days-skill): AI agent skill that researches any topic across Reddit, X, YouTube, HN, Polymark
 - [pbakaus/impeccable](https://github.com/pbakaus/impeccable): The design language that makes your AI harness better at design
+- [mvanhorn/last30days-skill](https://github.com/mvanhorn/last30days-skill): AI agent skill that researches any topic across Reddit, X, YouTube, HN, Polymark
 - [deepfakes/faceswap](https://github.com/deepfakes/faceswap): Deepfakes Software For All
 - [ageitgey/face_recognition](https://github.com/ageitgey/face_recognition): The world's simplest facial recognition api for Python and the command line
