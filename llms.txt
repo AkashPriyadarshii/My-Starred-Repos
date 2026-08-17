@@ -5,6 +5,7 @@
 
 ## Repositories
 
+- [sindresorhus/awesome](https://github.com/sindresorhus/awesome): 😎 Awesome lists about all kinds of interesting topics
 - [public-apis/public-apis](https://github.com/public-apis/public-apis): A collective list of free APIs
 - [donnemartin/system-design-primer](https://github.com/donnemartin/system-design-primer): Learn how to design large-scale systems
 - [obra/superpowers](https://github.com/obra/superpowers): An agentic skills framework & software development methodology that works
@@ -25,12 +26,12 @@
 - [x1xhlol/system-prompts-and-models-of-ai-tools](https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools): FULL Augment Code, Claude Code, Cluely, CodeBuddy, Comet, Cursor, Devin AI, Juni
 - [anthropics/claude-code](https://github.com/anthropics/claude-code): Claude Code is an agentic coding tool that lives in your terminal, understands y
 - [Shubhamsaboo/awesome-llm-apps](https://github.com/Shubhamsaboo/awesome-llm-apps): 100+ AI Agents, Agent Skills and RAG Apps
+- [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness): DeepSeek Harness: Everything is a Plugin
 - [github/spec-kit](https://github.com/github/spec-kit): 💫 Toolkit to help you get started with Spec-Driven Development
 - [garrytan/gstack](https://github.com/garrytan/gstack): Use Garry Tan's exact Claude Code setup: 23 opinionated tools that serve as CEO,
 - [farion1231/cc-switch](https://github.com/farion1231/cc-switch): A cross-platform desktop All-in-One assistant for Claude Code, Codex, OpenCode, 
 - [Hack-with-Github/Awesome-Hacking](https://github.com/Hack-with-Github/Awesome-Hacking): A collection of various awesome lists for hackers, pentesters and security resea
 - [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill): An AI skill that provides design intelligence for building professional UI/UX ac
-- [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness): DeepSeek Harness: Everything is a Plugin
 - [browser-use/browser-use](https://github.com/browser-use/browser-use): 🌐 Make websites accessible for AI agents
 - [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md): A collection of DESIGN
 - [denoland/deno](https://github.com/denoland/deno): A modern runtime for JavaScript and TypeScript
@@ -44,17 +45,17 @@
 - [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem): Persistent Context Across Sessions for Every Agent –  Captures everything your a
 - [opencv/opencv](https://github.com/opencv/opencv): Open Source Computer Vision Library
 - [ruvnet/RuView](https://github.com/ruvnet/RuView): π RuView turns commodity WiFi signals into real-time spatial intelligence, vital
-- [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers): Model Context Protocol Servers
 - [sherlock-project/sherlock](https://github.com/sherlock-project/sherlock): Hunt down social media accounts by username across social networks
 - [Stirling-Tools/Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF): #1 PDF Application on GitHub that lets you edit PDFs on any device anywhere
+- [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers): Model Context Protocol Servers
 - [vllm-project/vllm](https://github.com/vllm-project/vllm): A high-throughput and memory-efficient inference and serving engine for LLMs
 - [zed-industries/zed](https://github.com/zed-industries/zed): Code at the speed of thought – Zed is a high-performance, multiplayer code edito
 - [infiniflow/ragflow](https://github.com/infiniflow/ragflow): RAGFlow is a leading open-source Retrieval-Augmented Generation (RAG) engine tha
 - [localsend/localsend](https://github.com/localsend/localsend): An open-source cross-platform alternative to AirDrop
+- [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills): Production-grade engineering skills for AI coding agents
 - [PaddlePaddle/PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR): Turn any PDF or image document into structured data for your AI
 - [syncthing/syncthing](https://github.com/syncthing/syncthing): Open Source Continuous File Synchronization
-- [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills): Production-grade engineering skills for AI coding agents
-- [nexu-io/open-design](https://github.com/nexu-io/open-design): 🎨 The open-source Claude Design alternative
+- [nexu-io/open-design](https://github.com/nexu-io/open-design): 🎨 Best DeepSeek Harness Design Plugin
 - [odysseus-dev/odysseus](https://github.com/odysseus-dev/odysseus): Self-hosted AI workspace
 - [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands): 🙌 OpenHands: AI-Driven Development
 - [OpenCut-app/OpenCut](https://github.com/OpenCut-app/OpenCut): The open-source CapCut alternative
@@ -71,8 +72,8 @@
 - [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill): Taste-Skill
 - [rtk-ai/rtk](https://github.com/rtk-ai/rtk): CLI proxy that reduces LLM token consumption by 60-90% on common dev commands
 - [ocornut/imgui](https://github.com/ocornut/imgui): Dear ImGui: Bloat-free Graphical User interface for C++ with minimal dependencie
-- [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code): Bash is all you need
 - [D4Vinci/Scrapling](https://github.com/D4Vinci/Scrapling): 🕷️ An adaptive Web Scraping framework that handles everything from a single requ
+- [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code): Bash is all you need
 - [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills): A curated list of awesome Claude Skills, resources, and tools for customizing Cl
 - [Panniantong/Agent-Reach](https://github.com/Panniantong/Agent-Reach): Give your AI agent eyes to see the entire internet
 - [daytonaio/daytona](https://github.com/daytonaio/daytona): Daytona is a Secure and Elastic Infrastructure for Running AI-Generated Code
@@ -86,6 +87,7 @@
 - [bradtraversy/design-resources-for-developers](https://github.com/bradtraversy/design-resources-for-developers): Curated list of design and UI resources from stock photos, web templates, CSS fr
 - [colbymchenry/codegraph](https://github.com/colbymchenry/codegraph): Pre-indexed code knowledge graph, auto syncs on code changes, for Claude Code, C
 - [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom): Compress tool outputs, logs, files, and RAG chunks before they reach the LLM
+- [alacritty/alacritty](https://github.com/alacritty/alacritty): A cross-platform, OpenGL terminal emulator
 - [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec): Spec-driven development (SDD) for AI coding assistants
 - [gsd-build/get-shit-done](https://github.com/gsd-build/get-shit-done): A light-weight and powerful meta-prompting, context engineering and spec-driven 
 - [shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice): from vibe coding to agentic engineering
@@ -103,5 +105,3 @@
 - [pbakaus/impeccable](https://github.com/pbakaus/impeccable): The design language that makes your AI harness better at design
 - [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch): A lightning-fast search engine API bringing AI-powered hybrid search to your sit
 - [rust-unofficial/awesome-rust](https://github.com/rust-unofficial/awesome-rust): A curated list of Rust code and resources
-- [penpot/penpot](https://github.com/penpot/penpot): Penpot: The open-source design platform for Product teams that need scalable col
-- [mvanhorn/last30days-skill](https://github.com/mvanhorn/last30days-skill): AI agent skill that researches any topic across Reddit, X, YouTube, HN, Polymark
