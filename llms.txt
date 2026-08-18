@@ -20,13 +20,13 @@
 - [anthropics/skills](https://github.com/anthropics/skills): Public repository for Agent Skills
 - [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl): The context API to search, scrape, and interact with the web at scale
 - [f/prompts.chat](https://github.com/f/prompts.chat): f
+- [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness): DeepSeek Harness: Everything is a Plugin
 - [open-webui/open-webui](https://github.com/open-webui/open-webui): User-friendly AI Interface (Supports Ollama, OpenAI API,
 - [Genymobile/scrcpy](https://github.com/Genymobile/scrcpy): Display and control your Android device
 - [msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents): A complete AI agency at your fingertips
 - [x1xhlol/system-prompts-and-models-of-ai-tools](https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools): FULL Augment Code, Claude Code, Cluely, CodeBuddy, Comet, Cursor, Devin AI, Juni
 - [anthropics/claude-code](https://github.com/anthropics/claude-code): Claude Code is an agentic coding tool that lives in your terminal, understands y
 - [Shubhamsaboo/awesome-llm-apps](https://github.com/Shubhamsaboo/awesome-llm-apps): 100+ AI Agents, Agent Skills and RAG Apps
-- [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness): DeepSeek Harness: Everything is a Plugin
 - [github/spec-kit](https://github.com/github/spec-kit): 💫 Toolkit to help you get started with Spec-Driven Development
 - [garrytan/gstack](https://github.com/garrytan/gstack): Use Garry Tan's exact Claude Code setup: 23 opinionated tools that serve as CEO,
 - [farion1231/cc-switch](https://github.com/farion1231/cc-switch): A cross-platform desktop All-in-One assistant for Claude Code, Codex, OpenCode, 
@@ -43,22 +43,22 @@
 - [karpathy/autoresearch](https://github.com/karpathy/autoresearch): AI agents running research on single-GPU nanochat training automatically
 - [earendil-works/pi](https://github.com/earendil-works/pi): AI agent toolkit: unified LLM API, agent loop, TUI, coding agent CLI
 - [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem): Persistent Context Across Sessions for Every Agent –  Captures everything your a
-- [opencv/opencv](https://github.com/opencv/opencv): Open Source Computer Vision Library
 - [ruvnet/RuView](https://github.com/ruvnet/RuView): π RuView turns commodity WiFi signals into real-time spatial intelligence, vital
-- [sherlock-project/sherlock](https://github.com/sherlock-project/sherlock): Hunt down social media accounts by username across social networks
+- [opencv/opencv](https://github.com/opencv/opencv): Open Source Computer Vision Library
 - [Stirling-Tools/Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF): #1 PDF Application on GitHub that lets you edit PDFs on any device anywhere
+- [sherlock-project/sherlock](https://github.com/sherlock-project/sherlock): Hunt down social media accounts by username across social networks
 - [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers): Model Context Protocol Servers
 - [vllm-project/vllm](https://github.com/vllm-project/vllm): A high-throughput and memory-efficient inference and serving engine for LLMs
 - [zed-industries/zed](https://github.com/zed-industries/zed): Code at the speed of thought – Zed is a high-performance, multiplayer code edito
 - [infiniflow/ragflow](https://github.com/infiniflow/ragflow): RAGFlow is a leading open-source Retrieval-Augmented Generation (RAG) engine tha
 - [localsend/localsend](https://github.com/localsend/localsend): An open-source cross-platform alternative to AirDrop
+- [nexu-io/open-design](https://github.com/nexu-io/open-design): 🎨 Best DeepSeek Harness Design Plugin
 - [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills): Production-grade engineering skills for AI coding agents
 - [PaddlePaddle/PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR): Turn any PDF or image document into structured data for your AI
 - [syncthing/syncthing](https://github.com/syncthing/syncthing): Open Source Continuous File Synchronization
-- [nexu-io/open-design](https://github.com/nexu-io/open-design): 🎨 Best DeepSeek Harness Design Plugin
 - [odysseus-dev/odysseus](https://github.com/odysseus-dev/odysseus): Self-hosted AI workspace
-- [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands): 🙌 OpenHands: AI-Driven Development
 - [OpenCut-app/OpenCut](https://github.com/OpenCut-app/OpenCut): The open-source CapCut alternative
+- [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands): 🙌 OpenHands: AI-Driven Development
 - [Developer-Y/cs-video-courses](https://github.com/Developer-Y/cs-video-courses): List of Computer Science courses with video lectures
 - [koala73/worldmonitor](https://github.com/koala73/worldmonitor): Real-time global intelligence dashboard
 - [lobehub/lobehub](https://github.com/lobehub/lobehub): 🤯 LobeHub is your Chief Agent Operator, organizing your agents into 7×24 operati
@@ -76,23 +76,23 @@
 - [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code): Bash is all you need
 - [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills): A curated list of awesome Claude Skills, resources, and tools for customizing Cl
 - [Panniantong/Agent-Reach](https://github.com/Panniantong/Agent-Reach): Give your AI agent eyes to see the entire internet
-- [daytonaio/daytona](https://github.com/daytonaio/daytona): Daytona is a Secure and Elastic Infrastructure for Running AI-Generated Code
 - [OpenBB-finance/OpenBB](https://github.com/OpenBB-finance/OpenBB): Open Data Platform for analysts, quants and AI agents
+- [daytonaio/daytona](https://github.com/daytonaio/daytona): Daytona is a Secure and Elastic Infrastructure for Running AI-Generated Code
 - [toeverything/AFFiNE](https://github.com/toeverything/AFFiNE): There can be more than Notion and Miro
 - [666ghj/MiroFish](https://github.com/666ghj/MiroFish): A Simple and Universal Swarm Intelligence Engine, Predicting Anything
-- [openinterpreter/openinterpreter](https://github.com/openinterpreter/openinterpreter): A coding agent for open models like Kimi K3
 - [ruvnet/ruflo](https://github.com/ruvnet/ruflo): 🌊 The original agent meta-harness
+- [openinterpreter/openinterpreter](https://github.com/openinterpreter/openinterpreter): A coding agent for open models like Kimi K3
 - [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent): omo/lazycodex: The coding agent for tokenmaxxers;the one and only agent harness 
 - [BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep): ripgrep recursively searches directories for a regex pattern while respecting yo
-- [bradtraversy/design-resources-for-developers](https://github.com/bradtraversy/design-resources-for-developers): Curated list of design and UI resources from stock photos, web templates, CSS fr
 - [colbymchenry/codegraph](https://github.com/colbymchenry/codegraph): Pre-indexed code knowledge graph, auto syncs on code changes, for Claude Code, C
 - [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom): Compress tool outputs, logs, files, and RAG chunks before they reach the LLM
+- [bradtraversy/design-resources-for-developers](https://github.com/bradtraversy/design-resources-for-developers): Curated list of design and UI resources from stock photos, web templates, CSS fr
 - [alacritty/alacritty](https://github.com/alacritty/alacritty): A cross-platform, OpenGL terminal emulator
 - [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec): Spec-driven development (SDD) for AI coding assistants
 - [gsd-build/get-shit-done](https://github.com/gsd-build/get-shit-done): A light-weight and powerful meta-prompting, context engineering and spec-driven 
+- [santifer/career-ops](https://github.com/santifer/career-ops): Open-source AI job search: scan job portals, evaluate listings with a structured
 - [shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice): from vibe coding to agentic engineering
 - [ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts): Iconic font aggregator, collection, & patcher
-- [santifer/career-ops](https://github.com/santifer/career-ops): Open-source AI job search: scan job portals, evaluate listings with a structured
 - [mem0ai/mem0](https://github.com/mem0ai/mem0): Universal memory layer for AI Agents
 - [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks): Extracted system prompts from Anthropic
 - [virattt/ai-hedge-fund](https://github.com/virattt/ai-hedge-fund): An AI Hedge Fund Team
@@ -101,7 +101,7 @@
 - [tw93/Pake](https://github.com/tw93/Pake): 🤱🏻 Turn any webpage into a desktop app with one command
 - [pocketbase/pocketbase](https://github.com/pocketbase/pocketbase): Open Source realtime backend in 1 file
 - [coollabsio/coolify](https://github.com/coollabsio/coolify): An open-source, self-hostable PaaS alternative to Vercel, Heroku & Netlify that 
-- [ghostty-org/ghostty](https://github.com/ghostty-org/ghostty): 👻 Ghostty is a fast, feature-rich, and cross-platform terminal emulator that use
 - [pbakaus/impeccable](https://github.com/pbakaus/impeccable): The design language that makes your AI harness better at design
+- [ghostty-org/ghostty](https://github.com/ghostty-org/ghostty): 👻 Ghostty is a fast, feature-rich, and cross-platform terminal emulator that use
 - [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch): A lightning-fast search engine API bringing AI-powered hybrid search to your sit
 - [rust-unofficial/awesome-rust](https://github.com/rust-unofficial/awesome-rust): A curated list of Rust code and resources
