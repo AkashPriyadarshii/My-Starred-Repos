@@ -38,13 +38,19 @@ jobs:
       - name: Build site
         run: python build_site.py
 
+      # Cross-repo write (profile README) needs a PAT — GITHUB_TOKEN is scoped
+      # to this repo only and gets 403 on AkashPriyadarshii/AkashPriyadarshii.
+      # continue-on-error: badge update must never block the data sync commit.
       - name: Update profile README badge count
+        if: ${{ secrets.PROFILE_PAT != '' }}
+        continue-on-error: true
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PROFILE_PAT }}
         run: |
           COUNT=$(python -c "import json; print(json.load(open('repos_output.json'))['total_repos'])")
           gh api repos/AkashPriyadarshii/AkashPriyadarshii/contents/README.md --jq '.content' | base64 -d > /tmp/profile_readme.md
           sed -i "s|dashboard of [0-9]* curated starred repos|dashboard of ${COUNT} curated starred repos|" /tmp/profile_readme.md
+          grep -q "dashboard of ${COUNT} curated starred repos" /tmp/profile_readme.md || { echo "badge pattern not found in profile README"; exit 1; }
           SHA=$(gh api repos/AkashPriyadarshii/AkashPriyadarshii/contents/README.md --jq '.sha')
           gh api -X PUT repos/AkashPriyadarshii/AkashPriyadarshii/contents/README.md \
             -f message="[auto] update starred count to ${COUNT}" \
