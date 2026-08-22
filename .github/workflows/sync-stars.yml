@@ -42,11 +42,11 @@ jobs:
       # to this repo only and gets 403 on AkashPriyadarshii/AkashPriyadarshii.
       # continue-on-error: badge update must never block the data sync commit.
       - name: Update profile README badge count
-        if: ${{ secrets.PROFILE_PAT != '' }}
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.PROFILE_PAT }}
         run: |
+          if [ -z "$GH_TOKEN" ]; then echo "PROFILE_PAT not set, skipping badge update"; exit 0; fi
           COUNT=$(python -c "import json; print(json.load(open('repos_output.json'))['total_repos'])")
           gh api repos/AkashPriyadarshii/AkashPriyadarshii/contents/README.md --jq '.content' | base64 -d > /tmp/profile_readme.md
           sed -i "s|dashboard of [0-9]* curated starred repos|dashboard of ${COUNT} curated starred repos|" /tmp/profile_readme.md
