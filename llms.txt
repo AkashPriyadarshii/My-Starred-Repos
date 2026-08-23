@@ -5,7 +5,7 @@
 
 ## Repositories
 
-- [sindresorhus/awesome](https://github.com/sindresorhus/awesome): 😎 Awesome lists about all kinds of interesting topics
+- [sindresorhus/awesome](https://github.com/sindresorhus/awesome): 😎 Awesome lists about all kinds of interesting topics [NOTE: Pull requests are t
 - [public-apis/public-apis](https://github.com/public-apis/public-apis): A collective list of free APIs
 - [donnemartin/system-design-primer](https://github.com/donnemartin/system-design-primer): Learn how to design large-scale systems
 - [practical-tutorials/project-based-learning](https://github.com/practical-tutorials/project-based-learning): Curated list of project-based tutorials
@@ -52,9 +52,9 @@
 - [sherlock-project/sherlock](https://github.com/sherlock-project/sherlock): Hunt down social media accounts by username across social networks
 - [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers): Model Context Protocol Servers
 - [vllm-project/vllm](https://github.com/vllm-project/vllm): A high-throughput and memory-efficient inference and serving engine for LLMs
+- [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills): Production-grade engineering skills for AI coding agents
 - [zed-industries/zed](https://github.com/zed-industries/zed): Code at the speed of thought – Zed is a high-performance, multiplayer code edito
 - [infiniflow/ragflow](https://github.com/infiniflow/ragflow): RAGFlow is a leading open-source Retrieval-Augmented Generation (RAG) engine tha
-- [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills): Production-grade engineering skills for AI coding agents
 - [localsend/localsend](https://github.com/localsend/localsend): An open-source cross-platform alternative to AirDrop
 - [PaddlePaddle/PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR): Turn any PDF or image document into structured data for your AI
 - [syncthing/syncthing](https://github.com/syncthing/syncthing): Open Source Continuous File Synchronization
@@ -66,14 +66,14 @@
 - [lobehub/lobehub](https://github.com/lobehub/lobehub): 🤯 LobeHub is your Chief Agent Operator, organizing your agents into 7×24 operati
 - [bytedance/deer-flow](https://github.com/bytedance/deer-flow): An open-source long-horizon SuperAgent harness that researches, codes, and creat
 - [Egonex-AI/Understand-Anything](https://github.com/Egonex-AI/Understand-Anything): Graphs that teach > graphs that impress
-- [paperclipai/paperclip](https://github.com/paperclipai/paperclip): The open-source app everyone uses to manage agents at work
 - [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill): Taste-Skill
+- [paperclipai/paperclip](https://github.com/paperclipai/paperclip): The open-source app everyone uses to manage agents at work
 - [unclecode/crawl4ai](https://github.com/unclecode/crawl4ai): 🚀🤖 Crawl4AI: Open-source LLM Friendly Web Crawler & Scraper
 - [coder/code-server](https://github.com/coder/code-server): VS Code in the browser
 - [dair-ai/Prompt-Engineering-Guide](https://github.com/dair-ai/Prompt-Engineering-Guide): 🐙 Guides, papers, lessons, notebooks and resources for prompt engineering, conte
 - [rtk-ai/rtk](https://github.com/rtk-ai/rtk): CLI proxy that reduces LLM token consumption by 60-90% on common dev commands
-- [ocornut/imgui](https://github.com/ocornut/imgui): Dear ImGui: Bloat-free Graphical User interface for C++ with minimal dependencie
 - [D4Vinci/Scrapling](https://github.com/D4Vinci/Scrapling): 🕷️ An adaptive Web Scraping framework that handles everything from a single requ
+- [ocornut/imgui](https://github.com/ocornut/imgui): Dear ImGui: Bloat-free Graphical User interface for C++ with minimal dependencie
 - [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code): Bash is all you need
 - [Panniantong/Agent-Reach](https://github.com/Panniantong/Agent-Reach): Give your AI agent eyes to see the entire internet
 - [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills): A curated list of awesome Claude Skills, resources, and tools for customizing Cl
@@ -84,8 +84,8 @@
 - [ruvnet/ruflo](https://github.com/ruvnet/ruflo): 🌊 The original agent meta-harness
 - [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent): omo/lazycodex: The coding agent for tokenmaxxers;the one and only agent harness 
 - [openinterpreter/openinterpreter](https://github.com/openinterpreter/openinterpreter): A coding agent for open models like Kimi K3
-- [colbymchenry/codegraph](https://github.com/colbymchenry/codegraph): Pre-indexed code knowledge graph, auto syncs on code changes, for Claude Code, C
 - [santifer/career-ops](https://github.com/santifer/career-ops): Open-source AI job search: scan job portals, evaluate listings with a structured
+- [colbymchenry/codegraph](https://github.com/colbymchenry/codegraph): Pre-indexed code knowledge graph, auto syncs on code changes, for Claude Code, C
 - [BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep): ripgrep recursively searches directories for a regex pattern while respecting yo
 - [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom): Compress tool outputs, logs, files, and RAG chunks before they reach the LLM
 - [bradtraversy/design-resources-for-developers](https://github.com/bradtraversy/design-resources-for-developers): Curated list of design and UI resources from stock photos, web templates, CSS fr
