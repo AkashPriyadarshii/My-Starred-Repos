@@ -1,3 +1,9 @@
 User-agent: *
 Allow: /
+
+# LLM Documentation & Context
+# https://my-starred-repos.vercel.app/llms.txt
+# https://my-starred-repos.vercel.app/llms-full.txt
+
 Sitemap: https://my-starred-repos.vercel.app/sitemap.xml
+

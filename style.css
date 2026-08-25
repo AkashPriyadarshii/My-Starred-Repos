@@ -547,6 +547,246 @@ mark {
 .empty-reset:hover { background: var(--accent-h); }
 
 /* ==========================================================================
+   SEO & CURATION HIGHLIGHTS (E-E-A-T)
+   ========================================================================== */
+.seo-section {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.seo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+}
+
+.seo-header h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+
+.seo-desc {
+  font-size: 0.875rem;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+.seo-about {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
+}
+
+.seo-about h3 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 0.35rem;
+}
+
+.seo-about p {
+  font-size: 0.825rem;
+  color: var(--text-3);
+  line-height: 1.55;
+}
+
+.seo-grid-overview {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .seo-grid-overview {
+    grid-template-columns: 240px 1fr;
+  }
+}
+
+.seo-cats-block h3,
+.seo-featured-block h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+}
+
+.seo-cats-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.seo-cat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.seo-cat-name {
+  color: var(--text-2);
+}
+
+.seo-cat-count {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+.seo-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+}
+
+@media (min-width: 900px) {
+  .seo-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.seo-repo {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  transition: border-color 0.2s;
+}
+
+.seo-repo:hover {
+  border-color: var(--border-h);
+}
+
+.seo-repo-top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.seo-repo-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  word-break: break-all;
+}
+
+.seo-repo-name:hover {
+  color: var(--accent);
+}
+
+.seo-stars {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: #fbbf24;
+  margin-left: auto;
+}
+
+.seo-lang {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  background: var(--surface-2);
+  color: var(--text-3);
+}
+
+.seo-repo-desc {
+  font-size: 0.8rem;
+  color: var(--text-3);
+  line-height: 1.45;
+}
+
+/* Topic Cloud */
+.seo-topics-wrap h3,
+.seo-faq h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+}
+
+.seo-topic-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.seo-topic-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-2);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.75rem;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.seo-topic-badge:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-d);
+}
+
+/* FAQ */
+.seo-faq-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .seo-faq-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.seo-faq-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.seo-faq-q {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.seo-faq-a {
+  font-size: 0.8rem;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
    FOOTER
    ========================================================================== */
 .footer {
