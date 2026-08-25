@@ -3,6 +3,15 @@
 > A curated collection of GitHub starred repositories by Akash Priyadarshi (AkashPriyadarshii),
 > organized by topic and auto-updated daily.
 
+## Search & Topic Taxonomy
+
+- AI Agents & Multi-Agent Orchestration (LangGraph, CrewAI, AutoGen, Hermes-Agent, Pydantic-AI)
+- Model Context Protocol (MCP) & Coding Skills (Claude Code Skills, MCP Servers, Superpowers, ECC)
+- High-Performance Systems & CLI Utilities (Rust, Zig, Go, token-efficient grep/cat/repomap)
+- LLM & RAG Infrastructure (RAGFlow, vLLM, Open-WebUI, Firecrawl)
+- Developer Productivity & System Design (system-design-primer, awesome-lists, scrcpy)
+- Mobile & Android Internals (Android reverse engineering, offline-first Flutter/Kotlin)
+
 ## Repositories
 
 - [sindresorhus/awesome](https://github.com/sindresorhus/awesome): 😎 Awesome lists about all kinds of interesting topics [NOTE: Pull requests are temporarily disabled until I have a chance to catch up with the existing ones] [499632 stars, Unknown, Other]

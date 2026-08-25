@@ -167,13 +167,85 @@ function buildLangFilter() {
   });
 }
 
-// ── Grid ────────────────────────────────────────────────────────────────────
+// ── Grid & Progressive Rendering ────────────────────────────────────────────
+
+const BATCH_SIZE = 60;
+let currentFiltered = [];
+let renderedCount = 0;
+let observer = null;
+
+function createCard(repo, i) {
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.setAttribute('role', 'listitem');
+  card.style.animationDelay = `${Math.min((i % BATCH_SIZE) * 0.02, 0.4)}s`;
+
+  const langColor = LANG_COLORS[repo.language] || LANG_COLORS.Unknown;
+
+  card.innerHTML = `
+    <div class="card-top">
+      <a href="${escapeHTML(repo.url)}" target="_blank" rel="noopener" class="card-name">${highlight(repo.full_name, state.query)}</a>
+      <div class="card-stars">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        ${formatNum(repo.stars)}
+      </div>
+    </div>
+    <p class="card-desc">${highlight(repo.description || 'No description', state.query)}</p>
+    <div class="card-meta">
+      <span class="card-lang">
+        <span class="lang-dot" style="background:${langColor}"></span>
+        ${repo.language || 'N/A'}
+      </span>
+      <span class="card-date">${formatDate(repo.last_updated)}</span>
+      <a href="${escapeHTML(repo.url)}" target="_blank" rel="noopener" class="card-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+      </a>
+    </div>
+  `;
+  return card;
+}
+
+function renderNextBatch() {
+  if (renderedCount >= currentFiltered.length) return;
+
+  const grid = $('grid');
+  const sentinel = $('grid-sentinel');
+  if (sentinel) sentinel.remove();
+
+  const frag = document.createDocumentFragment();
+  const nextSlice = currentFiltered.slice(renderedCount, renderedCount + BATCH_SIZE);
+  nextSlice.forEach((repo, i) => {
+    frag.appendChild(createCard(repo, renderedCount + i));
+  });
+  renderedCount += nextSlice.length;
+  grid.appendChild(frag);
+
+  if (renderedCount < currentFiltered.length) {
+    const newSentinel = document.createElement('div');
+    newSentinel.id = 'grid-sentinel';
+    newSentinel.style.height = '1px';
+    newSentinel.style.gridColumn = '1 / -1';
+    grid.appendChild(newSentinel);
+
+    if (observer) observer.disconnect();
+    observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        renderNextBatch();
+      }
+    }, { rootMargin: '400px' });
+    observer.observe(newSentinel);
+  }
+}
 
 function renderGrid() {
   const grid = $('grid');
   grid.innerHTML = '';
+  if (observer) {
+    observer.disconnect();
+    observer = null;
+  }
 
-  let filtered = state.repos.filter(r => {
+  currentFiltered = state.repos.filter(r => {
     if (state.category !== 'all' && r.category.toLowerCase() !== state.category) return false;
     if (state.lang !== 'all' && (r.language || '').toLowerCase() !== state.lang) return false;
     if (state.query) {
@@ -184,7 +256,7 @@ function renderGrid() {
   });
 
   // Sort
-  filtered.sort((a, b) => {
+  currentFiltered.sort((a, b) => {
     switch (state.sort) {
       case 'stars-asc': return a.stars - b.stars;
       case 'name-asc': return a.full_name.localeCompare(b.full_name);
@@ -194,10 +266,10 @@ function renderGrid() {
   });
 
   // Result count
-  $('result-count').textContent = `${filtered.length} of ${state.repos.length}`;
+  $('result-count').textContent = `${currentFiltered.length} of ${state.repos.length}`;
 
   // Empty
-  if (!filtered.length) {
+  if (!currentFiltered.length) {
     grid.classList.add('hidden');
     $('empty-state').classList.remove('hidden');
     return;
@@ -205,41 +277,8 @@ function renderGrid() {
   grid.classList.remove('hidden');
   $('empty-state').classList.add('hidden');
 
-  // Render
-  const frag = document.createDocumentFragment();
-  filtered.forEach((repo, i) => {
-    const card = document.createElement('article');
-    card.className = 'card';
-    card.setAttribute('role', 'listitem');
-    card.style.animationDelay = `${Math.min(i * 0.02, 0.6)}s`;
-
-    const langColor = LANG_COLORS[repo.language] || LANG_COLORS.Unknown;
-
-    card.innerHTML = `
-      <div class="card-top">
-        <a href="${escapeHTML(repo.url)}" target="_blank" rel="noopener" class="card-name">${highlight(repo.full_name, state.query)}</a>
-        <div class="card-stars">
-          <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-          ${formatNum(repo.stars)}
-        </div>
-      </div>
-      <p class="card-desc">${highlight(repo.description || 'No description', state.query)}</p>
-      <div class="card-meta">
-        <span class="card-lang">
-          <span class="lang-dot" style="background:${langColor}"></span>
-          ${repo.language || 'N/A'}
-        </span>
-        <span class="card-date">${formatDate(repo.last_updated)}</span>
-        <a href="${escapeHTML(repo.url)}" target="_blank" rel="noopener" class="card-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-        </a>
-      </div>
-    `;
-
-    frag.appendChild(card);
-  });
-
-  grid.appendChild(frag);
+  renderedCount = 0;
+  renderNextBatch();
 }
 
 // ── Events ──────────────────────────────────────────────────────────────────
@@ -304,6 +343,21 @@ function initEvents() {
           renderGrid();
         }
       }
+    }
+  });
+
+  // Topic Badges quick search
+  document.addEventListener('click', e => {
+    const badge = e.target.closest('.seo-topic-badge');
+    if (!badge) return;
+    const query = badge.dataset.query || badge.textContent.trim();
+    const searchInput = $('search');
+    if (searchInput) {
+      searchInput.value = query;
+      $('search-clear')?.classList.remove('hidden');
+      state.query = query.toLowerCase();
+      renderGrid();
+      $('grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   });
 }
