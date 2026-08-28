@@ -119,6 +119,8 @@ def main():
             'category': categorize(r['full_name'], r.get('description'), r.get('language')),
             'url': r['html_url'],
             'last_updated': r.get('updated_at', ''),
+            'pushed_at': r.get('pushed_at', ''),
+            'archived': r.get('archived', False),
             'license': r.get('license', {}).get('spdx_id') if r.get('license') else None,
             'forks': r.get('forks_count', 0),
             'topics': r.get('topics', []),

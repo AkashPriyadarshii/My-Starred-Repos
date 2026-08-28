@@ -1,7 +1,21 @@
 # Starred Repos
 
 > A curated collection of GitHub starred repositories by Akash Priyadarshi (AkashPriyadarshii),
-> organized by topic and auto-updated daily.
+> organized by topic and auto-updated weekly.
+
+## Category LLM Endpoints
+
+- [AI & Agents](https://my-starred-repos.vercel.app/llms-ai-agents.txt)
+- [Other](https://my-starred-repos.vercel.app/llms-other.txt)
+- [Dev Tools](https://my-starred-repos.vercel.app/llms-dev-tools.txt)
+- [Mobile](https://my-starred-repos.vercel.app/llms-mobile.txt)
+- [Web Automation](https://my-starred-repos.vercel.app/llms-web-automation.txt)
+- [Media](https://my-starred-repos.vercel.app/llms-media.txt)
+- [LLM & RAG](https://my-starred-repos.vercel.app/llms-llm-rag.txt)
+- [Web Dev](https://my-starred-repos.vercel.app/llms-web-dev.txt)
+- [Security](https://my-starred-repos.vercel.app/llms-security.txt)
+- [DevOps](https://my-starred-repos.vercel.app/llms-devops.txt)
+- [Databases](https://my-starred-repos.vercel.app/llms-databases.txt)
 
 ## Search & Topic Taxonomy
 

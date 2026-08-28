@@ -1,9 +1,17 @@
 User-agent: *
 Allow: /
 
-# LLM Documentation & Context
+# LLM Documentation & Machine Context Endpoints
 # https://my-starred-repos.vercel.app/llms.txt
 # https://my-starred-repos.vercel.app/llms-full.txt
+# https://my-starred-repos.vercel.app/llms-ai-agents.txt
+# https://my-starred-repos.vercel.app/llms-dev-tools.txt
+# https://my-starred-repos.vercel.app/llms-mobile.txt
+# https://my-starred-repos.vercel.app/llms-llm-rag.txt
+# https://my-starred-repos.vercel.app/llms-web-automation.txt
+# https://my-starred-repos.vercel.app/llms-security.txt
+
+# REST Search API for AI Agents & Tools
+# https://my-starred-repos.vercel.app/api/search?q=agent
 
 Sitemap: https://my-starred-repos.vercel.app/sitemap.xml
-
