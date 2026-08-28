@@ -1,6 +1,6 @@
-# My Starred Repos
+# My Starred Repos — v0.1
 
-A curated dashboard of 800 GitHub starred repositories — categorized, searchable, and auto-updated daily.
+A curated dashboard of 900+ GitHub starred repositories — categorized, searchable, and auto-updated daily.
 
 **[Live Site](https://my-starred-repos.vercel.app/)**
 
@@ -47,4 +47,3 @@ python3 -m http.server 8080
 ## License
 
 CUSTOM
-
