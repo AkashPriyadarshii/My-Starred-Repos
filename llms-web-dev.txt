@@ -1,0 +1,18 @@
+# Starred Repos — Web Dev
+
+> A curated collection of GitHub starred repositories by Akash Priyadarshi (AkashPriyadarshii),
+> organized by topic and auto-updated weekly.
+
+## Repositories
+
+- [remotion-dev/remotion](https://github.com/remotion-dev/remotion): 🎥      Make videos programmatically with React [57462 stars, TypeScript, Web Dev]
+- [DavidHDev/react-bits](https://github.com/DavidHDev/react-bits): An open source collection of animated, interactive & fully customizable React components for building memorable websites. [46230 stars, JavaScript, Web Dev]
+- [imputnet/cobalt](https://github.com/imputnet/cobalt): best way to save what you love [42277 stars, Svelte, Web Dev]
+- [ghostfolio/ghostfolio](https://github.com/ghostfolio/ghostfolio): Open Source Wealth Management Software. Angular + NestJS + Prisma + Nx + TypeScript 🤍 [9195 stars, TypeScript, Web Dev]
+- [seriousm4x/UpSnap](https://github.com/seriousm4x/UpSnap): A simple wake on lan web app written with SvelteKit, Go and PocketBase. [6226 stars, Go, Web Dev]
+- [AhmadIbrahiim/Website-downloader](https://github.com/AhmadIbrahiim/Website-downloader): 💡  Download the complete source code of any website (including all assets). [ Javascripts, Stylesheets, Images ]  using Node.js [5253 stars, HTML, Web Dev]
+- [unovue/inspira-ui](https://github.com/unovue/inspira-ui): Build beautiful website using Vue & Nuxt. [4940 stars, Vue, Web Dev]
+- [caamer20/Telegram-Drive](https://github.com/caamer20/Telegram-Drive): Turn your Telegram account into an unlimited, secure cloud storage drive. an Open-source desktop app built with Tauri, Rust, and React. [4847 stars, TypeScript, Web Dev]
+- [imskyleen/animate-ui](https://github.com/imskyleen/animate-ui): Fully animated, open-source component distribution built with React, TypeScript, Tailwind CSS, Motion, and Shadcn CLI. Browse a list of components you can install, modify, and use in your projects. [4211 stars, TypeScript, Web Dev]
+- [MatinSenPai/Aether-GUI](https://github.com/MatinSenPai/Aether-GUI): One-click desktop GUI for the Aether censorship-circumvention tunnel — Tauri v2, React 19, Rust [902 stars, TypeScript, Web Dev]
+- [quiet-node/thuki](https://github.com/quiet-node/thuki): context-ware floating secretary [561 stars, Rust, Web Dev]

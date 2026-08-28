@@ -1,0 +1,28 @@
+# Starred Repos — Media
+
+> A curated collection of GitHub starred repositories by Akash Priyadarshi (AkashPriyadarshii),
+> organized by topic and auto-updated weekly.
+
+## Repositories
+
+- [sherlock-project/sherlock](https://github.com/sherlock-project/sherlock): Hunt down social media accounts by username across social networks [90380 stars, Python, Media]
+- [Developer-Y/cs-video-courses](https://github.com/Developer-Y/cs-video-courses): List of Computer Science courses with video lectures. [83187 stars, Unknown, Media]
+- [mifi/lossless-cut](https://github.com/mifi/lossless-cut): The swiss army knife of lossless video/audio editing [43230 stars, TypeScript, Media]
+- [webadderallorg/Recordly](https://github.com/webadderallorg/Recordly): Create polished demo videos without editing skills. Mac/Windows/Linux [22625 stars, TypeScript, Media]
+- [abus-aikorea/voice-pro](https://github.com/abus-aikorea/voice-pro): Gradio WebUI for creators and developers, featuring key TTS (Edge-TTS, kokoro) and zero-shot Voice Cloning (E2 & F5-TTS, CosyVoice), with Whisper audio processing, YouTube download, Demucs vocal isolation, and multilingual translation. [12647 stars, Python, Media]
+- [debpalash/VoiceStudio](https://github.com/debpalash/VoiceStudio): VoiceStudio is the open-source, fully-local ElevenLabs alternative — voice cloning, voice design, video dubbing, dictation, transcription & audiobook creation in 646 languages. [11780 stars, Python, Media]
+- [meituan-longcat/LongCat-Video](https://github.com/meituan-longcat/LongCat-Video): No description [7672 stars, Python, Media]
+- [OpenWhispr/openwhispr](https://github.com/OpenWhispr/openwhispr): Voice-to-text dictation app with local (Nvidia Parakeet/Whisper) and cloud models (BYOK). Privacy-first and available cross-platform. [5771 stars, JavaScript, Media]
+- [joye61/pic-smaller](https://github.com/joye61/pic-smaller): Pic Smaller – Compress JPEG, PNG, WEBP, AVIF, SVG and GIF images intelligently [2852 stars, TypeScript, Media]
+- [ideogram-oss/ideogram4](https://github.com/ideogram-oss/ideogram4): Ideogram 4: Open image model at the forefront of design [2770 stars, Python, Media]
+- [NVlabs/LongLive](https://github.com/NVlabs/LongLive): Long Video Gen Infrastructure [2564 stars, Python, Media]
+- [stupside/castor](https://github.com/stupside/castor): Point it at any web page and it finds the video, extracts the stream, transcodes it and casts in real time to your TV. It even burns subtitles…. [2234 stars, Go, Media]
+- [LongQT-sea/macos-iso-builder](https://github.com/LongQT-sea/macos-iso-builder): Generate bootable macOS installer ISO or DMG images directly from Apple servers via GitHub Actions - no Mac required. Mac OS X 10.7 - macOS 26 Tahoe [2210 stars, Shell, Media]
+- [brightbeanxyz/brightbean-studio](https://github.com/brightbeanxyz/brightbean-studio): Open-source, self-hostable social media management platform. Schedule, publish, and manage content across 10+ platforms from a single dashboard. Free alternative to Buffer, Sendible, and SocialPilot. [2195 stars, Python, Media]
+- [giantpinkrobots/varia](https://github.com/giantpinkrobots/varia): Download manager that supports regular downloads, torrents and videos [1840 stars, Python, Media]
+- [latent-spaces/brag](https://github.com/latent-spaces/brag): You built it. Now brag. Turn the project you just created into a short, shareable launch video with one command. [1122 stars, Python, Media]
+- [ant-research/4DAnyone](https://github.com/ant-research/4DAnyone): [SIGGRAPH Asia 2026] 4DAnyone: Create Anyone in 4D from a Casual Monocular Video [841 stars, Python, Media]
+- [meituan-longcat/LongCat-Image](https://github.com/meituan-longcat/LongCat-Image): No description [723 stars, Python, Media]
+- [hushhq/hush](https://github.com/hushhq/hush): End-to-end encrypted messaging, voice, and video. Entry point that orchestrates every public component. [493 stars, JavaScript, Media]
+- [antonio-orionus/Arroxy](https://github.com/antonio-orionus/Arroxy): Free open-source YouTube and +2000 sites downloader GUI based on yt-dlp for Windows, macOS, and Linux. Download videos, Shorts, 4K, 1080p60, HDR, playlists, channels, and subtitles with no ads, tracking, cookies, or login. Supports 23 languages. [306 stars, TypeScript, Media]
+- [kouhxp/textsnap](https://github.com/kouhxp/textsnap): Snap any image, screenshot, or webpage into plaintext. No GPU. No cloud. One command. [182 stars, Python, Media]
