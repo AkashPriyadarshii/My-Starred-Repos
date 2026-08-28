@@ -27,6 +27,7 @@ const state = {
   pinned: new Set(JSON.parse(localStorage.getItem('starred_pinned') || '[]')),
   matchScores: new Map(), // full_name -> { score, percent }
   isMatching: false,
+  focusedIndex: -1,
 };
 
 function $(id) { return document.getElementById(id); }
@@ -74,6 +75,47 @@ function showToast(msg) {
   }, 2200);
 }
 
+// ── URL State Synchronization ───────────────────────────────────────────────
+
+function syncUrlParams() {
+  const params = new URLSearchParams();
+  if (state.query) params.set('q', state.query);
+  if (state.category !== 'all') params.set('cat', state.category);
+  if (state.lang !== 'all') params.set('lang', state.lang);
+  if (state.sort !== 'stars-desc') params.set('sort', state.sort);
+  if (state.view !== 'grid') params.set('view', state.view);
+
+  const qs = params.toString();
+  const newUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
+  window.history.replaceState({}, '', newUrl);
+}
+
+function loadUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('q')) {
+    state.query = params.get('q').trim().toLowerCase();
+    const searchInput = $('search');
+    if (searchInput) {
+      searchInput.value = state.query;
+      $('search-clear')?.classList.remove('hidden');
+    }
+  }
+  if (params.has('cat')) {
+    state.category = params.get('cat').trim().toLowerCase();
+  }
+  if (params.has('lang')) {
+    state.lang = params.get('lang').trim().toLowerCase();
+  }
+  if (params.has('sort')) {
+    state.sort = params.get('sort').trim();
+    if ($('sort')) $('sort').value = state.sort;
+  }
+  if (params.has('view')) {
+    const v = params.get('view').trim();
+    if (v === 'compact' || v === 'grid') state.view = v;
+  }
+}
+
 // ── Bookmarks / Pinned ──────────────────────────────────────────────────────
 
 function updatePinnedCount() {
@@ -92,7 +134,6 @@ function togglePin(repoName) {
   localStorage.setItem('starred_pinned', JSON.stringify(Array.from(state.pinned)));
   updatePinnedCount();
 
-  // Update button states on current rendered items
   document.querySelectorAll(`.pin-btn[data-repo="${CSS.escape(repoName)}"]`).forEach(btn => {
     const isPinned = state.pinned.has(repoName);
     btn.classList.toggle('active', isPinned);
@@ -140,6 +181,7 @@ async function fetchData() {
     const data = await reposRes.json();
     state.repos = data.repos || [];
 
+    loadUrlParams();
     renderProfile(data.profile);
     renderMetrics();
     buildCategoryTabs();
@@ -208,25 +250,24 @@ function buildCategoryTabs() {
   state.repos.forEach(r => { cats[r.category] = (cats[r.category] || 0) + 1; });
 
   const tabs = $('category-tabs');
+  if (!tabs) return;
+
+  tabs.innerHTML = `
+    <button class="cat-tab ${state.category === 'all' ? 'active' : ''}" data-cat="all" role="tab" aria-selected="${state.category === 'all'}">All (${state.repos.length})</button>
+    <button class="cat-tab cat-tab-pinned ${state.category === 'pinned' ? 'active' : ''}" data-cat="pinned" role="tab" aria-selected="${state.category === 'pinned'}">📌 Pinned (<span id="pinned-count">${state.pinned.size}</span>)</button>
+  `;
+
   const sorted = Object.entries(cats).sort((a, b) => b[1] - a[1]);
   sorted.forEach(([cat, count]) => {
     const btn = document.createElement('button');
-    btn.className = 'cat-tab';
-    btn.dataset.cat = cat.toLowerCase();
+    const catLower = cat.toLowerCase();
+    const isActive = state.category === catLower;
+    btn.className = `cat-tab ${isActive ? 'active' : ''}`;
+    btn.dataset.cat = catLower;
     btn.setAttribute('role', 'tab');
-    btn.setAttribute('aria-selected', 'false');
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
     btn.textContent = `${cat} (${count})`;
     tabs.appendChild(btn);
-  });
-
-  tabs.addEventListener('click', e => {
-    const btn = e.target.closest('.cat-tab');
-    if (!btn) return;
-    tabs.querySelectorAll('.cat-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
-    btn.classList.add('active');
-    btn.setAttribute('aria-selected', 'true');
-    state.category = btn.dataset.cat;
-    renderGrid();
   });
 }
 
@@ -239,10 +280,15 @@ function buildLangFilter() {
   });
 
   const sel = $('lang-filter');
+  if (!sel) return;
+
+  sel.innerHTML = '<option value="all">All languages</option>';
   Object.keys(langs).sort().forEach(lang => {
     const opt = document.createElement('option');
-    opt.value = lang.toLowerCase();
+    const langLower = lang.toLowerCase();
+    opt.value = langLower;
     opt.textContent = `${lang} (${langs[lang]})`;
+    if (state.lang === langLower) opt.selected = true;
     sel.appendChild(opt);
   });
 }
@@ -254,10 +300,11 @@ function applyViewMode(mode) {
   localStorage.setItem('starred_view_mode', mode);
 
   const grid = $('grid');
-  grid.classList.toggle('view-compact', mode === 'compact');
+  if (grid) grid.classList.toggle('view-compact', mode === 'compact');
 
   $('view-grid-btn')?.classList.toggle('active', mode === 'grid');
   $('view-compact-btn')?.classList.toggle('active', mode === 'compact');
+  syncUrlParams();
 }
 
 // ── Vibe Coder Project Relevance Matcher ─────────────────────────────────────
@@ -267,17 +314,18 @@ function runProjectMatcher(inputText) {
   if (!text) {
     state.isMatching = false;
     state.matchScores.clear();
-    $('matcher-status').textContent = '';
+    const statusEl = $('matcher-status');
+    if (statusEl) statusEl.textContent = '';
     renderGrid();
     return;
   }
 
-  // Tokenize & remove stop words
   const rawTokens = text.replace(/[^a-z0-9+#.-]+/g, ' ').split(/\s+/).filter(Boolean);
   const tokens = rawTokens.filter(t => t.length > 1 && !STOP_WORDS.has(t));
 
   if (!tokens.length) {
-    $('matcher-status').textContent = 'Please enter more specific keywords or stack details.';
+    const statusEl = $('matcher-status');
+    if (statusEl) statusEl.textContent = 'Please enter more specific keywords or stack details.';
     return;
   }
 
@@ -293,20 +341,14 @@ function runProjectMatcher(inputText) {
     const topics = (repo.topics || []).map(t => t.toLowerCase());
 
     tokens.forEach(tok => {
-      // Direct topic match (highest signal)
       if (topics.some(t => t.includes(tok))) score += 6;
-      // Name match
       if (name.includes(tok)) score += 5;
-      // Language match
       if (lang === tok || lang.includes(tok)) score += 4;
-      // Category match
       if (cat.includes(tok)) score += 3;
-      // Description match
       if (desc.includes(tok)) score += 2;
     });
 
     if (score > 0) {
-      // Star magnitude slight log-dampened boost for established projects
       const starBoost = Math.log10(Math.max(repo.stars, 10)) * 0.5;
       const finalScore = score + starBoost;
       if (finalScore > maxScore) maxScore = finalScore;
@@ -314,14 +356,14 @@ function runProjectMatcher(inputText) {
     }
   });
 
-  // Normalize percentages
-  state.matchScores.forEach((val, key) => {
+  state.matchScores.forEach((val) => {
     val.percent = Math.min(Math.round((val.score / maxScore) * 100), 99);
   });
 
   state.isMatching = true;
   const matchCount = state.matchScores.size;
-  $('matcher-status').textContent = `Found ${matchCount} relevant projects matching your prompt!`;
+  const statusEl = $('matcher-status');
+  if (statusEl) statusEl.textContent = `Found ${matchCount} relevant projects!`;
 
   renderGrid();
   $('grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -340,6 +382,7 @@ function createCard(repo, i) {
     const row = document.createElement('article');
     row.className = 'compact-row';
     row.setAttribute('role', 'listitem');
+    row.dataset.index = i;
     row.innerHTML = `
       <div class="compact-left">
         <button class="pin-btn ${isPinned ? 'active' : ''}" data-repo="${escapeHTML(repo.full_name)}" title="${isPinned ? 'Unpin' : 'Pin'}" aria-label="Pin repository">
@@ -365,6 +408,7 @@ function createCard(repo, i) {
   const card = document.createElement('article');
   card.className = 'card';
   card.setAttribute('role', 'listitem');
+  card.dataset.index = i;
   card.style.animationDelay = `${Math.min((i % BATCH_SIZE) * 0.02, 0.4)}s`;
 
   card.innerHTML = `
@@ -404,7 +448,7 @@ function createCard(repo, i) {
   return card;
 }
 
-// ── Progressive Rendering ───────────────────────────────────────────────────
+// ── Progressive Batch Rendering ─────────────────────────────────────────────
 
 const BATCH_SIZE = 60;
 let currentFiltered = [];
@@ -446,6 +490,8 @@ function renderNextBatch() {
 function renderGrid() {
   const grid = $('grid');
   grid.innerHTML = '';
+  state.focusedIndex = -1;
+
   if (observer) {
     observer.disconnect();
     observer = null;
@@ -487,60 +533,87 @@ function renderGrid() {
 
   // Result count
   const matchIndicator = state.isMatching ? ` (Project Matches)` : '';
-  $('result-count').textContent = `${currentFiltered.length} of ${state.repos.length}${matchIndicator}`;
+  const countEl = $('result-count');
+  if (countEl) countEl.textContent = `${currentFiltered.length} of ${state.repos.length}${matchIndicator}`;
 
   // Empty state
   if (!currentFiltered.length) {
     grid.classList.add('hidden');
-    $('empty-state').classList.remove('hidden');
+    $('empty-state')?.classList.remove('hidden');
+    syncUrlParams();
     return;
   }
   grid.classList.remove('hidden');
-  $('empty-state').classList.add('hidden');
+  $('empty-state')?.classList.add('hidden');
 
   renderedCount = 0;
   renderNextBatch();
+  syncUrlParams();
+}
+
+// ── Keyboard Navigation Helper ──────────────────────────────────────────────
+
+function updateKeyboardFocus(newIndex) {
+  const items = document.querySelectorAll('#grid > article');
+  if (!items.length) return;
+
+  if (state.focusedIndex >= 0 && state.focusedIndex < items.length) {
+    items[state.focusedIndex].classList.remove('keyboard-focus');
+  }
+
+  state.focusedIndex = Math.max(0, Math.min(newIndex, items.length - 1));
+  const activeItem = items[state.focusedIndex];
+  activeItem.classList.add('keyboard-focus');
+  activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 // ── Events ──────────────────────────────────────────────────────────────────
 
 function initEvents() {
-  // Search
+  // Search input
   let debounce;
-  $('search').addEventListener('input', e => {
+  $('search')?.addEventListener('input', e => {
     const q = e.target.value.trim().toLowerCase();
-    $('search-clear').classList.toggle('hidden', !q);
+    $('search-clear')?.classList.toggle('hidden', !q);
     clearTimeout(debounce);
-    debounce = setTimeout(() => { state.query = q; renderGrid(); }, 120);
+    debounce = setTimeout(() => { state.query = q; renderGrid(); }, 100);
   });
 
-  $('search-clear').addEventListener('click', () => {
-    $('search').value = '';
-    $('search-clear').classList.add('hidden');
+  $('search-clear')?.addEventListener('click', () => {
+    const input = $('search');
+    if (input) input.value = '';
+    $('search-clear')?.classList.add('hidden');
     state.query = '';
     renderGrid();
   });
 
   // Language filter
-  $('lang-filter').addEventListener('change', e => {
+  $('lang-filter')?.addEventListener('change', e => {
     state.lang = e.target.value;
     renderGrid();
   });
 
   // Sort
-  $('sort').addEventListener('change', e => {
+  $('sort')?.addEventListener('change', e => {
     state.sort = e.target.value;
     renderGrid();
   });
 
   // View toggle
-  $('view-grid-btn')?.addEventListener('click', () => {
-    applyViewMode('grid');
-    renderGrid();
-  });
+  $('view-grid-btn')?.addEventListener('click', () => applyViewMode('grid'));
+  $('view-compact-btn')?.addEventListener('click', () => applyViewMode('compact'));
 
-  $('view-compact-btn')?.addEventListener('click', () => {
-    applyViewMode('compact');
+  // Category Tabs Click Delegation
+  $('category-tabs')?.addEventListener('click', e => {
+    const btn = e.target.closest('.cat-tab');
+    if (!btn) return;
+    document.querySelectorAll('.cat-tab').forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    state.category = btn.dataset.cat;
     renderGrid();
   });
 
@@ -563,12 +636,24 @@ function initEvents() {
   });
 
   $('matcher-reset-btn')?.addEventListener('click', () => {
-    if ($('matcher-input')) $('matcher-input').value = '';
+    const input = $('matcher-input');
+    if (input) input.value = '';
     runProjectMatcher('');
   });
 
-  // Pin & Copy Click Delegation
+  // Matcher Quick Suggestion Chips Delegation
   document.addEventListener('click', e => {
+    const chip = e.target.closest('.matcher-chip');
+    if (chip) {
+      const promptText = chip.dataset.prompt || chip.textContent.trim();
+      const input = $('matcher-input');
+      if (input) {
+        input.value = promptText;
+        runProjectMatcher(promptText);
+      }
+      return;
+    }
+
     const pinBtn = e.target.closest('.pin-btn');
     if (pinBtn) {
       e.preventDefault();
@@ -596,10 +681,24 @@ function initEvents() {
         searchInput.value = query;
         $('search-clear')?.classList.remove('hidden');
         state.query = query.toLowerCase();
+        state.category = 'all';
+        document.querySelectorAll('.cat-tab').forEach((t, i) => {
+          t.classList.toggle('active', i === 0);
+          t.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+        });
         renderGrid();
         $('grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
       return;
+    }
+
+    // Card / row click to open repository on GitHub
+    const article = e.target.closest('#grid > article');
+    if (article && !e.target.closest('a') && !e.target.closest('button')) {
+      const link = article.querySelector('.card-name, .compact-name');
+      if (link && link.href) {
+        window.open(link.href, '_blank', 'noopener');
+      }
     }
   });
 
@@ -610,33 +709,58 @@ function initEvents() {
     state.lang = 'all';
     state.isMatching = false;
     state.matchScores.clear();
-    $('search').value = '';
-    $('search-clear').classList.add('hidden');
-    $('lang-filter').value = 'all';
+    const searchInput = $('search');
+    if (searchInput) searchInput.value = '';
+    $('search-clear')?.classList.add('hidden');
+    if ($('lang-filter')) $('lang-filter').value = 'all';
     if ($('matcher-input')) $('matcher-input').value = '';
-    $('matcher-status').textContent = '';
+    if ($('matcher-status')) $('matcher-status').textContent = '';
     $('matcher-panel')?.classList.add('hidden');
-    $('category-tabs').querySelectorAll('.cat-tab').forEach((t, i) => {
+    document.querySelectorAll('.cat-tab').forEach((t, i) => {
       t.classList.toggle('active', i === 0);
       t.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
     });
     renderGrid();
   });
 
-  // Keyboard shortcuts
+  // Keyboard navigation & shortcuts
   document.addEventListener('keydown', e => {
-    if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+    const isTyping = document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA';
+
+    if (e.key === '/' && !isTyping) {
       e.preventDefault();
-      $('search').focus();
+      $('search')?.focus();
+      return;
     }
+
     if (e.key === 'Escape') {
       if (document.activeElement === $('search')) {
         $('search').blur();
         if (state.query) {
           $('search').value = '';
-          $('search-clear').classList.add('hidden');
+          $('search-clear')?.classList.add('hidden');
           state.query = '';
           renderGrid();
+        }
+      } else if (!$('matcher-panel')?.classList.contains('hidden')) {
+        $('matcher-panel')?.classList.add('hidden');
+      }
+      return;
+    }
+
+    if (!isTyping) {
+      if (e.key === 'j' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        updateKeyboardFocus(state.focusedIndex + 1);
+      } else if (e.key === 'k' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        updateKeyboardFocus(state.focusedIndex - 1);
+      } else if (e.key === 'Enter' && state.focusedIndex >= 0) {
+        const items = document.querySelectorAll('#grid > article');
+        const activeItem = items[state.focusedIndex];
+        const link = activeItem?.querySelector('.card-name, .compact-name');
+        if (link && link.href) {
+          window.open(link.href, '_blank', 'noopener');
         }
       }
     }

@@ -440,6 +440,14 @@ def render_index(d):
             <button id="matcher-reset-btn" class="matcher-btn-secondary">Clear</button>
             <span id="matcher-status" class="matcher-status"></span>
           </div>
+          <div class="matcher-chips-wrap">
+            <span class="matcher-chips-label">Quick Ideas:</span>
+            <button class="matcher-chip" data-prompt="Multi-agent orchestration Claude Code MCP servers tools">⚡ Multi-Agent &amp; MCP</button>
+            <button class="matcher-chip" data-prompt="Rust CLI high performance token efficient terminal utilities">🦀 Rust CLI &amp; Performance</button>
+            <button class="matcher-chip" data-prompt="Offline-first Android Kotlin Jetpack Compose SQLite">📱 Android &amp; Kotlin</button>
+            <button class="matcher-chip" data-prompt="Web crawling headless browser scraping anti-bot">🕷️ Web Scraping</button>
+            <button class="matcher-chip" data-prompt="Local RAG embeddings vector database search">🧠 RAG &amp; Vector DBs</button>
+          </div>
         </div>
       </div>
 

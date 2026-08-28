@@ -536,6 +536,47 @@ img { display: block; max-width: 100%; }
   margin-left: 0.5rem;
 }
 
+/* Matcher Suggestion Chips */
+.matcher-chips-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.matcher-chips-label {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+.matcher-chip {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-2);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.55rem;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.matcher-chip:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-d);
+}
+
+/* Keyboard Navigation Focus Ring */
+.card.keyboard-focus,
+.compact-row.keyboard-focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  background: var(--surface-2) !important;
+}
+
 /* ==========================================================================
    SKELETON
    ========================================================================== */
