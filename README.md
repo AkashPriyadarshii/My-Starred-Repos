@@ -53,7 +53,7 @@ GET https://my-starred-repos.vercel.app/api/search?q={query}&category={category}
 # Query AI agent and MCP tools
 curl -s "https://my-starred-repos.vercel.app/api/search?q=mcp&limit=5"
 
-# Query high-performance Rust tools
+# Query high-performance Rust tools ( slugs like dev-tools / ai auto-normalize to display names )
 curl -s "https://my-starred-repos.vercel.app/api/search?category=dev-tools&lang=rust&limit=10"
 ```
 
@@ -104,7 +104,7 @@ Add this tool definition to Claude Code, Cursor, or your MCP agent configuration
       },
       "category": {
         "type": "string",
-        "description": "Optional category: 'ai', 'dev-tools', 'mobile', 'security', 'databases'"
+        "description": "Optional category: 'AI & Agents', 'Dev Tools', 'Mobile', 'Security', 'Web Automation', 'LLM & RAG', 'Web Dev', 'Other', 'Media', 'Databases', 'DevOps' (slugs like 'ai', 'dev-tools' also accepted)"
       },
       "limit": {
         "type": "number",
@@ -124,12 +124,17 @@ Add this tool definition to Claude Code, Cursor, or your MCP agent configuration
 |---|---|
 | [`/llms.txt`](https://my-starred-repos.vercel.app/llms.txt) | Top 100 Starred Repos + Topic Taxonomy + Category Manifest |
 | [`/llms-full.txt`](https://my-starred-repos.vercel.app/llms-full.txt) | All 960+ Starred Repos with full metadata |
-| [`/llms-ai-agents.txt`](https://my-starred-repos.vercel.app/llms-ai-agents.txt) | AI & Agents Category (530+ repos) |
-| [`/llms-dev-tools.txt`](https://my-starred-repos.vercel.app/llms-dev-tools.txt) | Dev Tools & CLI Utilities (70+ repos) |
-| [`/llms-mobile.txt`](https://my-starred-repos.vercel.app/llms-mobile.txt) | Android & Mobile Internals (50+ repos) |
-| [`/llms-llm-rag.txt`](https://my-starred-repos.vercel.app/llms-llm-rag.txt) | LLM & RAG Frameworks |
-| [`/llms-web-automation.txt`](https://my-starred-repos.vercel.app/llms-web-automation.txt) | Web Automation & Scraping |
-| [`/llms-security.txt`](https://my-starred-repos.vercel.app/llms-security.txt) | Security & Pentesting |
+| [`/llms-ai-agents.txt`](https://my-starred-repos.vercel.app/llms-ai-agents.txt) | AI & Agents Category (539 repos) |
+| [`/llms-dev-tools.txt`](https://my-starred-repos.vercel.app/llms-dev-tools.txt) | Dev Tools & CLI Utilities (74 repos) |
+| [`/llms-mobile.txt`](https://my-starred-repos.vercel.app/llms-mobile.txt) | Android & Mobile Internals (50 repos) |
+| [`/llms-web-automation.txt`](https://my-starred-repos.vercel.app/llms-web-automation.txt) | Web Automation & Scraping (29 repos) |
+| [`/llms-llm-rag.txt`](https://my-starred-repos.vercel.app/llms-llm-rag.txt) | LLM & RAG Frameworks (16 repos) |
+| [`/llms-web-dev.txt`](https://my-starred-repos.vercel.app/llms-web-dev.txt) | Web Dev Frameworks (11 repos) |
+| [`/llms-security.txt`](https://my-starred-repos.vercel.app/llms-security.txt) | Security & Pentesting (10 repos) |
+| [`/llms-other.txt`](https://my-starred-repos.vercel.app/llms-other.txt) | Other / Unclassified (207 repos) |
+| [`/llms-media.txt`](https://my-starred-repos.vercel.app/llms-media.txt) | Media & Video/Audio (21 repos) |
+| [`/llms-databases.txt`](https://my-starred-repos.vercel.app/llms-databases.txt) | Databases & ORMs (2 repos) |
+| [`/llms-devops.txt`](https://my-starred-repos.vercel.app/llms-devops.txt) | DevOps & Infra (5 repos) |
 
 ---
 
