@@ -19,7 +19,46 @@ export default function handler(req, res) {
 
     const { q = '', category = 'all', lang = 'all', limit = 20, sort = 'stars-desc' } = req.query;
     const query = String(q).trim().toLowerCase();
-    const catFilter = String(category).trim().toLowerCase();
+    // Normalize category slugs — docs use slugs (ai, dev-tools) but stored categories are display names (AI & Agents, Dev Tools)
+    const CATEGORY_ALIASES = {
+      'ai': 'AI & Agents',
+      'ai-agents': 'AI & Agents',
+      'ai_agents': 'AI & Agents',
+      'agents': 'AI & Agents',
+      'ai & agents': 'AI & Agents',
+      'dev-tools': 'Dev Tools',
+      'dev_tools': 'Dev Tools',
+      'devtools': 'Dev Tools',
+      'dev tools': 'Dev Tools',
+      'web-automation': 'Web Automation',
+      'web_automation': 'Web Automation',
+      'web automation': 'Web Automation',
+      'automation': 'Web Automation',
+      'llm-rag': 'LLM & RAG',
+      'llm_rag': 'LLM & RAG',
+      'llm & rag': 'LLM & RAG',
+      'rag': 'LLM & RAG',
+      'web-dev': 'Web Dev',
+      'web_dev': 'Web Dev',
+      'webdev': 'Web Dev',
+      'web dev': 'Web Dev',
+      'databases': 'Databases',
+      'database': 'Databases',
+      'db': 'Databases',
+      'devops': 'DevOps',
+      'dev-ops': 'DevOps',
+      'dev_ops': 'DevOps',
+      'security': 'Security',
+      'mobile': 'Mobile',
+      'media': 'Media',
+      'other': 'Other',
+    };
+    let catRaw = String(category).trim();
+    if (catRaw.toLowerCase() !== 'all') {
+      const catKey = catRaw.toLowerCase();
+      catRaw = CATEGORY_ALIASES[catKey] || catRaw;
+    }
+    const catFilter = catRaw.toLowerCase();
     const langFilter = String(lang).trim().toLowerCase();
     const maxLimit = Math.min(Math.max(parseInt(limit, 10) || 20, 1), 100);
 

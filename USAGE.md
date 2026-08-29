@@ -55,7 +55,7 @@ GET https://my-starred-repos.vercel.app/api/search?q={query}&category={category}
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `q` | string | `""` | Search query across name, description, language, category, and topics |
-| `category`| string | `"all"` | Filter by category (`ai`, `dev-tools`, `mobile`, `security`, etc.) |
+| `category`| string | `"all"` | Filter by category — display names (`AI & Agents`, `Dev Tools`, `Mobile`, `Security`, `Web Automation`, `LLM & RAG`, `Web Dev`, `Other`, `Media`, `Databases`, `DevOps`) — slugs (`ai`, `dev-tools`, `web-automation`, `llm-rag`, `web-dev`) also accepted |
 | `lang` | string | `"all"` | Filter by primary programming language (`rust`, `python`, `go`, etc.) |
 | `limit` | number | `20` | Maximum number of records returned (1–100) |
 | `sort` | string | `"stars-desc"` | Sorting order: `stars-desc`, `stars-asc`, `name-asc`, `updated-desc` |
@@ -102,12 +102,17 @@ Fetch token-optimized Markdown text files designed specifically for AI system pr
 |---|---|
 | [`https://my-starred-repos.vercel.app/llms.txt`](https://my-starred-repos.vercel.app/llms.txt) | Top 100 starred repos + Topic Taxonomy + Category Manifest |
 | [`https://my-starred-repos.vercel.app/llms-full.txt`](https://my-starred-repos.vercel.app/llms-full.txt) | Complete collection of 960+ repos with metadata |
-| [`https://my-starred-repos.vercel.app/llms-ai-agents.txt`](https://my-starred-repos.vercel.app/llms-ai-agents.txt) | AI & Agents category slice |
+| [`https://my-starred-repos.vercel.app/llms-ai-agents.txt`](https://my-starred-repos.vercel.app/llms-ai-agents.txt) | AI & Agents category slice (539+ repos) |
 | [`https://my-starred-repos.vercel.app/llms-dev-tools.txt`](https://my-starred-repos.vercel.app/llms-dev-tools.txt) | Dev Tools & CLI utilities slice |
 | [`https://my-starred-repos.vercel.app/llms-mobile.txt`](https://my-starred-repos.vercel.app/llms-mobile.txt) | Android & Mobile internals slice |
-| [`https://my-starred-repos.vercel.app/llms-llm-rag.txt`](https://my-starred-repos.vercel.app/llms-llm-rag.txt) | LLM & RAG frameworks slice |
 | [`https://my-starred-repos.vercel.app/llms-web-automation.txt`](https://my-starred-repos.vercel.app/llms-web-automation.txt) | Web Scraping & Automation slice |
+| [`https://my-starred-repos.vercel.app/llms-llm-rag.txt`](https://my-starred-repos.vercel.app/llms-llm-rag.txt) | LLM & RAG frameworks slice |
+| [`https://my-starred-repos.vercel.app/llms-web-dev.txt`](https://my-starred-repos.vercel.app/llms-web-dev.txt) | Web Dev frameworks slice |
 | [`https://my-starred-repos.vercel.app/llms-security.txt`](https://my-starred-repos.vercel.app/llms-security.txt) | Security & Pentesting slice |
+| [`https://my-starred-repos.vercel.app/llms-other.txt`](https://my-starred-repos.vercel.app/llms-other.txt) | Other / Unclassified slice (207 repos) |
+| [`https://my-starred-repos.vercel.app/llms-media.txt`](https://my-starred-repos.vercel.app/llms-media.txt) | Media & Video/Audio slice |
+| [`https://my-starred-repos.vercel.app/llms-databases.txt`](https://my-starred-repos.vercel.app/llms-databases.txt) | Databases & ORMs slice |
+| [`https://my-starred-repos.vercel.app/llms-devops.txt`](https://my-starred-repos.vercel.app/llms-devops.txt) | DevOps & Infra slice |
 
 ---
 
@@ -128,7 +133,7 @@ To enable Claude Code, Cursor, Codex, or OpenClaw to search this repository dire
       },
       "category": {
         "type": "string",
-        "description": "Optional category filter: 'ai', 'dev-tools', 'mobile', 'security', 'web-dev', 'databases'"
+        "description": "Optional category filter: 'AI & Agents', 'Dev Tools', 'Mobile', 'Security', 'Web Automation', 'Other', 'Media', 'LLM & RAG', 'Web Dev', 'Databases', 'DevOps' (slugs like 'ai', 'dev-tools' also accepted)"
       },
       "limit": {
         "type": "number",
