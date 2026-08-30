@@ -174,3 +174,11 @@ supabase_schema.sql
 
 # Local SEO audit output — never commit
 *-audit/
+
+# Local design prototypes & skill clones — never commit
+hallmark-src/
+hallmark-prototype.html
+prototype.html
+hybrid-best-design.md
+
+
