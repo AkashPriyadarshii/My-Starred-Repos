@@ -32,6 +32,7 @@
 
 ## 🧭 Live Web Dashboard Features
 
+- **Bloom warm-amber "aura" theme**: atmospheric dark UI with drifting amber/coral blooms, film grain, giant weighty-sans display type (Inter Tight) + Instrument Serif accent, and refined shadcn-grade controls.
 - **Project Relevance Matcher**: Paste your project idea or README. The client-side engine calculates TF-IDF and weighted keyword overlap scores, ranking the top matching tools with percentage match pills (e.g. `98% Match`).
 - **Keyboard-First Navigation**: Press `/` anywhere to focus search; press `Escape` to reset.
 - **Progressive Batch Rendering**: `IntersectionObserver` renders 60 cards per chunk, reducing initial DOM nodes from 7,100+ to ~450 for silky smooth 60fps scrolling and optimal Core Web Vitals (INP/LCP).

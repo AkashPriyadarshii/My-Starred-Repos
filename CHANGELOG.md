@@ -2,6 +2,23 @@
 
 All notable changes to My-Starred-Repos.
 
+## [v0.3] — 2026-08-30 — Bloom Warm-Amber Aura Redesign
+
+Full frontend skin overhaul to a premium atmospheric "Bloom" register (Hallmark Hyperlane theme), replacing the dev-tool terminal look.
+
+### 🎨 Design
+- **Warm amber "aura" theme**: OKLCH token system throughout — warm charcoal paper (no violet/cyan), single warm-amber accent, amber + coral bloom pair.
+- **Ambient atmospheric backdrop**: two drifting radial `.bloom` gradients (GPU-safe transform, `blur`) + SVG film-grain overlay, injected by `build_site.py`.
+- **Typography**: swapped Geist/Geist Mono for Inter Tight (weighty-sans display), Inter (body), JetBrains Mono (data/labels) + Instrument Serif accent. Giant display scale (`clamp(2.75rem, 8vw, 7.5rem)`), `theme-color` `#16100b`.
+- **shadcn-grade polish**: refined focus rings / `:focus-within` search glow, amber-tinted layered shadows, atmospheric pulsing scrollbar, segmented view toggle, pill chips.
+- **Motion**: ease-out-expo choreography, staggered card fade-in, GPU-composited `scaleY` edge-glow reveal (no layout thrash), tactile `:active` press, `prefers-reduced-motion` support.
+
+### 🔧 Build
+- `build_site.py`: Inject ambient aura divs, Bloom font link, updated theme-color, CSS cache-buster `?v=5 → ?v=8`.
+- `style.css`: full rewrite (~900 lines), class names preserved — no JS changes required.
+
+---
+
 ## [v0.2] — 2026-08-28 — Dual-Audience Platform (Humans & AI Agents)
 
 Major update turning My-Starred-Repos into a dual-purpose platform for developer discovery and machine-readable AI agent context.
