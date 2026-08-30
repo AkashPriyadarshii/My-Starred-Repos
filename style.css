@@ -125,6 +125,7 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: clip;
+  -webkit-tap-highlight-color: transparent;
 }
 
 ::selection { background: oklch(74% 0.18 55 / 0.30); color: var(--color-ink); }
@@ -407,7 +408,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    9. GRID — repo cards
    ========================================================================== */
 .grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
   gap: var(--space-md);
   max-width: var(--max-width); margin: var(--space-2xl) auto;
   padding: 0 var(--page-gutter);
@@ -432,6 +433,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   border: 1px solid var(--color-rule);
   border-radius: var(--radius-md);
   backdrop-filter: blur(6px);
+  cursor: pointer;
   transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), background var(--dur-base);
   animation: cardIn 0.5s var(--ease-out) both;
 }
@@ -502,6 +504,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   gap: var(--space-lg); align-items: baseline;
   padding: var(--space-lg) 0;
   border-top: 1px solid var(--color-rule);
+  cursor: pointer;
   transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast);
 }
 .compact-row:last-child { border-bottom: 1px solid var(--color-rule); }
@@ -634,6 +637,23 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   .compact-rank { font-size: var(--text-md); }
   .compact-right { grid-column: 2; }
   .result-count { margin-left: 0; width: 100%; }
+  .controls-right { flex-wrap: wrap; }
+  .controls-bottom { align-items: flex-start; flex-direction: column; }
+}
+
+/* Touch devices — comfortable 44px+ tap targets (WCAG 2.5.5) */
+@media (pointer: coarse) {
+  .view-btn { width: 44px; height: 44px; }
+  .pin-btn { width: 40px; height: 40px; }
+  .copy-btn, .card-link { width: 40px; height: 40px; }
+  .cat-tab, .matcher-chip, .seo-topic-badge { padding: 0.6rem 1rem; }
+  .search-clear { width: 36px; height: 36px; }
+  .matcher-close-btn { width: 40px; height: 40px; }
+  .btn-matcher, .empty-reset { padding: 0.8rem 1.2rem; }
+  .controls-right select { padding: 0.8rem 2.4rem 0.8rem 1rem; }
+  .search-wrap input { padding-top: 0.85rem; padding-bottom: 0.85rem; }
+  .cat-tab:hover { transform: none; }
+  .matcher-chip:hover { transform: none; }
 }
 
 /* ==========================================================================

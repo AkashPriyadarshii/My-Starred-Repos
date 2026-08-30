@@ -767,16 +767,47 @@ function initEvents() {
   });
 }
 
-// ── Visitor Counter ─────────────────────────────────────────────────────────
+// ── Visitor Counter (global, realtime, cross-device, no-cache) ──────────────
+
+// Keyless, no-signup, persistent counting API (drop-in for dead countapi.xyz).
+// Unique key per site so the count is shared across ALL devices & users.
+const VISITOR_API = 'https://countapi.mileshilliard.com/api/v1/hit/my-starred-repos-global-views';
+const VISITOR_FALLBACK_KEY = 'my-starred-repos-views-local-fallback';
 
 function initVisitorCounter() {
-  const KEY = 'starred-repos-views';
   const el = $('visitor-count');
   if (!el) return;
 
-  let count = parseInt(localStorage.getItem(KEY) || '0', 10) + 1;
-  localStorage.setItem(KEY, count);
-  el.textContent = count.toLocaleString();
+  // Guard against accidental double-hit within the same page session
+  // (soft re-render / re-init) while still counting once per real load.
+  if (sessionStorage.getItem('my-starred-repos-counted')) {
+    // already counted this session — just fetch the live number without +1
+    const getUrl = VISITOR_API.replace('/hit/', '/get/').split('?')[0] + `?_=${Date.now()}`;
+    fetch(getUrl, { cache: 'no-store' })
+      .then(r => r.json())
+      .then(d => { if (d && d.value != null) el.textContent = Number(d.value).toLocaleString(); })
+      .catch(() => {});
+    return;
+  }
+  sessionStorage.setItem('my-starred-repos-counted', '1');
+
+  // Hit global counter: +1 every page load, returns new total. no-store to
+  // defeat any CDN/browser/proxy cache so the count updates in realtime.
+  fetch(`${VISITOR_API}?_=${Date.now()}`, { cache: 'no-store' })
+    .then(r => r.json())
+    .then(d => {
+      if (d && d.value != null) {
+        el.textContent = Number(d.value).toLocaleString();
+      } else {
+        throw new Error('bad response');
+      }
+    })
+    .catch(() => {
+      // graceful fallback so the UI never breaks if the API is down
+      const local = parseInt(localStorage.getItem(VISITOR_FALLBACK_KEY) || '0', 10) + 1;
+      localStorage.setItem(VISITOR_FALLBACK_KEY, String(local));
+      el.textContent = local.toLocaleString();
+    });
 }
 
 // ── Init ────────────────────────────────────────────────────────────────────

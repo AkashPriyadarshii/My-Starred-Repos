@@ -17,8 +17,8 @@ LLMS = ROOT / "llms.txt"
 LLMS_FULL = ROOT / "llms-full.txt"
 SITEMAP = ROOT / "sitemap.xml"
 
-CSS_V = "8"
-JS_V = "6"
+CSS_V = "9"
+JS_V = "7"
 
 GITHUB = "https://github.com/AkashPriyadarshii"
 PORTFOLIO = "https://akashpriyadarshi.vercel.app"
