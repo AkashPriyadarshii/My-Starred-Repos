@@ -33,13 +33,14 @@
 - [donnemartin/system-design-primer](https://github.com/donnemartin/system-design-primer): Learn how to design large-scale systems.
 - [practical-tutorials/project-based-learning](https://github.com/practical-tutorials/project-based-learning): Curated list of project-based tutorials
 - [obra/superpowers](https://github.com/obra/superpowers): An agentic skills framework & software development methodology that works.
-- [affaan-m/ECC](https://github.com/affaan-m/ECC): The agent harness performance optimization system.
 - [mattpocock/skills](https://github.com/mattpocock/skills): Skills for Real Engineers.
+- [affaan-m/ECC](https://github.com/affaan-m/ECC): The agent harness performance optimization system.
 - [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent): The agent that grows with you
-- [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills): A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy's observations on LLM coding pi...
 - [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness): DeepSeek Harness: Everything is a Plugin.
+- [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills): A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy's observations on LLM coding pi...
 - [DigitalPlatDev/FreeDomain](https://github.com/DigitalPlatDev/FreeDomain): Free domain registration and practical DNS learning resources for everyone.
 - [ultraworkers/claw-code](https://github.com/ultraworkers/claw-code): An agent-managed museum exhibit, built in Rust with Gajae-Code / LazyCodex
+- [massgravel/Microsoft-Activation-Scripts](https://github.com/massgravel/Microsoft-Activation-Scripts): Open-source Windows and Office activator featuring HWID, Ohook, TSforge, and Online KMS activation methods, along wit...
 - [Significant-Gravitas/AutoGPT](https://github.com/Significant-Gravitas/AutoGPT): AutoGPT is the vision of accessible AI for everyone, to use and to build on.
 - [microsoft/markitdown](https://github.com/microsoft/markitdown): Python tool for converting files and office documents to Markdown.
 - [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl): The context API to search, scrape, and interact with the web at scale. 🔥
@@ -55,15 +56,15 @@
 - [github/spec-kit](https://github.com/github/spec-kit): 💫 Toolkit to help you get started with Spec-Driven Development
 - [garrytan/gstack](https://github.com/garrytan/gstack): Use Garry Tan's exact Claude Code setup: 23 opinionated tools that serve as CEO, Designer, Eng Manager, Release Manag...
 - [farion1231/cc-switch](https://github.com/farion1231/cc-switch): A cross-platform desktop All-in-One assistant for Claude Code, Codex, OpenCode, OpenClaw, Grok Build & Hermes Agent.
+- [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail): Makes your AI agent think like the laziest senior dev in the room.
 - [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill): An AI skill that provides design intelligence for building professional UI/UX across multiple platforms.
 - [shadcn-ui/ui](https://github.com/shadcn-ui/ui): A set of beautifully-designed, accessible components and a code distribution platform.
 - [openai/codex](https://github.com/openai/codex): Lightweight coding agent that runs in your terminal
-- [Hack-with-Github/Awesome-Hacking](https://github.com/Hack-with-Github/Awesome-Hacking): A collection of various awesome lists for hackers, pentesters and security researchers
 - [harry0703/MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo): 利用 AI 大模型和自动化工作流，根据主题或关键词一键生成高清短视频。Generate HD short videos from a topic or keyword with an automated AI workflow.
-- [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail): Makes your AI agent think like the laziest senior dev in the room.
+- [Hack-with-Github/Awesome-Hacking](https://github.com/Hack-with-Github/Awesome-Hacking): A collection of various awesome lists for hackers, pentesters and security researchers
 - [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify): Turn any codebase, with its docs, SQL schemas, configs, and PDFs, into a queryable knowledge graph.
-- [browser-use/browser-use](https://github.com/browser-use/browser-use): 🌐 Make websites accessible for AI agents.
 - [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md): A collection of DESIGN.md files analysis by popular brand design systems.
+- [browser-use/browser-use](https://github.com/browser-use/browser-use): 🌐 Make websites accessible for AI agents.
 - [denoland/deno](https://github.com/denoland/deno): A modern runtime for JavaScript and TypeScript.
 - [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman): 🪨 why use many token when few token do trick
 - [earendil-works/pi](https://github.com/earendil-works/pi): AI agent toolkit: unified LLM API, agent loop, TUI, coding agent CLI
@@ -71,60 +72,59 @@
 - [nexu-io/open-design](https://github.com/nexu-io/open-design): 🎨 Best DeepSeek Harness Design Plugin.
 - [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem): Persistent Context Across Sessions for Every Agent –  Captures everything your agent does during sessions, compresses...
 - [ruvnet/RuView](https://github.com/ruvnet/RuView): π RuView turns commodity WiFi signals into real-time spatial intelligence, vital sign monitoring, and presence detection
-- [Stirling-Tools/Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF): #1 PDF Application on GitHub that lets you edit PDFs on any device anywhere
 - [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills): Production-grade engineering skills for AI coding agents.
-- [opencv/opencv](https://github.com/opencv/opencv): Open Source Computer Vision Library
-- [sherlock-project/sherlock](https://github.com/sherlock-project/sherlock): Hunt down social media accounts by username across social networks
+- [Stirling-Tools/Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF): #1 PDF Application on GitHub that lets you edit PDFs on any device anywhere
 - [vllm-project/vllm](https://github.com/vllm-project/vllm): A high-throughput and memory-efficient inference and serving engine for LLMs
-- [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers): Model Context Protocol Servers
+- [sherlock-project/sherlock](https://github.com/sherlock-project/sherlock): Hunt down social media accounts by username across social networks
+- [opencv/opencv](https://github.com/opencv/opencv): Open Source Computer Vision Library
 - [localsend/localsend](https://github.com/localsend/localsend): An open-source cross-platform alternative to AirDrop
+- [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers): Model Context Protocol Servers
 - [infiniflow/ragflow](https://github.com/infiniflow/ragflow): RAGFlow is a leading open-source Retrieval-Augmented Generation (RAG) engine that fuses cutting-edge RAG with Agent c...
 - [zed-industries/zed](https://github.com/zed-industries/zed): Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-...
 - [PaddlePaddle/PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR): Turn any PDF or image document into structured data for your AI. A powerful, lightweight OCR toolkit that bridges the...
-- [syncthing/syncthing](https://github.com/syncthing/syncthing): Open Source Continuous File Synchronization
 - [OpenCut-app/OpenCut](https://github.com/OpenCut-app/OpenCut): The open-source CapCut alternative
+- [syncthing/syncthing](https://github.com/syncthing/syncthing): Open Source Continuous File Synchronization
 - [odysseus-dev/odysseus](https://github.com/odysseus-dev/odysseus): Self-hosted AI workspace.
 - [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands): 🙌 OpenHands: AI-Driven Development
 - [koala73/worldmonitor](https://github.com/koala73/worldmonitor): Real-time global intelligence dashboard.
-- [Developer-Y/cs-video-courses](https://github.com/Developer-Y/cs-video-courses): List of Computer Science courses with video lectures.
 - [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill): Taste-Skill
+- [Developer-Y/cs-video-courses](https://github.com/Developer-Y/cs-video-courses): List of Computer Science courses with video lectures.
 - [lobehub/lobehub](https://github.com/lobehub/lobehub): 🤯 LobeHub is your Chief Agent Operator, organizing your agents into 7×24 operations by hiring, scheduling, and report...
-- [bytedance/deer-flow](https://github.com/bytedance/deer-flow): An open-source long-horizon SuperAgent harness that researches, codes, and creates.
 - [Egonex-AI/Understand-Anything](https://github.com/Egonex-AI/Understand-Anything): Graphs that teach > graphs that impress.
 - [unclecode/crawl4ai](https://github.com/unclecode/crawl4ai): 🚀🤖 Crawl4AI: Open-source LLM Friendly Web Crawler & Scraper.
+- [bytedance/deer-flow](https://github.com/bytedance/deer-flow): An open-source long-horizon SuperAgent harness that researches, codes, and creates.
 - [paperclipai/paperclip](https://github.com/paperclipai/paperclip): The open-source app everyone uses to manage agents at work
 - [coder/code-server](https://github.com/coder/code-server): VS Code in the browser
-- [dair-ai/Prompt-Engineering-Guide](https://github.com/dair-ai/Prompt-Engineering-Guide): 🐙 Guides, papers, lessons, notebooks and resources for prompt engineering, context engineering, RAG, and AI Agents.
 - [rtk-ai/rtk](https://github.com/rtk-ai/rtk): CLI proxy that reduces LLM token consumption by 60-90% on common dev commands.
 - [D4Vinci/Scrapling](https://github.com/D4Vinci/Scrapling): 🕷️ An adaptive Web Scraping framework that handles everything from a single request to a full-scale crawl!
 - [Panniantong/Agent-Reach](https://github.com/Panniantong/Agent-Reach): Give your AI agent eyes to see the entire internet.
-- [ocornut/imgui](https://github.com/ocornut/imgui): Dear ImGui: Bloat-free Graphical User interface for C++ with minimal dependencies
+- [dair-ai/Prompt-Engineering-Guide](https://github.com/dair-ai/Prompt-Engineering-Guide): 🐙 Guides, papers, lessons, notebooks and resources for prompt engineering, context engineering, RAG, and AI Agents.
+- [abi/screenshot-to-code](https://github.com/abi/screenshot-to-code): Drop in a screenshot and convert it to clean code (HTML/Tailwind/React/Vue)
 - [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code): Bash is all you need
+- [ocornut/imgui](https://github.com/ocornut/imgui): Dear ImGui: Bloat-free Graphical User interface for C++ with minimal dependencies
 - [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills): A curated list of awesome Claude Skills, resources, and tools for customizing Claude AI workflows
+- [NationalSecurityAgency/ghidra](https://github.com/NationalSecurityAgency/ghidra): Ghidra is a software reverse engineering (SRE) framework
 - [OpenBB-finance/OpenBB](https://github.com/OpenBB-finance/OpenBB): Open Data Platform for analysts, quants and AI agents.
 - [toeverything/AFFiNE](https://github.com/toeverything/AFFiNE): There can be more than Notion and Miro.
-- [daytonaio/daytona](https://github.com/daytonaio/daytona): Daytona is a Secure and Elastic Infrastructure for Running AI-Generated Code
 - [666ghj/MiroFish](https://github.com/666ghj/MiroFish): A Simple and Universal Swarm Intelligence Engine, Predicting Anything. 简洁通用的群体智能引擎，预测万物
+- [daytonaio/daytona](https://github.com/daytonaio/daytona): Daytona is a Secure and Elastic Infrastructure for Running AI-Generated Code
 - [ruvnet/ruflo](https://github.com/ruvnet/ruflo): 🌊 The original agent meta-harness.
-- [santifer/career-ops](https://github.com/santifer/career-ops): Open-source AI job search: scan job portals, evaluate listings into a structured A-H report with a global 1-5 score,...
+- [career-ops-hq/career-ops](https://github.com/career-ops-hq/career-ops): Open-source AI job search: scan job portals, evaluate listings into a structured A-H report with a global 1-5 score,...
 - [colbymchenry/codegraph](https://github.com/colbymchenry/codegraph): Pre-indexed code knowledge graph, auto syncs on code changes, for Claude Code, Codex, Gemini, Cursor, OpenCode, AntiG...
-- [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent): omo/lazycodex: The coding agent for tokenmaxxers;the one and only agent harness for complex codebases.
-- [openinterpreter/openinterpreter](https://github.com/openinterpreter/openinterpreter): A coding agent for open models like Kimi K3
 - [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom): Compress tool outputs, logs, files, and RAG chunks before they reach the LLM. 20% fewer tokens for coding agents, 60-...
+- [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent): OmO: Drop your tokens.
+- [openinterpreter/openinterpreter](https://github.com/openinterpreter/openinterpreter): A coding agent for open models like Kimi K3
 - [BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep): ripgrep recursively searches directories for a regex pattern while respecting your gitignore
-- [bradtraversy/design-resources-for-developers](https://github.com/bradtraversy/design-resources-for-developers): Curated list of design and UI resources from stock photos, web templates, CSS frameworks, UI libraries, tools and muc...
 - [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec): Spec-driven development (SDD) for AI coding assistants.
+- [bradtraversy/design-resources-for-developers](https://github.com/bradtraversy/design-resources-for-developers): Curated list of design and UI resources from stock photos, web templates, CSS frameworks, UI libraries, tools and muc...
 - [docling-project/docling](https://github.com/docling-project/docling): Get your documents ready for gen AI
+- [pbakaus/impeccable](https://github.com/pbakaus/impeccable): The design language that makes your AI harness better at design.
 - [alacritty/alacritty](https://github.com/alacritty/alacritty): A cross-platform, OpenGL terminal emulator.
 - [shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice): from vibe coding to agentic engineering
+- [mem0ai/mem0](https://github.com/mem0ai/mem0): The Memory Layer for AI Agents
 - [gsd-build/get-shit-done](https://github.com/gsd-build/get-shit-done): A light-weight and powerful meta-prompting, context engineering and spec-driven development system for Claude Code by...
 - [ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts): Iconic font aggregator, collection, & patcher. 3,600+ icons, 50+ patched fonts: Hack, Source Code Pro, more.
-- [mem0ai/mem0](https://github.com/mem0ai/mem0): Universal memory layer for AI Agents
-- [pbakaus/impeccable](https://github.com/pbakaus/impeccable): The design language that makes your AI harness better at design.
 - [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks): Extracted system prompts from Anthropic
 - [virattt/ai-hedge-fund](https://github.com/virattt/ai-hedge-fund): An AI Hedge Fund Team
 - [karpathy/nanoGPT](https://github.com/karpathy/nanoGPT): The simplest, fastest repository for training/finetuning medium-sized GPTs.
-- [upstash/context7](https://github.com/upstash/context7): Context7 Platform -- Up-to-date code documentation for LLMs and AI code editors
-- [coollabsio/coolify](https://github.com/coollabsio/coolify): An open-source, self-hostable PaaS alternative to Vercel, Heroku & Netlify that lets you easily deploy static sites,...
-- [tw93/Pake](https://github.com/tw93/Pake): 🤱🏻 Turn any webpage into a desktop app with one command.
-- [pocketbase/pocketbase](https://github.com/pocketbase/pocketbase): Open Source realtime backend in 1 file
+- [stablyai/orca](https://github.com/stablyai/orca): Orca is the ADE for working with a fleet of parallel agents.
