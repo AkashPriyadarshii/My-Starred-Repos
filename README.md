@@ -16,6 +16,8 @@
 
 </div>
 
+[![stars](https://img.shields.io/github/stars/AkashPriyadarshii/My-Starred-Repos?style=flat-square&label=stars)](https://github.com/AkashPriyadarshii/My-Starred-Repos/stargazers)
+
 ---
 
 ## ⚡ Highlights
