@@ -194,6 +194,13 @@ python3 -m http.server 8080
 
 ---
 
+
+
+<p align="center">
+  <img src="https://api.star-history.com/svg?repos=AkashPriyadarshii/My-Starred-Repos&type=Date" width="600" alt="star history" />
+</p>
+
+
 ## 📄 License
 
 CUSTOM &bull; Built with pride by [Akash Priyadarshi](https://github.com/AkashPriyadarshii).
