@@ -101,7 +101,7 @@ Fetch token-optimized Markdown text files designed specifically for AI system pr
 | Endpoint | Content |
 |---|---|
 | [`https://my-starred-repos.vercel.app/llms.txt`](https://my-starred-repos.vercel.app/llms.txt) | Top 100 starred repos + Topic Taxonomy + Category Manifest |
-| [`https://my-starred-repos.vercel.app/llms-full.txt`](https://my-starred-repos.vercel.app/llms-full.txt) | Complete collection of 960+ repos with metadata |
+| [`https://my-starred-repos.vercel.app/llms-full.txt`](https://my-starred-repos.vercel.app/llms-full.txt) | Complete collection of 1127 repos with metadata |
 | [`https://my-starred-repos.vercel.app/llms-ai-agents.txt`](https://my-starred-repos.vercel.app/llms-ai-agents.txt) | AI & Agents category slice (539+ repos) |
 | [`https://my-starred-repos.vercel.app/llms-dev-tools.txt`](https://my-starred-repos.vercel.app/llms-dev-tools.txt) | Dev Tools & CLI utilities slice |
 | [`https://my-starred-repos.vercel.app/llms-mobile.txt`](https://my-starred-repos.vercel.app/llms-mobile.txt) | Android & Mobile internals slice |

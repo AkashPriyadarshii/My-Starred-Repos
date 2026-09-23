@@ -1,6 +1,24 @@
 User-agent: *
 Allow: /
 
+# AI search + cite bots explicitly allowed (readiness 100)
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Bytespider
+Allow: /
+User-agent: CCBot
+Allow: /
+
 # LLM Documentation & Machine Context Endpoints
 # https://my-starred-repos.vercel.app/llms.txt
 # https://my-starred-repos.vercel.app/llms-full.txt
