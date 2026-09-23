@@ -126,7 +126,7 @@ Add this tool definition to Claude Code, Cursor, or your MCP agent configuration
 | Endpoint | Description |
 |---|---|
 | [`/llms.txt`](https://my-starred-repos.vercel.app/llms.txt) | Top 100 Starred Repos + Topic Taxonomy + Category Manifest |
-| [`/llms-full.txt`](https://my-starred-repos.vercel.app/llms-full.txt) | All 960+ Starred Repos with full metadata |
+| [`/llms-full.txt`](https://my-starred-repos.vercel.app/llms-full.txt) | All 1127 Starred Repos with full metadata |
 | [`/llms-ai-agents.txt`](https://my-starred-repos.vercel.app/llms-ai-agents.txt) | AI & Agents Category (539 repos) |
 | [`/llms-dev-tools.txt`](https://my-starred-repos.vercel.app/llms-dev-tools.txt) | Dev Tools & CLI Utilities (74 repos) |
 | [`/llms-mobile.txt`](https://my-starred-repos.vercel.app/llms-mobile.txt) | Android & Mobile Internals (50 repos) |

@@ -370,7 +370,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   border: 1px solid oklch(74% 0.18 55 / 0.35);
   font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
 }
-.matcher-title-wrap h3 { font-family: var(--font-display); font-weight: 700; font-size: var(--text-2xl); letter-spacing: -0.03em; color: var(--color-ink); }
+.matcher-title-wrap h3, .matcher-title-wrap h2.matcher-title { font-family: var(--font-display); font-weight: 700; font-size: var(--text-2xl); letter-spacing: -0.03em; color: var(--color-ink); margin: 0; }
 .matcher-close-btn {
   width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--radius-sm);
   color: var(--color-ink-3); font-size: 1.4rem; line-height: 1;

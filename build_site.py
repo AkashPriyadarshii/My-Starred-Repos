@@ -81,7 +81,7 @@ def itemlist_json(repos, n=20):
     return items
 
 
-def render_featured_section(repos):
+def render_featured_section(repos, date_mod):
     cards = []
     for r in featured(repos):
         desc = r.get("description") or "No description provided."
@@ -127,6 +127,7 @@ def render_featured_section(repos):
       <div class="seo-card">
         <div class="seo-header">
           <h2>Curated GitHub Repositories &amp; Developer Tools</h2>
+          <p class="seo-def">my-starred-repos is a free, searchable index of {len(repos)} GitHub repositories starred by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">Akash Priyadarshi</a>, covering AI agents, MCP servers, Rust CLIs, RAG frameworks, and developer tools. The index syncs weekly from the GitHub API. Last updated {esc(date_mod)}.</p>
           <p class="seo-desc">{len(repos)} hand-curated open-source projects by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">Akash Priyadarshi</a>, organized across {len(cats)} categories and auto-updated weekly via GitHub Actions. Primary technologies: {langs}.</p>
         </div>
 
@@ -155,12 +156,16 @@ def render_featured_section(repos):
           <h3>Frequently Asked Questions</h3>
           <div class="seo-faq-grid">
             <div class="seo-faq-item">
+              <h4 class="seo-faq-q">What is my-starred-repos?</h4>
+              <p class="seo-faq-a">my-starred-repos is a free index of every GitHub repository starred by Akash Priyadarshi, searchable by keyword, category, and language, with a client-side Project Matcher that ranks tools against your own project description. New stars sync weekly.</p>
+            </div>
+            <div class="seo-faq-item">
               <h4 class="seo-faq-q">What are the best open-source AI agent and developer tool repositories in 2026?</h4>
               <p class="seo-faq-a">Top-rated repositories include multi-agent orchestration frameworks (LangGraph, CrewAI, AutoGen, Hermes-Agent), Model Context Protocol servers (MCP), agent skill ecosystems (Claude Code skills, Superpowers, ECC), type-safe LLM tools (Pydantic-AI), token-efficient CLI utilities (rustygrep, zcat, repomap), and local agent assistants (OpenClaw, Browser-Use).</p>
             </div>
             <div class="seo-faq-item">
               <h4 class="seo-faq-q">How does the Vibe Coder Project Matcher work?</h4>
-              <p class="seo-faq-a">The built-in Project Matcher calculates term overlap and semantic keyword relevance scores purely in client-side JavaScript against all 960+ repository descriptions and tags with zero backend latency.</p>
+              <p class="seo-faq-a">The built-in Project Matcher calculates term overlap and semantic keyword relevance scores purely in client-side JavaScript against all {len(repos)}+ repository descriptions and tags with zero backend latency.</p>
             </div>
             <div class="seo-faq-item">
               <h4 class="seo-faq-q">How often is the repository index updated?</h4>
@@ -173,7 +178,25 @@ def render_featured_section(repos):
 """
 
 
+def render_noscript(repos, n=30):
+    """Plain-HTML top-N list for no-JS crawlers and lightweight AI fetchers."""
+    items = "".join(
+        f'<li><a href="{esc(r.get("url"))}">{esc(r.get("full_name"))}</a> — {esc((r.get("description") or "No description provided.")[:140])}</li>'
+        for r in sorted(repos, key=lambda r: r.get("stars", 0), reverse=True)[:n]
+    )
+    return f"""
+    <noscript>
+      <nav aria-label="Top starred repositories">
+        <h2>Top Starred Repositories</h2>
+        <ul>{items}</ul>
+      </nav>
+    </noscript>
+"""
+
+
 def render_sitemap(date_mod, categories):
+    # Homepage only: crawl budget concentrates on the indexable page.
+    # llms*.txt endpoints stay discoverable via footer links + robots.txt.
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
@@ -183,29 +206,7 @@ def render_sitemap(date_mod, categories):
         '    <changefreq>weekly</changefreq>',
         '    <priority>1.0</priority>',
         '  </url>',
-        '  <url>',
-        '    <loc>https://my-starred-repos.vercel.app/llms.txt</loc>',
-        f'    <lastmod>{date_mod}</lastmod>',
-        '    <changefreq>weekly</changefreq>',
-        '    <priority>0.8</priority>',
-        '  </url>',
-        '  <url>',
-        '    <loc>https://my-starred-repos.vercel.app/llms-full.txt</loc>',
-        f'    <lastmod>{date_mod}</lastmod>',
-        '    <changefreq>weekly</changefreq>',
-        '    <priority>0.8</priority>',
-        '  </url>',
     ]
-    for cat, _ in categories:
-        slug = slugify(cat)
-        lines.extend([
-            '  <url>',
-            f'    <loc>https://my-starred-repos.vercel.app/llms-{slug}.txt</loc>',
-            f'    <lastmod>{date_mod}</lastmod>',
-            '    <changefreq>weekly</changefreq>',
-            '    <priority>0.7</priority>',
-            '  </url>',
-        ])
     lines.append('</urlset>\n')
     return '\n'.join(lines)
 
@@ -217,16 +218,16 @@ def render_index(d):
     generated = d.get("generated_at", "")
     date_mod = generated[:10] if generated else datetime.utcnow().strftime("%Y-%m-%d")
 
-    # Title: ~53 chars (target 30-60)
-    title = f"Starred Repos — {esc(profile.get('name') or 'Akash Priyadarshi')} | {count_label(count)} Curated Stars"
+    # Title: ~55 chars, exact count so SERP matches page copy (target 30-60)
+    title = f"Starred Repos — {esc(profile.get('name') or 'Akash Priyadarshi')} | {count} Curated Stars"
 
-    # Meta description: ~152 chars (target 120-160)
+    # Meta description: ~140 chars (target 120-160)
     desc = (
         f"{count} curated GitHub starred repos by {esc(profile.get('name') or 'Akash Priyadarshi')} — "
-        "AI agents, MCP, dev tools, systems, LLMs & web dev. Auto-updated weekly. Search, project match & explore."
+        "AI agents, MCP, dev tools, systems, LLMs & web dev. Auto-updated weekly."
     )
 
-    featured_html = render_featured_section(repos)
+    featured_html = render_featured_section(repos, date_mod)
     schema = {
         "@context": "https://schema.org",
         "@type": "WebApplication",
@@ -273,6 +274,46 @@ def render_index(d):
         "about": {"@type": "ItemList", "itemListElement": itemlist_json(repos)},
     }
     schema_json = json.dumps(schema, ensure_ascii=False, separators=(",", ":"))
+    faq = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What is my-starred-repos?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "my-starred-repos is a free index of every GitHub repository starred by Akash Priyadarshi, searchable by keyword, category, and language, with a client-side Project Matcher that ranks tools against your own project description. New stars sync weekly.",
+                },
+            },
+            {
+                "@type": "Question",
+                "name": "What are the best open-source AI agent and developer tool repositories in 2026?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Top-rated repositories include multi-agent orchestration frameworks (LangGraph, CrewAI, AutoGen, Hermes-Agent), Model Context Protocol servers (MCP), agent skill ecosystems (Claude Code skills, Superpowers, ECC), type-safe LLM tools (Pydantic-AI), token-efficient CLI utilities (rustygrep, zcat, repomap), and local agent assistants (OpenClaw, Browser-Use).",
+                },
+            },
+            {
+                "@type": "Question",
+                "name": "How does the Vibe Coder Project Matcher work?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "The built-in Project Matcher calculates term overlap and semantic keyword relevance scores purely in client-side JavaScript against all repository descriptions and tags with zero backend latency.",
+                },
+            },
+            {
+                "@type": "Question",
+                "name": "How often is the repository index updated?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "The dataset, star metrics, language taxonomies, and GitHub metadata are synchronized automatically every week (and on-demand) via GitHub Actions workflows.",
+                },
+            },
+        ],
+    }
+    faq_json = json.dumps(faq, ensure_ascii=False, separators=(",", ":"))
+    noscript_html = render_noscript(repos)
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -311,6 +352,7 @@ def render_index(d):
 
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">{schema_json}</script>
+  <script type="application/ld+json">{faq_json}</script>
 
   <!-- Favicon / manifest -->
   <link rel="icon" href="/favicon.ico" sizes="any">
@@ -437,7 +479,7 @@ def render_index(d):
         <div class="matcher-header">
           <div class="matcher-title-wrap">
             <span class="matcher-badge">AI Agents &amp; Vibe Coders</span>
-            <h3>Project Relevance Matcher</h3>
+            <h2 class="matcher-title">Project Relevance Matcher</h2>
           </div>
           <button id="matcher-close-btn" class="matcher-close-btn" aria-label="Close project matcher">&times;</button>
         </div>
@@ -481,6 +523,8 @@ def render_index(d):
       </div>
     </main>
 
+    {noscript_html}
+
     <!-- Empty state -->
     <div class="empty-state hidden" id="empty-state">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -496,7 +540,7 @@ def render_index(d):
     <!-- Footer -->
     <footer class="footer">
       <div class="footer-content">
-        <p class="footer-text">Starred Repos v0.2 by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">{esc(profile.get('name') or 'Akash Priyadarshi')}</a>. Auto-updated weekly via GitHub Actions. <a href="/llms.txt" target="_blank" class="footer-link">llms.txt</a> &bull; <a href="/api/search?q=agent" target="_blank" class="footer-link">API</a></p>
+        <p class="footer-text">Starred Repos v0.2 by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">{esc(profile.get('name') or 'Akash Priyadarshi')}</a>. Auto-updated weekly via GitHub Actions. <a href="/llms.txt" target="_blank" class="footer-link">llms.txt</a> &bull; <a href="/llms-full.txt" target="_blank" class="footer-link">llms-full.txt</a> &bull; <a href="/api/search?q=agent" target="_blank" class="footer-link">API</a></p>
         <div class="visitor-counter" id="visitor-counter">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="visitor-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
           <span id="visitor-count">—</span> views
