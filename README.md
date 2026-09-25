@@ -1,6 +1,8 @@
 <div align="center">
 
 # ⭐ My Starred Repos — v0.2
+
+**Support:** fuel the next build — [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/AkashPriyadarshi)
 ### *Curated Open-Source Directory & Machine-Readable Knowledge Hub*
 
 [![Live Site](https://img.shields.io/badge/Live%20Site-my--starred--repos.vercel.app-34d399?style=flat-square&logo=vercel)](https://my-starred-repos.vercel.app/)
@@ -194,18 +196,10 @@ python3 -m http.server 8080
 
 ---
 
-
-
 <p align="center">
   <img src="https://api.star-history.com/svg?repos=AkashPriyadarshii/My-Starred-Repos&type=Date" width="600" alt="star history" />
 </p>
 
-
 ## 📄 License
 
 CUSTOM &bull; Built with pride by [Akash Priyadarshi](https://github.com/AkashPriyadarshii).
-
-
----
-
-**Support:** fuel the next build — [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/AkashPriyadarshi)
