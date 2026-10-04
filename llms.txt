@@ -10,8 +10,8 @@
 - [Dev Tools](https://my-starred-repos.vercel.app/llms-dev-tools.txt)
 - [Mobile](https://my-starred-repos.vercel.app/llms-mobile.txt)
 - [Web Automation](https://my-starred-repos.vercel.app/llms-web-automation.txt)
-- [Media](https://my-starred-repos.vercel.app/llms-media.txt)
 - [Web Dev](https://my-starred-repos.vercel.app/llms-web-dev.txt)
+- [Media](https://my-starred-repos.vercel.app/llms-media.txt)
 - [LLM & RAG](https://my-starred-repos.vercel.app/llms-llm-rag.txt)
 - [Security](https://my-starred-repos.vercel.app/llms-security.txt)
 - [DevOps](https://my-starred-repos.vercel.app/llms-devops.txt)
@@ -53,8 +53,8 @@
 - [anthropics/skills](https://github.com/anthropics/skills): Public repository for Agent Skills
 - [f/prompts.chat](https://github.com/f/prompts.chat): f.k.a. Awesome ChatGPT Prompts.
 - [msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents): A complete AI agency at your fingertips
-- [open-webui/open-webui](https://github.com/open-webui/open-webui): User-friendly AI Interface (Supports Ollama, OpenAI API, ...)
 - [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail): Makes your AI agent think like the laziest senior dev in the room.
+- [open-webui/open-webui](https://github.com/open-webui/open-webui): User-friendly AI Interface (Supports Ollama, OpenAI API, ...)
 - [Genymobile/scrcpy](https://github.com/Genymobile/scrcpy): Display and control your Android device
 - [clash-verge-rev/clash-verge-rev](https://github.com/clash-verge-rev/clash-verge-rev): A modern GUI client based on Tauri, designed to run in Windows, macOS and Linux for tailored proxy experience
 - [x1xhlol/system-prompts-and-models-of-ai-tools](https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools): FULL Augment Code, Claude Code, Cluely, CodeBuddy, Comet, Cursor, Devin AI, Junie, Kiro, Leap.new, Lovable, Manus, No...
@@ -62,6 +62,7 @@
 - [iptv-org/iptv](https://github.com/iptv-org/iptv): Collection of publicly available IPTV channels from all over the world
 - [github/spec-kit](https://github.com/github/spec-kit): 💫 Toolkit to help you get started with SDD or any other process!
 - [farion1231/cc-switch](https://github.com/farion1231/cc-switch): A cross-platform desktop All-in-One assistant for Claude Code, Codex, OpenCode, OpenClaw, Grok Build & Hermes Agent.
+- [Comfy-Org/ComfyUI](https://github.com/Comfy-Org/ComfyUI): The most powerful and modular diffusion model GUI, api and backend with a graph/nodes interface.
 - [garrytan/gstack](https://github.com/garrytan/gstack): Use Garry Tan's exact Claude Code setup: 23 opinionated tools that serve as CEO, Designer, Eng Manager, Release Manag...
 - [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill): An AI skill that provides design intelligence for building professional UI/UX across multiple platforms.
 - [harry0703/MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo): 利用 AI 大模型和自动化工作流，根据主题或关键词一键生成高清短视频。Generate HD short videos from a topic or keyword with an automated AI workflow.
@@ -77,7 +78,9 @@
 - [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman): 🪨 why use many token when few token do trick.
 - [denoland/deno](https://github.com/denoland/deno): A modern runtime for JavaScript and TypeScript.
 - [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills): Production-grade engineering skills for AI coding agents.
+- [ant-design/ant-design](https://github.com/ant-design/ant-design): An enterprise-class UI design language and React UI library
 - [nexu-io/open-design](https://github.com/nexu-io/open-design): 🎨 Best DeepSeek Harness Design Plugin.
+- [mui/material-ui](https://github.com/mui/material-ui): Material UI: Comprehensive React component library that implements Google's Material Design.
 - [karpathy/autoresearch](https://github.com/karpathy/autoresearch): AI agents running research on single-GPU nanochat training automatically
 - [paperclipai/paperclip](https://github.com/paperclipai/paperclip): The open-source app everyone uses to manage agents at work
 - [ruvnet/RuView](https://github.com/ruvnet/RuView): π RuView turns commodity WiFi signals into real-time spatial intelligence, vital sign monitoring, and presence detection
@@ -113,11 +116,11 @@
 - [coder/code-server](https://github.com/coder/code-server): VS Code in the browser
 - [dair-ai/Prompt-Engineering-Guide](https://github.com/dair-ai/Prompt-Engineering-Guide): 🐙 Guides, papers, lessons, notebooks and resources for prompt engineering, context engineering, RAG, and AI Agents.
 - [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code): Bash is all you need
-- [tt-a1i/archify](https://github.com/tt-a1i/archify): Agent skill for beautiful, verifiable architecture, workflow, sequence, data-flow, and lifecycle diagrams—self-contai...
+- [tt-a1i/archify](https://github.com/tt-a1i/archify): Turn any idea, plan, or codebase into a beautiful interactive diagram.
 - [ocornut/imgui](https://github.com/ocornut/imgui): Dear ImGui: Bloat-free Graphical User interface for C++ with minimal dependencies
 - [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills): A curated list of awesome Claude Skills, resources, and tools for customizing Claude AI workflows
-- [666ghj/MiroFish](https://github.com/666ghj/MiroFish): A Simple and Universal Swarm Intelligence Engine, Predicting Anything. 简洁通用的群体智能引擎，预测万物
 - [pbakaus/impeccable](https://github.com/pbakaus/impeccable): The design language that makes your AI harness better at design.
+- [666ghj/MiroFish](https://github.com/666ghj/MiroFish): A Simple and Universal Swarm Intelligence Engine, Predicting Anything. 简洁通用的群体智能引擎，预测万物
 - [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom): Compress tool outputs, logs, files, and RAG chunks before they reach the LLM. 20% fewer tokens for coding agents, 60-...
 - [openbq-org/OpenBB](https://github.com/openbq-org/OpenBB): Open Data Platform for analysts, quants and AI agents.
 - [ruvnet/ruflo](https://github.com/ruvnet/ruflo): 🌊 The original agent harness.
@@ -125,6 +128,3 @@
 - [juliangarnier/anime](https://github.com/juliangarnier/anime): JavaScript animation engine
 - [toeverything/AFFiNE](https://github.com/toeverything/AFFiNE): There can be more than Notion and Miro.
 - [colbymchenry/codegraph](https://github.com/colbymchenry/codegraph): Pre-indexed code knowledge graph, auto syncs on code changes, for Claude Code, Codex, Gemini, Cursor, OpenCode, AntiG...
-- [daytonaio/daytona](https://github.com/daytonaio/daytona): Daytona is a Secure and Elastic Infrastructure for Running AI-Generated Code
-- [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec): Spec-driven development (SDD) for AI coding assistants.
-- [FoundationAgents/MetaGPT](https://github.com/FoundationAgents/MetaGPT): 🌟 The Multi-Agent Framework: First AI Software Company, Towards Natural Language Programming
