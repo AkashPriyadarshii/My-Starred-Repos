@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
-"""Generate index.html + llms.txt + category llms + sitemap.xml from repos_output.json.
+"""Generate index.html + llms.txt + llms-full.txt + sitemap.xml from repos_output.json.
 
-v0.2 release: Project relevance matcher, per-category llms files, compact view,
-local bookmarks, and weekly sync workflow.
+Generated files are committed; pushing to main is the deploy. There is no workflow
+and no cron. Run `python fetch_stars.py && python build_site.py`, or
+`python build_site.py --check` to verify the committed output still matches.
 """
+import argparse
+import hashlib
 import html as _html
 import json
 import re
+import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -17,13 +21,17 @@ LLMS = ROOT / "llms.txt"
 LLMS_FULL = ROOT / "llms-full.txt"
 SITEMAP = ROOT / "sitemap.xml"
 
-CSS_V = "9"
-JS_V = "7"
+# Cache versions derive from file bytes: a stale ?v= can no longer happen.
+def asset_version(name):
+    return hashlib.sha1((ROOT / name).read_bytes()).hexdigest()[:8]
+
+CSS_V = asset_version("style.css")
+JS_V = asset_version("app.js")
 
 GITHUB = "https://github.com/AkashPriyadarshii"
-PORTFOLIO = "https://akashpriyadarshi.vercel.app"
+PORTFOLIO = "https://akashpriyadarshi.is-a.dev"
 X_PROFILE = "https://x.com/Akash__ydv001"
-LINKEDIN = "https://linkedin.com/in/akash-priyadarshi-1aa51b37a"
+LINKEDIN = "https://www.linkedin.com/in/akashpriyadarshii"
 
 
 def esc(s):
@@ -34,8 +42,16 @@ def slugify(s):
     return re.sub(r'[^a-z0-9]+', '-', str(s or '').lower()).strip('-')
 
 
-def count_label(n):
-    return f"{int(n) // 10 * 10}+"
+def fmt_num(n):
+    """Mirror app.js formatNum so the baked and hydrated values agree."""
+    n = int(n or 0)
+    if n >= 1_000_000_000:
+        return f"{n / 1e9:.1f}".rstrip("0").rstrip(".") + "b"
+    if n >= 1_000_000:
+        return f"{n / 1e6:.1f}".rstrip("0").rstrip(".") + "m"
+    if n >= 1000:
+        return f"{n / 1000:.1f}".rstrip("0").rstrip(".") + "k"
+    return str(n)
 
 
 def load():
@@ -127,8 +143,8 @@ def render_featured_section(repos, date_mod):
       <div class="seo-card">
         <div class="seo-header">
           <h2>Curated GitHub Repositories &amp; Developer Tools</h2>
-          <p class="seo-def">my-starred-repos is a free, searchable index of {len(repos)} GitHub repositories starred by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">Akash Priyadarshi</a>, covering AI agents, MCP servers, Rust CLIs, RAG frameworks, and developer tools. The index syncs weekly from the GitHub API. Last updated {esc(date_mod)}.</p>
-          <p class="seo-desc">{len(repos)} hand-curated open-source projects by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">Akash Priyadarshi</a>, organized across {len(cats)} categories and auto-updated weekly via GitHub Actions. Primary technologies: {langs}.</p>
+          <p class="seo-def">my-starred-repos is a free, searchable index of {len(repos)} GitHub repositories starred by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">Akash Priyadarshi</a>, covering AI agents, MCP servers, Rust CLIs, RAG frameworks, and developer tools. The index is a baked snapshot of the public GitHub API, regenerated on demand. This build: {esc(date_mod)}.</p>
+          <p class="seo-desc">{len(repos)} starred open-source projects by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">Akash Priyadarshi</a>, organized across {len(cats)} categories from a snapshot generated {esc(date_mod)}. Primary technologies: {langs}.</p>
         </div>
 
         <div class="seo-topics-wrap">
@@ -157,19 +173,19 @@ def render_featured_section(repos, date_mod):
           <div class="seo-faq-grid">
             <div class="seo-faq-item">
               <h4 class="seo-faq-q">What is my-starred-repos?</h4>
-              <p class="seo-faq-a">my-starred-repos is a free index of every GitHub repository starred by Akash Priyadarshi, searchable by keyword, category, and language, with a client-side Project Matcher that ranks tools against your own project description. New stars sync weekly.</p>
+              <p class="seo-faq-a">my-starred-repos is a free index of every GitHub repository starred by Akash Priyadarshi, searchable by keyword, category, and language, with a client-side Project Matcher that ranks tools against your own project description. New stars appear on the next sync run.</p>
             </div>
             <div class="seo-faq-item">
               <h4 class="seo-faq-q">What are the best open-source AI agent and developer tool repositories in 2026?</h4>
               <p class="seo-faq-a">Top-rated repositories include multi-agent orchestration frameworks (LangGraph, CrewAI, AutoGen, Hermes-Agent), Model Context Protocol servers (MCP), agent skill ecosystems (Claude Code skills, Superpowers, ECC), type-safe LLM tools (Pydantic-AI), token-efficient CLI utilities (rustygrep, zcat, repomap), and local agent assistants (OpenClaw, Browser-Use).</p>
             </div>
             <div class="seo-faq-item">
-              <h4 class="seo-faq-q">How does the Vibe Coder Project Matcher work?</h4>
-              <p class="seo-faq-a">The built-in Project Matcher calculates term overlap and semantic keyword relevance scores purely in client-side JavaScript against all {len(repos)}+ repository descriptions and tags with zero backend latency.</p>
+              <h4 class="seo-faq-q">How does the Project Matcher rank repositories?</h4>
+              <p class="seo-faq-a">It scores every repository in the browser by keyword overlap across names, topics, languages, and descriptions, with a small boost for well-starred projects. Nothing you paste leaves the page, and scores are relative to the best match in the current dataset.</p>
             </div>
             <div class="seo-faq-item">
               <h4 class="seo-faq-q">How often is the repository index updated?</h4>
-              <p class="seo-faq-a">The dataset, star metrics, language taxonomies, and GitHub metadata are synchronized automatically every week (and on-demand) via GitHub Actions workflows.</p>
+              <p class="seo-faq-a">There is no schedule. The owner re-runs the sync script against the public GitHub API and commits the result; the badge in the header shows how old the current snapshot is.</p>
             </div>
           </div>
         </div>
@@ -194,7 +210,7 @@ def render_noscript(repos, n=30):
 """
 
 
-def render_sitemap(date_mod, categories):
+def render_sitemap(date_mod):
     # Homepage only: crawl budget concentrates on the indexable page.
     # llms*.txt endpoints stay discoverable via footer links + robots.txt.
     lines = [
@@ -203,7 +219,6 @@ def render_sitemap(date_mod, categories):
         '  <url>',
         '    <loc>https://my-starred-repos.vercel.app/</loc>',
         f'    <lastmod>{date_mod}</lastmod>',
-        '    <changefreq>weekly</changefreq>',
         '    <priority>1.0</priority>',
         '  </url>',
     ]
@@ -224,7 +239,7 @@ def render_index(d):
     # Meta description: ~140 chars (target 120-160)
     desc = (
         f"{count} curated GitHub starred repos by {esc(profile.get('name') or 'Akash Priyadarshi')} — "
-        "AI agents, MCP, dev tools, systems, LLMs & web dev. Auto-updated weekly."
+        "AI agents, MCP, dev tools, systems, LLMs & web dev. Snapshot refreshed on demand."
     )
 
     featured_html = render_featured_section(repos, date_mod)
@@ -236,7 +251,7 @@ def render_index(d):
         "description": desc,
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Web",
-        "softwareVersion": "0.2.0",
+        "softwareVersion": "0.3.0",
         "author": {
             "@type": "Person",
             "name": profile.get("name") or "Akash Priyadarshi",
@@ -283,7 +298,7 @@ def render_index(d):
                 "name": "What is my-starred-repos?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "my-starred-repos is a free index of every GitHub repository starred by Akash Priyadarshi, searchable by keyword, category, and language, with a client-side Project Matcher that ranks tools against your own project description. New stars sync weekly.",
+                    "text": "my-starred-repos is a free index of every GitHub repository starred by Akash Priyadarshi, searchable by keyword, category, and language, with a client-side Project Matcher that ranks tools against your own project description. New stars appear on the next sync run.",
                 },
             },
             {
@@ -296,10 +311,10 @@ def render_index(d):
             },
             {
                 "@type": "Question",
-                "name": "How does the Vibe Coder Project Matcher work?",
+                "name": "How does the Project Matcher rank repositories?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "The built-in Project Matcher calculates term overlap and semantic keyword relevance scores purely in client-side JavaScript against all repository descriptions and tags with zero backend latency.",
+                    "text": "It scores every repository in the browser by keyword overlap across names, topics, languages, and descriptions, with a small boost for well-starred projects. Nothing you paste leaves the page, and scores are relative to the best match in the current dataset.",
                 },
             },
             {
@@ -307,13 +322,17 @@ def render_index(d):
                 "name": "How often is the repository index updated?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "The dataset, star metrics, language taxonomies, and GitHub metadata are synchronized automatically every week (and on-demand) via GitHub Actions workflows.",
+                    "text": "There is no schedule. The owner re-runs the sync script against the public GitHub API and commits the result; the badge in the header shows how old the current snapshot is.",
                 },
             },
         ],
     }
     faq_json = json.dumps(faq, ensure_ascii=False, separators=(",", ":"))
     noscript_html = render_noscript(repos)
+    # Baked so the page shows real numbers before app.js runs (no-JS, crawlers).
+    total_stars = sum(r.get("stars", 0) for r in repos)
+    avg_stars = round(total_stars / len(repos)) if repos else 0
+    top_lang = (top_langs(repos, 1) or ["—"])[0]
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -368,19 +387,12 @@ def render_index(d):
   <!-- Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css?v={CSS_V}">
   <script defer src="app.js?v={JS_V}"></script>
 </head>
 <body>
-
-  <!-- ambient warm blooms (atmospheric aura backdrop) -->
-  <div class="ambient" aria-hidden="true">
-    <div class="bloom bloom--1"></div>
-    <div class="bloom bloom--2"></div>
-    <div class="grain"></div>
-  </div>
 
   <a href="#grid" class="skip-link">Skip to repository list</a>
 
@@ -411,9 +423,9 @@ def render_index(d):
               <span class="stat-label">repos</span>
             </div>
           </div>
-          <span class="sync-badge" id="sync-badge" title="Profile synced live from GitHub API">
+          <span class="sync-badge" id="sync-badge" title="Baked snapshot of the GitHub API">
             <span class="sync-dot"></span>
-            <span id="sync-label">syncing</span>
+            <span id="sync-label">snapshot</span>
           </span>
         </div>
       </div>
@@ -422,7 +434,7 @@ def render_index(d):
     <!-- Metrics -->
     <section class="metrics" id="metrics">
       <div class="metric-card">
-        <span class="metric-val" id="metric-stars">—</span>
+        <span class="metric-val" id="metric-stars">{fmt_num(total_stars)}</span>
         <span class="metric-label">total stars tracked</span>
       </div>
       <div class="metric-card">
@@ -430,11 +442,11 @@ def render_index(d):
         <span class="metric-label">starred repos</span>
       </div>
       <div class="metric-card">
-        <span class="metric-val" id="metric-lang">—</span>
+        <span class="metric-val" id="metric-lang">{esc(top_lang)}</span>
         <span class="metric-label">top language</span>
       </div>
       <div class="metric-card">
-        <span class="metric-val" id="metric-avg">—</span>
+        <span class="metric-val" id="metric-avg">{fmt_num(avg_stars)}</span>
         <span class="metric-label">avg stars</span>
       </div>
     </section>
@@ -464,26 +476,25 @@ def render_index(d):
             <option value="updated-desc">Recently updated</option>
           </select>
           <div class="view-toggle" role="group" aria-label="View mode">
-            <button id="view-grid-btn" class="view-btn active" title="Card grid view" aria-label="Grid view">
+            <button id="view-grid-btn" class="view-btn" title="Card grid view" aria-label="Grid view">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
             </button>
-            <button id="view-compact-btn" class="view-btn" title="Compact list view" aria-label="Compact view">
+            <button id="view-compact-btn" class="view-btn active" title="Compact list view" aria-label="Compact view">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Vibe Coder Project Matcher Drawer -->
+      <!-- Project Matcher Drawer -->
       <div id="matcher-panel" class="matcher-panel hidden">
         <div class="matcher-header">
           <div class="matcher-title-wrap">
-            <span class="matcher-badge">AI Agents &amp; Vibe Coders</span>
             <h2 class="matcher-title">Project Relevance Matcher</h2>
           </div>
           <button id="matcher-close-btn" class="matcher-close-btn" aria-label="Close project matcher">&times;</button>
         </div>
-        <p class="matcher-desc">Paste your README, tech stack requirements, or idea description. Our client-side relevance engine ranks the most relevant tools, libraries, and frameworks from this collection.</p>
+        <p class="matcher-desc">Paste your README, tech stack requirements, or idea description. The matcher scores every starred repo by keyword overlap, client-side, with no request leaving the page.</p>
         <div class="matcher-input-wrap">
           <textarea id="matcher-input" placeholder="e.g. Building an offline-first Android expense tracker in Kotlin with local SQLite and auto SMS extraction... or A multi-agent AI coding harness with Claude Code MCP servers and token-efficient Rust CLI tools..." rows="3"></textarea>
           <div class="matcher-actions">
@@ -493,11 +504,11 @@ def render_index(d):
           </div>
           <div class="matcher-chips-wrap">
             <span class="matcher-chips-label">Quick Ideas:</span>
-            <button class="matcher-chip" data-prompt="Multi-agent orchestration Claude Code MCP servers tools">⚡ Multi-Agent &amp; MCP</button>
-            <button class="matcher-chip" data-prompt="Rust CLI high performance token efficient terminal utilities">🦀 Rust CLI &amp; Performance</button>
-            <button class="matcher-chip" data-prompt="Offline-first Android Kotlin Jetpack Compose SQLite">📱 Android &amp; Kotlin</button>
-            <button class="matcher-chip" data-prompt="Web crawling headless browser scraping anti-bot">🕷️ Web Scraping</button>
-            <button class="matcher-chip" data-prompt="Local RAG embeddings vector database search">🧠 RAG &amp; Vector DBs</button>
+            <button class="matcher-chip" data-prompt="Multi-agent orchestration Claude Code MCP servers tools">Multi-Agent &amp; MCP</button>
+            <button class="matcher-chip" data-prompt="Rust CLI high performance token efficient terminal utilities">Rust CLI &amp; Performance</button>
+            <button class="matcher-chip" data-prompt="Offline-first Android Kotlin Jetpack Compose SQLite">Android &amp; Kotlin</button>
+            <button class="matcher-chip" data-prompt="Web crawling headless browser scraping anti-bot">Web Scraping</button>
+            <button class="matcher-chip" data-prompt="Local RAG embeddings vector database search">RAG &amp; Vector DBs</button>
           </div>
         </div>
       </div>
@@ -505,7 +516,7 @@ def render_index(d):
       <div class="controls-bottom">
         <div class="category-tabs" id="category-tabs" role="tablist" aria-label="Filter by category">
           <button class="cat-tab active" data-cat="all" role="tab" aria-selected="true">All</button>
-          <button class="cat-tab cat-tab-pinned" data-cat="pinned" role="tab" aria-selected="false">📌 Pinned (<span id="pinned-count">0</span>)</button>
+          <button class="cat-tab cat-tab-pinned" data-cat="pinned" role="tab" aria-selected="false">Pinned (<span id="pinned-count">0</span>)</button>
         </div>
         <span class="result-count" id="result-count"></span>
       </div>
@@ -540,11 +551,7 @@ def render_index(d):
     <!-- Footer -->
     <footer class="footer">
       <div class="footer-content">
-        <p class="footer-text">Starred Repos v0.2 by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">{esc(profile.get('name') or 'Akash Priyadarshi')}</a>. Auto-updated weekly via GitHub Actions. <a href="/llms.txt" target="_blank" class="footer-link">llms.txt</a> &bull; <a href="/llms-full.txt" target="_blank" class="footer-link">llms-full.txt</a> &bull; <a href="/api/search?q=agent" target="_blank" class="footer-link">API</a></p>
-        <div class="visitor-counter" id="visitor-counter">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="visitor-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-          <span id="visitor-count">—</span> views
-        </div>
+        <p class="footer-text">Starred Repos v0.3 by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">{esc(profile.get('name') or 'Akash Priyadarshi')}</a>. Baked snapshot, refreshed on demand. <a href="/llms.txt" target="_blank" class="footer-link">llms.txt</a> &bull; <a href="/llms-full.txt" target="_blank" class="footer-link">llms-full.txt</a> &bull; <a href="/api/search?q=agent" target="_blank" class="footer-link">API</a></p>
       </div>
     </footer>
   </div>
@@ -575,25 +582,28 @@ def clean_summary(desc):
     return cleaned
 
 
-def llms_lines(repos, full=False, limit=100, category_title=None, category_files=None):
-    title = f"# Starred Repos — {category_title}" if category_title else "# Starred Repos"
+def llms_lines(repos, meta, full=False, limit=100):
     lines = [
-        title,
+        "# Starred Repos",
         "",
         "> A curated collection of GitHub starred repositories by Akash Priyadarshi (AkashPriyadarshii),",
-        "> organized by topic and auto-updated weekly.",
+        "> organized by topic. This file is a baked snapshot, not a live feed.",
+        "",
+        "## Dataset",
+        "",
+        f"- schema_version: {meta.get('schema_version', 1)}",
+        f"- total_repos: {meta.get('total_repos', len(repos))}",
+        f"- generated_at: {meta.get('generated_at', 'unknown')}",
+        f"- sync_mode: {meta.get('sync_mode', 'full')}",
+        "- freshness: regenerated on demand (no schedule, no cron). Treat generated_at as the truth.",
+        "- search_api: https://my-starred-repos.vercel.app/api/search?q=agent",
+        "- full_index: https://my-starred-repos.vercel.app/llms-full.txt",
         "",
     ]
-    if category_files:
-        lines.append("## Category LLM Endpoints")
-        lines.append("")
-        for cat_name, file_name in category_files:
-            lines.append(f"- [{cat_name}](https://my-starred-repos.vercel.app/{file_name})")
-        lines.append("")
 
-    if not category_title:
+    if not full:
         lines.extend([
-            "## Search & Topic Taxonomy",
+            "## Topic Taxonomy",
             "",
             "- AI Agents & Multi-Agent Orchestration (LangGraph, CrewAI, AutoGen, Hermes-Agent, Pydantic-AI)",
             "- Model Context Protocol (MCP) & Coding Skills (Claude Code Skills, MCP Servers, Superpowers, ECC)",
@@ -613,43 +623,63 @@ def llms_lines(repos, full=False, limit=100, category_title=None, category_files
         url = r.get("url", "")
         desc = (r.get("description") or "").strip()
         if full:
-            meta = f" [{r.get('stars', 0)} stars, {r.get('language') or 'N/A'}, {r.get('category') or 'Other'}]"
-            lines.append(f"- [{name}]({url}): {desc}{meta}")
+            meta_cols = f" [{r.get('stars', 0)} stars, {r.get('language') or 'N/A'}, {r.get('category') or 'Other'}]"
+            lines.append(f"- [{name}]({url}): {desc}{meta_cols}")
         else:
             short = clean_summary(desc)
             lines.append(f"- [{name}]({url}): {short}")
     return "\n".join(lines) + "\n"
 
 
-def main():
+def build_outputs():
     d = load()
     repos = d.get("repos", [])
     generated = d.get("generated_at", "")
     date_mod = generated[:10] if generated else datetime.utcnow().strftime("%Y-%m-%d")
 
-    cats = category_counts(repos)
-    category_files = []
+    outputs = {
+        INDEX: render_index(d),
+        LLMS: llms_lines(repos, d, full=False, limit=100),
+        LLMS_FULL: llms_lines(repos, d, full=True, limit=len(repos)),
+        SITEMAP: render_sitemap(date_mod),
+    }
+    # Per-category llms files were retired in 0.3: /api/search answers those queries.
+    stale = [p for p in sorted(ROOT.glob("llms-*.txt")) if p.name != LLMS_FULL.name]
+    return outputs, stale, len(repos), date_mod
 
-    # Generate category-specific llms files
-    for cat, _ in cats:
-        slug = slugify(cat)
-        cat_file = f"llms-{slug}.txt"
-        category_files.append((cat, cat_file))
-        cat_repos = [r for r in repos if (r.get("category") or "Other") == cat]
-        cat_txt_path = ROOT / cat_file
-        cat_txt_path.write_text(llms_lines(cat_repos, full=True, limit=len(cat_repos), category_title=cat), encoding="utf-8", newline="\n")
-        print(f"{cat_file} ({len(cat_repos)} entries)")
 
-    INDEX.write_text(render_index(d), encoding="utf-8", newline="\n")
-    LLMS.write_text(llms_lines(repos, full=False, limit=100, category_files=category_files), encoding="utf-8", newline="\n")
-    LLMS_FULL.write_text(llms_lines(repos, full=True, limit=len(repos), category_files=category_files), encoding="utf-8", newline="\n")
-    SITEMAP.write_text(render_sitemap(date_mod, cats), encoding="utf-8", newline="\n")
+def main():
+    parser = argparse.ArgumentParser(
+        description="Generate index.html, llms.txt, llms-full.txt, sitemap.xml from repos_output.json."
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="verify committed output matches the generator; exit 1 on drift",
+    )
+    args = parser.parse_args()
 
-    print(f"index.html ({len(repos)} repos, {len(repos)} baked)")
-    print(f"llms.txt ({min(len(repos), 100)} entries)")
-    print(f"llms-full.txt ({len(repos)} entries)")
-    print(f"sitemap.xml (lastmod: {date_mod})")
+    outputs, stale, repo_count, date_mod = build_outputs()
+
+    if args.check:
+        drift = [p for p, text in outputs.items() if not p.exists() or p.read_text(encoding="utf-8") != text]
+        drift += stale
+        if drift:
+            print("DRIFT: " + ", ".join(p.name for p in drift))
+            print("Run: python build_site.py")
+            return 1
+        print(f"OK: {len(outputs)} generated files match repos_output.json")
+        return 0
+
+    for path, text in outputs.items():
+        path.write_text(text, encoding="utf-8", newline="\n")
+        print(f"{path.name} ({len(text)} bytes)")
+    for path in stale:
+        path.unlink()
+        print(f"removed stale {path.name}")
+    print(f"{repo_count} repos, snapshot {date_mod}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -17,14 +17,33 @@ const STOP_WORDS = new Set([
   'want', 'best', 'good', 'my', 'we', 'our', 'like', 'some', 'any'
 ]);
 
+// Private mode / disabled storage throws on access, and a corrupt value must not
+// blank the page: both reads degrade to defaults instead of aborting the module.
+function readStore(key, fallback) {
+  try { return localStorage.getItem(key) || fallback; } catch (e) { return fallback; }
+}
+function readJSONStore(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+function writeStore(key, value) {
+  try { localStorage.setItem(key, value); } catch (e) { /* storage full or blocked */ }
+}
+
 const state = {
   repos: [],
   query: '',
   category: 'all',
   lang: 'all',
   sort: 'stars-desc',
-  view: localStorage.getItem('starred_view_mode') || 'grid',
-  pinned: new Set(JSON.parse(localStorage.getItem('starred_pinned') || '[]')),
+  view: readStore('starred_view_mode', 'compact'),
+  pinned: new Set(readJSONStore('starred_pinned', [])),
   matchScores: new Map(), // full_name -> { score, percent }
   isMatching: false,
   focusedIndex: -1,
@@ -83,7 +102,7 @@ function syncUrlParams() {
   if (state.category !== 'all') params.set('cat', state.category);
   if (state.lang !== 'all') params.set('lang', state.lang);
   if (state.sort !== 'stars-desc') params.set('sort', state.sort);
-  if (state.view !== 'grid') params.set('view', state.view);
+  if (state.view === 'grid') params.set('view', 'grid');
 
   const qs = params.toString();
   const newUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
@@ -131,7 +150,7 @@ function togglePin(repoName) {
     state.pinned.add(repoName);
     showToast(`Pinned ⭐ ${repoName}`);
   }
-  localStorage.setItem('starred_pinned', JSON.stringify(Array.from(state.pinned)));
+  writeStore('starred_pinned', JSON.stringify(Array.from(state.pinned)));
   updatePinnedCount();
 
   document.querySelectorAll(`.pin-btn[data-repo="${CSS.escape(repoName)}"]`).forEach(btn => {
@@ -171,8 +190,9 @@ async function copyCloneCommand(url, name) {
 
 async function fetchData() {
   try {
-    const cb = `?t=${Date.now()}`;
-    const reposRes = await fetch(`./repos_output.json${cb}`);
+    // No cache-buster: the CDN's max-age + SWR window is the freshness contract,
+    // and a per-load query string bypasses it (972 KB re-downloaded every view).
+    const reposRes = await fetch('./repos_output.json');
 
     if (!reposRes.ok) {
       throw new Error('Failed to load repos_output.json');
@@ -182,7 +202,7 @@ async function fetchData() {
     state.repos = data.repos || [];
 
     loadUrlParams();
-    renderProfile(data.profile);
+    renderProfile(data.profile, data.generated_at);
     renderMetrics();
     buildCategoryTabs();
     buildLangFilter();
@@ -196,7 +216,7 @@ async function fetchData() {
 
 // ── Profile ─────────────────────────────────────────────────────────────────
 
-function renderProfile(profile) {
+function renderProfile(profile, generatedAt) {
   if (!profile) return;
 
   const avatar = $('profile-avatar');
@@ -212,11 +232,23 @@ function renderProfile(profile) {
   if (profile.followers != null) $('stat-followers').textContent = formatNum(profile.followers);
   if (profile.public_repos != null) $('stat-repos').textContent = formatNum(profile.public_repos);
 
+  renderSnapshotAge(generatedAt);
+}
+
+// The page reads a baked snapshot, not live GitHub data. Show its real age.
+function renderSnapshotAge(generatedAt) {
   const badge = $('sync-badge');
-  if (badge) {
-    $('sync-label').textContent = 'live';
-    badge.title = 'Profile synced live from GitHub API';
+  const label = $('sync-label');
+  if (!badge || !label) return;
+  const when = generatedAt ? new Date(generatedAt) : null;
+  if (!when || isNaN(when)) {
+    label.textContent = 'snapshot';
+    badge.title = 'Baked snapshot of the GitHub API';
+    return;
   }
+  const days = Math.floor((Date.now() - when.getTime()) / 86400000);
+  label.textContent = days <= 0 ? 'snapshot today' : `snapshot ${days}d old`;
+  badge.title = `Baked snapshot generated ${when.toISOString().slice(0, 10)}. Refresh with fetch_stars.py.`;
 }
 
 // ── Metrics ─────────────────────────────────────────────────────────────────
@@ -254,7 +286,7 @@ function buildCategoryTabs() {
 
   tabs.innerHTML = `
     <button class="cat-tab ${state.category === 'all' ? 'active' : ''}" data-cat="all" role="tab" aria-selected="${state.category === 'all'}">All (${state.repos.length})</button>
-    <button class="cat-tab cat-tab-pinned ${state.category === 'pinned' ? 'active' : ''}" data-cat="pinned" role="tab" aria-selected="${state.category === 'pinned'}">📌 Pinned (<span id="pinned-count">${state.pinned.size}</span>)</button>
+    <button class="cat-tab cat-tab-pinned ${state.category === 'pinned' ? 'active' : ''}" data-cat="pinned" role="tab" aria-selected="${state.category === 'pinned'}">Pinned (<span id="pinned-count">${state.pinned.size}</span>)</button>
   `;
 
   const sorted = Object.entries(cats).sort((a, b) => b[1] - a[1]);
@@ -297,7 +329,7 @@ function buildLangFilter() {
 
 function applyViewMode(mode) {
   state.view = mode;
-  localStorage.setItem('starred_view_mode', mode);
+  writeStore('starred_view_mode', mode);
 
   const grid = $('grid');
   if (grid) grid.classList.toggle('view-compact', mode === 'compact');
@@ -395,7 +427,7 @@ function createCard(repo, i) {
         <span class="compact-desc">${highlight(repo.description || '', state.query)}</span>
       </div>
       <div class="compact-right">
-        <span class="card-lang"><span class="lang-dot" style="background:${langColor}"></span>${repo.language || 'N/A'}</span>
+        <span class="card-lang"><span class="lang-dot" style="background:${langColor}"></span>${escapeHTML(repo.language || 'N/A')}</span>
         <span class="compact-stars">★ ${formatNum(repo.stars)}</span>
         <button class="copy-btn" data-url="${escapeHTML(repo.url)}" data-name="${escapeHTML(repo.full_name)}" title="Copy git clone" aria-label="Copy clone command">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
@@ -432,7 +464,7 @@ function createCard(repo, i) {
     <div class="card-meta">
       <span class="card-lang">
         <span class="lang-dot" style="background:${langColor}"></span>
-        ${repo.language || 'N/A'}
+        ${escapeHTML(repo.language || 'N/A')}
       </span>
       <span class="card-date" title="Last update">${formatDate(repo.last_updated)}</span>
       <div class="card-actions">
@@ -572,6 +604,7 @@ function updateKeyboardFocus(newIndex) {
 function initEvents() {
   // Search input
   let debounce;
+  const clearSearchTimer = () => { clearTimeout(debounce); };
   $('search')?.addEventListener('input', e => {
     const q = e.target.value.trim().toLowerCase();
     $('search-clear')?.classList.toggle('hidden', !q);
@@ -583,6 +616,7 @@ function initEvents() {
     const input = $('search');
     if (input) input.value = '';
     $('search-clear')?.classList.add('hidden');
+    clearSearchTimer();
     state.query = '';
     renderGrid();
   });
@@ -704,6 +738,7 @@ function initEvents() {
 
   // Empty reset
   $('empty-reset')?.addEventListener('click', () => {
+    clearSearchTimer();
     state.query = '';
     state.category = 'all';
     state.lang = 'all';
@@ -737,6 +772,7 @@ function initEvents() {
       if (document.activeElement === $('search')) {
         $('search').blur();
         if (state.query) {
+          clearSearchTimer();
           $('search').value = '';
           $('search-clear')?.classList.add('hidden');
           state.query = '';
@@ -767,53 +803,9 @@ function initEvents() {
   });
 }
 
-// ── Visitor Counter (global, realtime, cross-device, no-cache) ──────────────
-
-// Keyless, no-signup, persistent counting API (drop-in for dead countapi.xyz).
-// Unique key per site so the count is shared across ALL devices & users.
-const VISITOR_API = 'https://countapi.mileshilliard.com/api/v1/hit/my-starred-repos-global-views';
-const VISITOR_FALLBACK_KEY = 'my-starred-repos-views-local-fallback';
-
-function initVisitorCounter() {
-  const el = $('visitor-count');
-  if (!el) return;
-
-  // Guard against accidental double-hit within the same page session
-  // (soft re-render / re-init) while still counting once per real load.
-  if (sessionStorage.getItem('my-starred-repos-counted')) {
-    // already counted this session — just fetch the live number without +1
-    const getUrl = VISITOR_API.replace('/hit/', '/get/').split('?')[0] + `?_=${Date.now()}`;
-    fetch(getUrl, { cache: 'no-store' })
-      .then(r => r.json())
-      .then(d => { if (d && d.value != null) el.textContent = Number(d.value).toLocaleString(); })
-      .catch(() => {});
-    return;
-  }
-  sessionStorage.setItem('my-starred-repos-counted', '1');
-
-  // Hit global counter: +1 every page load, returns new total. no-store to
-  // defeat any CDN/browser/proxy cache so the count updates in realtime.
-  fetch(`${VISITOR_API}?_=${Date.now()}`, { cache: 'no-store' })
-    .then(r => r.json())
-    .then(d => {
-      if (d && d.value != null) {
-        el.textContent = Number(d.value).toLocaleString();
-      } else {
-        throw new Error('bad response');
-      }
-    })
-    .catch(() => {
-      // graceful fallback so the UI never breaks if the API is down
-      const local = parseInt(localStorage.getItem(VISITOR_FALLBACK_KEY) || '0', 10) + 1;
-      localStorage.setItem(VISITOR_FALLBACK_KEY, String(local));
-      el.textContent = local.toLocaleString();
-    });
-}
-
 // ── Init ────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
   initEvents();
   fetchData();
-  initVisitorCounter();
 });

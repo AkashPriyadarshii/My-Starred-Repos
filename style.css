@@ -1,19 +1,13 @@
 /* ==========================================================================
-   STARRED-REPOS — FOUNDRY / BLOOM "aura" SKIN
+   STARRED-REPOS — WARM PAPER
    --------------------------------------------------------------------------
-   Archetype : Hallmark · atmospheric "Bloom" (warm amber aura)
-   Basis     : hyperlane-01 example — dark warm paper, weighty-sans display,
-               giant type, instrumental serif accent, amber/coral blooms
-   Stack     : Vanilla CSS. Inter Tight (display) + Inter (body) +
-               JetBrains Mono (data/labels) + Instrument Serif (serif accent)
-   Rule      : ONE warm-amber bloom hue locks every highlight. Massive type
-               contrast. GPU-safe transform/opacity motion only, custom
-               cubic-beziers, honors prefers-reduced-motion. shadcn-grade
-               component polish (focus rings, elevation, refined controls).
+   Dark warm charcoal paper, one amber accent, hairline rules.
+   Vanilla CSS. Inter Tight (display) + Inter (body) + JetBrains Mono (data).
+   Motion: transform/opacity only, honors prefers-reduced-motion.
    ========================================================================== */
 
 /* ==========================================================================
-   1. DESIGN TOKENS — Bloom (warm amber) from Hallmark hyperlane example
+   1. DESIGN TOKENS — warm amber on warm charcoal
    ========================================================================== */
 :root {
   color-scheme: dark;
@@ -27,22 +21,19 @@
   /* ink — warm high-contrast */
   --color-ink:        oklch(95% 0.010 70);
   --color-ink-2:      oklch(78% 0.015 60);
-  --color-ink-3:      oklch(58% 0.015 50);
+  --color-ink-3:      oklch(68% 0.015 50);
 
   /* rules — hairline warm borders */
   --color-rule:       oklch(28% 0.018 40);
   --color-rule-strong:oklch(40% 0.025 40);
 
-  /* accent — warm amber bloom + coral secondary */
+  /* accent — warm amber + coral secondary */
   --color-accent:     oklch(74% 0.180 55);
   --color-accent-2:   oklch(68% 0.220 18);
   --color-accent-soft:oklch(74% 0.060 55);
   --color-accent-ink: oklch(15% 0.040 50);
   --color-focus:      oklch(82% 0.180 55);
-  --color-bloom-1:    oklch(74% 0.220 50);
-  --color-bloom-2:    oklch(60% 0.220 15);
   --color-glow:       oklch(74% 0.220 50 / 0.45);
-  --color-glow-2:     oklch(60% 0.220 15 / 0.30);
 
   --color-muted:      var(--color-ink-3);
 
@@ -50,7 +41,6 @@
   --font-display: 'Inter Tight', system-ui, -apple-system, sans-serif;
   --font-body:    'Inter', system-ui, -apple-system, sans-serif;
   --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
-  --font-accent:  'Instrument Serif', 'Times New Roman', Georgia, serif;
 
   /* type scale */
   --text-xs: 0.75rem;
@@ -61,9 +51,7 @@
   --text-xl: 1.5rem;
   --text-2xl: 2rem;
   --text-3xl: 2.75rem;
-  --text-display: clamp(2.75rem, 8vw + 0.5rem, 7.5rem);
 
-  --leading-display: 0.92;
   --leading-snug: 1.25;
   --leading-body: 1.55;
 
@@ -91,12 +79,12 @@
   --radius-md: 14px;
   --radius-lg: 20px;
   --radius-pill: 999px;
+  --rule-hair: 1px;
 
   /* shadow — layered elevation (no pure-black) */
   --shadow-1: 0 1px 2px rgba(0,0,0,0.2), 0 1px 3px rgba(0,0,0,0.12);
   --shadow-2: 0 4px 12px rgba(0,0,0,0.28), 0 2px 6px rgba(0,0,0,0.18);
   --shadow-3: 0 16px 40px rgba(0,0,0,0.4), 0 6px 16px rgba(0,0,0,0.28);
-  --shadow-glow: 0 0 0 1px oklch(74% 0.18 55 / 0.35), 0 8px 30px -6px var(--color-glow);
 
   --page-gutter: clamp(1rem, 4vw, 3rem);
   --max-width: 80rem;
@@ -142,40 +130,14 @@ input:focus-visible, select:focus-visible {
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
 ::placeholder { color: var(--color-ink-3); opacity: 1; }
 
-/* animated scrollbar thumb pulse */
-@keyframes thumbGlow { 0%,100% { box-shadow: none; } 50% { box-shadow: 0 0 6px var(--color-glow); } }
+/* scrollbar */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--color-paper); }
-::-webkit-scrollbar-thumb { background: var(--color-paper-4); border-radius: var(--radius-pill); border: 2px solid var(--color-paper); animation: thumbGlow 6s ease-in-out infinite; }
+::-webkit-scrollbar-thumb { background: var(--color-paper-4); border-radius: var(--radius-pill); border: 2px solid var(--color-paper); }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-accent-soft); }
 
 /* ==========================================================================
-   3. AMBIENT AURA — warm blooms + grain (fixed, non-interactive)
-   ========================================================================== */
-.ambient { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; isolation: isolate; }
-.bloom { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.5; will-change: opacity; }
-.bloom--1 {
-  top: -12vmax; left: -8vmax; width: 62vmax; height: 62vmax;
-  background: radial-gradient(closest-side, color-mix(in oklch, var(--color-bloom-1) 55%, transparent), transparent 70%);
-  animation: drift1 26s ease-in-out infinite alternate;
-}
-.bloom--2 {
-  bottom: -22vmax; right: -16vmax; width: 58vmax; height: 58vmax;
-  background: radial-gradient(closest-side, color-mix(in oklch, var(--color-bloom-2) 42%, transparent), transparent 70%);
-  animation: drift2 32s ease-in-out infinite alternate;
-}
-@keyframes drift1 { from { transform: translate3d(0,0,0) scale(1); } to { transform: translate3d(4vmax,3vmax,0) scale(1.12); } }
-@keyframes drift2 { from { transform: translate3d(0,0,0) scale(1.08); } to { transform: translate3d(-4vmax,-3vmax,0) scale(1); } }
-.grain {
-  position: absolute; inset: 0;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95  0 0 0 0 0.94  0 0 0 0 0.92  0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.6'/></svg>");
-  background-size: 200px 200px;
-  opacity: 0.5;
-  mix-blend-mode: overlay;
-}
-
-/* ==========================================================================
-   4. PAGE / SHELL
+   3. PAGE / SHELL
    ========================================================================== */
 .page { position: relative; z-index: 1; }
 
@@ -192,7 +154,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .hidden { display: none !important; }
 
 /* ==========================================================================
-   5. HEADER — floating pill brand bar
+   4. HEADER — floating pill brand bar
    ========================================================================== */
 .header { padding: var(--space-md) var(--page-gutter) 0; }
 .header-content {
@@ -201,9 +163,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   padding: var(--space-sm) var(--space-lg);
   border: 1px solid var(--color-rule);
   border-radius: var(--radius-pill);
-  background: oklch(17% 0.02 35 / 0.72);
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  background: var(--color-paper-2);
   box-shadow: var(--shadow-1);
 }
 .header-left { display: flex; align-items: center; gap: var(--space-md); min-width: 0; }
@@ -237,12 +197,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   border: 1px solid var(--color-rule); border-radius: var(--radius-pill);
   background: var(--color-paper-2);
 }
-.sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-accent); box-shadow: 0 0 8px var(--color-glow); animation: syncPulse 2.4s ease-in-out infinite; }
-@keyframes syncPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+.sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-accent); }
 #sync-label { text-transform: lowercase; }
 
 /* ==========================================================================
-   6. METRICS — oversized readout band
+   5. METRICS — oversized readout band
    ========================================================================== */
 .metrics {
   display: grid; grid-template-columns: repeat(4, 1fr);
@@ -255,19 +214,16 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   overflow: hidden;
 }
 .metric-card {
-  background: oklch(17% 0.02 35 / 0.8);
+  background: var(--color-paper-2);
   padding: var(--space-lg) var(--space-xl);
   display: flex; flex-direction: column; gap: 2px;
-  backdrop-filter: blur(6px);
-  transition: background var(--dur-base) var(--ease-out);
 }
-.metric-card:hover { background: var(--color-paper-2); }
 .metric-val { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.75rem, 3.5vw, 2.75rem); letter-spacing: -0.03em; color: var(--color-ink); line-height: 1; }
 .metric-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-ink-3); }
 .metric-card:first-child .metric-val { color: var(--color-accent); }
 
 /* ==========================================================================
-   7. CONTROLS — toolbar
+   6. CONTROLS — toolbar
    ========================================================================== */
 .controls { max-width: var(--max-width); margin: var(--space-2xl) auto 0; padding: 0 var(--page-gutter); }
 .controls-top { display: flex; flex-wrap: wrap; gap: var(--space-md); align-items: center; }
@@ -351,25 +307,18 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .result-count b { color: var(--color-accent); font-weight: 500; }
 
 /* ==========================================================================
-   8. MATCHER PANEL — drawer card
+   7. MATCHER PANEL — drawer card
    ========================================================================== */
 .matcher-panel {
   margin-top: var(--space-lg); padding: var(--space-xl);
   border: 1px solid var(--color-rule); border-radius: var(--radius-lg);
-  background: oklch(17% 0.02 35 / 0.85);
-  backdrop-filter: blur(8px);
+  background: var(--color-paper-2);
   box-shadow: var(--shadow-2);
   animation: panelIn var(--dur-slow) var(--ease-out);
 }
 @keyframes panelIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 .matcher-header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-lg); }
 .matcher-title-wrap { display: flex; flex-direction: column; gap: 4px; }
-.matcher-badge {
-  align-self: flex-start; padding: 0.3rem 0.7rem; border-radius: var(--radius-pill);
-  background: oklch(74% 0.18 55 / 0.14); color: var(--color-accent);
-  border: 1px solid oklch(74% 0.18 55 / 0.35);
-  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-}
 .matcher-title-wrap h3, .matcher-title-wrap h2.matcher-title { font-family: var(--font-display); font-weight: 700; font-size: var(--text-2xl); letter-spacing: -0.03em; color: var(--color-ink); margin: 0; }
 .matcher-close-btn {
   width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--radius-sm);
@@ -405,7 +354,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .matcher-chip:hover { color: var(--color-accent); border-color: oklch(74% 0.18 55 / 0.5); transform: translateY(-1px); box-shadow: 0 4px 14px -8px var(--color-glow); }
 
 /* ==========================================================================
-   9. GRID — repo cards
+   8. GRID — repo cards
    ========================================================================== */
 .grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
@@ -418,35 +367,21 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .skeleton-grid { display: contents; }
 .skeleton-card {
   height: 172px; border-radius: var(--radius-md);
-  background: linear-gradient(100deg, var(--color-paper-2) 40%, var(--color-paper-3) 50%, var(--color-paper-2) 60%);
-  background-size: 200% 100%;
-  animation: shimmer 1.4s linear infinite;
+  background: var(--color-paper-2);
   border: 1px solid var(--color-rule);
 }
-@keyframes shimmer { to { background-position: -200% 0; } }
 
 /* card */
 .card {
   position: relative; display: flex; flex-direction: column;
   padding: var(--space-lg);
-  background: oklch(17% 0.02 35 / 0.78);
+  background: var(--color-paper-2);
   border: 1px solid var(--color-rule);
   border-radius: var(--radius-md);
-  backdrop-filter: blur(6px);
   cursor: pointer;
-  transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), background var(--dur-base);
-  animation: cardIn 0.5s var(--ease-out) both;
+  transition: border-color var(--dur-base) var(--ease-out), background var(--dur-base);
 }
-@keyframes cardIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-/* edge glow reveal */
-.card::after {
-  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
-  background: linear-gradient(var(--color-bloom-1), var(--color-bloom-2));
-  transform: scaleY(0); transform-origin: top;
-  transition: transform var(--dur-slow) var(--ease-out);
-}
-.card:hover { transform: translateY(-3px); border-color: var(--color-rule-strong); box-shadow: var(--shadow-2), 0 0 40px -12px var(--color-glow); background: oklch(19% 0.02 35 / 0.92); }
-.card:hover::after { transform: scaleY(1); }
+.card:hover { border-color: var(--color-rule-strong); background: var(--color-paper-3); }
 .card.keyboard-focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px oklch(74% 0.18 55 / 0.18), var(--shadow-2); }
 
 .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-md); }
@@ -494,7 +429,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .pin-btn.active svg { fill: currentColor; }
 
 /* ==========================================================================
-   10. COMPACT VIEW — hairline index rows (Bloom format-row)
+   9. COMPACT VIEW — hairline index rows
    ========================================================================== */
 .view-compact { grid-template-columns: 1fr; gap: 0; }
 .view-compact .compact-row { opacity: 1; }
@@ -521,7 +456,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .compact-stars::first-letter { color: var(--color-accent); filter: drop-shadow(0 0 4px var(--color-glow)); }
 
 /* ==========================================================================
-   11. EMPTY STATE
+   10. EMPTY STATE
    ========================================================================== */
 .empty-state {
   max-width: var(--max-width); margin: var(--space-2xl) auto; padding: var(--space-3xl) var(--page-gutter);
@@ -539,7 +474,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .empty-reset:hover { transform: translateY(-1px); box-shadow: 0 8px 24px -8px var(--color-glow); filter: brightness(1.05); }
 
 /* ==========================================================================
-   12. TOAST — status notification
+   11. TOAST — status notification
    ========================================================================== */
 .toast {
   position: fixed; left: 50%; bottom: var(--space-xl); transform: translate(-50%, 20px);
@@ -556,14 +491,13 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .toast.visible { opacity: 1; transform: translate(-50%, 0); }
 
 /* ==========================================================================
-   13. SEO SECTION — branded content band
+   12. SEO SECTION — branded content band
    ========================================================================== */
 .seo-section { max-width: var(--max-width); margin: var(--space-3xl) auto; padding: 0 var(--page-gutter); }
 .seo-card {
   padding: var(--space-2xl) var(--space-xl);
   border: 1px solid var(--color-rule); border-radius: var(--radius-lg);
-  background: oklch(17% 0.02 35 / 0.72);
-  backdrop-filter: blur(6px);
+  background: var(--color-paper-2);
 }
 .seo-header { max-width: var(--max-width); }
 .seo-header h2 { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 3vw, 2.5rem); letter-spacing: -0.03em; color: var(--color-ink); }
@@ -604,7 +538,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .seo-faq-a { margin-top: 4px; color: var(--color-ink-2); font-size: var(--text-sm); }
 
 /* ==========================================================================
-   14. FOOTER — statement
+   13. FOOTER — statement
    ========================================================================== */
 .footer { position: relative; margin-top: var(--space-3xl); border-top: 1px solid var(--color-rule); overflow: hidden; }
 .footer-content {
@@ -615,12 +549,9 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .footer-text a { color: var(--color-ink-2); font-weight: 500; text-decoration: underline; text-underline-offset: 3px; transition: color var(--dur-fast); }
 .footer-text a:hover { color: var(--color-accent); }
 .footer-link { margin: 0 2px; }
-.visitor-counter { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-ink-3); }
-.visitor-icon { width: 14px; height: 14px; }
-#visitor-count { color: var(--color-accent); font-weight: 500; }
 
 /* ==========================================================================
-   15. RESPONSIVE
+   14. RESPONSIVE
    ========================================================================== */
 @media (max-width: 900px) {
   .seo-grid-overview { grid-template-columns: 1fr; }
@@ -657,7 +588,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 
 /* ==========================================================================
-   16. REDUCED MOTION — respect system preference
+   15. REDUCED MOTION — respect system preference
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
