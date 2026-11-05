@@ -1,0 +1,12 @@
+{
+  "name": "my-starred-repos",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "description": "Static index of Akash Priyadarshi's starred GitHub repos, plus a serverless search endpoint.",
+  "scripts": {
+    "build": "python build_site.py",
+    "check": "python build_site.py --check",
+    "test": "python -m unittest discover -s tests -v && node --test tests/test_api_search.mjs"
+  }
+}
