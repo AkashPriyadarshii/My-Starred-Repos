@@ -16,7 +16,7 @@ Visit the live site: **[https://my-starred-repos.vercel.app/](https://my-starred
 | `Esc` | Blur search bar and clear query if active |
 
 ### Discovery & Filtering
-- **Fuzzy & Substring Search**: Type any package name, topic, or keyword to filter the 960+ repositories in real time.
+- **Fuzzy & Substring Search**: Type any package name, topic, or keyword to filter the 1,350+ repositories in real time.
 - **Category Tabs**: Click any category (e.g. *AI & Agents*, *Dev Tools*, *Mobile*, *Security*) to narrow down projects.
 - **Language Filter**: Use the language dropdown to filter strictly by primary language (Rust, Go, Python, Kotlin, TypeScript, Zig, etc.).
 - **Popular Topic Badges**: Click any pre-rendered topic pill in the curation section (e.g., *MCP Servers*, *Claude Code Skills*, *Rust CLI*, *Android Internals*) to auto-apply that search term and scroll to results.
@@ -38,7 +38,7 @@ Visit the live site: **[https://my-starred-repos.vercel.app/](https://my-starred
 1. Click the **Project Matcher** button next to the search bar.
 2. Paste your project README, tech stack idea, or problem description.
 3. Click **Find Matching Repos**.
-4. The client-side relevance engine calculates weighted keyword overlaps, topic matches, and semantic relevance scores across all 960+ repos, displaying match percentage pills (e.g. `98% Match`).
+4. The client-side relevance engine calculates weighted keyword overlaps, topic matches, and semantic relevance scores across all 1,350+ repos, displaying match percentage pills (e.g. `98% Match`).
 
 ---
 
@@ -123,7 +123,7 @@ To enable Claude Code, Cursor, Codex, or OpenClaw to search this repository dire
 ```json
 {
   "name": "search_starred_repos",
-  "description": "Search 960+ hand-curated high-performance GitHub repositories across AI agents, MCP, Rust CLI, Android internals, and developer tools by Akash Priyadarshi.",
+  "description": "Search 1,350+ hand-curated high-performance GitHub repositories across AI agents, MCP, Rust CLI, Android internals, and developer tools by Akash Priyadarshi.",
   "parameters": {
     "type": "object",
     "properties": {

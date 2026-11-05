@@ -637,13 +637,13 @@ def main():
         category_files.append((cat, cat_file))
         cat_repos = [r for r in repos if (r.get("category") or "Other") == cat]
         cat_txt_path = ROOT / cat_file
-        cat_txt_path.write_text(llms_lines(cat_repos, full=True, limit=len(cat_repos), category_title=cat), encoding="utf-8")
+        cat_txt_path.write_text(llms_lines(cat_repos, full=True, limit=len(cat_repos), category_title=cat), encoding="utf-8", newline="\n")
         print(f"{cat_file} ({len(cat_repos)} entries)")
 
-    INDEX.write_text(render_index(d), encoding="utf-8")
-    LLMS.write_text(llms_lines(repos, full=False, limit=100, category_files=category_files), encoding="utf-8")
-    LLMS_FULL.write_text(llms_lines(repos, full=True, limit=len(repos), category_files=category_files), encoding="utf-8")
-    SITEMAP.write_text(render_sitemap(date_mod, cats), encoding="utf-8")
+    INDEX.write_text(render_index(d), encoding="utf-8", newline="\n")
+    LLMS.write_text(llms_lines(repos, full=False, limit=100, category_files=category_files), encoding="utf-8", newline="\n")
+    LLMS_FULL.write_text(llms_lines(repos, full=True, limit=len(repos), category_files=category_files), encoding="utf-8", newline="\n")
+    SITEMAP.write_text(render_sitemap(date_mod, cats), encoding="utf-8", newline="\n")
 
     print(f"index.html ({len(repos)} repos, {len(repos)} baked)")
     print(f"llms.txt ({min(len(repos), 100)} entries)")

@@ -117,6 +117,7 @@
 - [dair-ai/Prompt-Engineering-Guide](https://github.com/dair-ai/Prompt-Engineering-Guide): 🐙 Guides, papers, lessons, notebooks and resources for prompt engineering, context engineering, RAG, and AI Agents.
 - [shareAI-lab/learn-claude-code](https://github.com/shareAI-lab/learn-claude-code): Bash is all you need
 - [tt-a1i/archify](https://github.com/tt-a1i/archify): Turn any idea, plan, or codebase into a beautiful interactive diagram.
+- [storytold/photocraft](https://github.com/storytold/photocraft): PhotoCraft: An open-source, photo editor written by scratch in pure Rust
 - [ocornut/imgui](https://github.com/ocornut/imgui): Dear ImGui: Bloat-free Graphical User interface for C++ with minimal dependencies
 - [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills): A curated list of awesome Claude Skills, resources, and tools for customizing Claude AI workflows
 - [pbakaus/impeccable](https://github.com/pbakaus/impeccable): The design language that makes your AI harness better at design.
@@ -127,4 +128,3 @@
 - [career-ops-hq/career-ops](https://github.com/career-ops-hq/career-ops): Open-source AI job search agent and job finder: scan job boards, score each job 1-5 against your CV before you apply,...
 - [juliangarnier/anime](https://github.com/juliangarnier/anime): JavaScript animation engine
 - [toeverything/AFFiNE](https://github.com/toeverything/AFFiNE): There can be more than Notion and Miro.
-- [colbymchenry/codegraph](https://github.com/colbymchenry/codegraph): Pre-indexed code knowledge graph, auto syncs on code changes, for Claude Code, Codex, Gemini, Cursor, OpenCode, AntiG...

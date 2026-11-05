@@ -59,20 +59,35 @@ def categorize(name, desc, lang):
     return 'Other'
 
 def main():
-    token = os.environ.get('GITHUB_TOKEN', '').strip()
-    username = os.environ.get('GITHUB_USERNAME', '').strip() or 'AkashPriyadarshii'
+    import argparse
+    parser = argparse.ArgumentParser(description="Fetch public starred repos from GitHub")
+    parser.add_argument('--full', action='store_true', help="Fetch all pages even if repos_output.json exists")
+    parser.add_argument('--user', default='AkashPriyadarshii', help="GitHub username")
+    args = parser.parse_args()
 
-    if not token:
-        print("Error: GITHUB_TOKEN not set")
-        sys.exit(1)
+    token = os.environ.get('GITHUB_TOKEN', '').strip()
+    username = args.user or os.environ.get('GITHUB_USERNAME', '').strip() or 'AkashPriyadarshii'
 
     session = requests.Session()
-    session.headers.update({'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3+json'})
+    headers = {
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': f'my-starred-repos-public/0.3 ({username})'
+    }
+    if token:
+        headers['Authorization'] = f'token {token}'
+        print("Using provided GITHUB_TOKEN")
+    else:
+        print("Running in 100% public unauthenticated mode (no tokens)")
+
+    session.headers.update(headers)
 
     # Fetch profile
     print("Fetching profile...")
     try:
         resp = safe_get(session, f"https://api.github.com/users/{username}", timeout=15)
+        rem = resp.headers.get('X-RateLimit-Remaining', '?')
+        lim = resp.headers.get('X-RateLimit-Limit', '?')
+        print(f"  [Rate limit: {rem}/{lim} remaining]")
         resp.raise_for_status()
         d = resp.json()
         profile = {
@@ -90,47 +105,100 @@ def main():
         print(f"  Profile fetch failed: {e}")
         profile = {'login': username, 'name': username}
 
-    # Fetch all starred repos
+    # Check existing data for incremental sync
+    existing_repos = []
+    existing_map = {}
+    if os.path.exists('repos_output.json') and not args.full:
+        try:
+            with open('repos_output.json', 'r', encoding='utf-8') as f:
+                old_data = json.load(f)
+                existing_repos = old_data.get('repos', [])
+                existing_map = {r['full_name']: r for r in existing_repos}
+            print(f"Found {len(existing_repos)} existing repos in repos_output.json")
+        except Exception:
+            existing_map = {}
+
+    # Fetch starred repos
     print("Fetching starred repos...")
-    repos = []
+    new_repos_raw = []
     page = 1
+    found_existing = False
+
     while True:
         resp = safe_get(session, f"https://api.github.com/users/{username}/starred?per_page=100&page={page}", timeout=30)
+        rem = resp.headers.get('X-RateLimit-Remaining', '?')
+        lim = resp.headers.get('X-RateLimit-Limit', '?')
         resp.raise_for_status()
         data = resp.json()
         if not data:
             break
-        repos.extend(data)
-        print(f"  Page {page}: {len(data)} repos")
+
+        print(f"  Page {page}: {len(data)} repos (rate limit remaining: {rem}/{lim})")
+
+        # In incremental mode, check if we've seen these repos before
+        if existing_map and not args.full:
+            batch_new = []
+            for r in data:
+                if r['full_name'] in existing_map:
+                    found_existing = True
+                    break
+                batch_new.append(r)
+            new_repos_raw.extend(batch_new)
+            if found_existing:
+                print("  Reached previously synced repos. Stopping early (saved API calls).")
+                break
+        else:
+            new_repos_raw.extend(data)
+
         if len(data) < 100:
             break
         page += 1
 
-    print(f"Total: {len(repos)} repos\n")
-
-    # Process
-    results = []
-    for i, r in enumerate(repos, 1):
-        results.append({
-            'full_name': r['full_name'],
-            'stars': r.get('stargazers_count', 0),
-            'language': r.get('language') or 'Unknown',
-            'description': r.get('description') or 'No description',
-            'category': categorize(r['full_name'], r.get('description'), r.get('language')),
-            'url': r['html_url'],
-            'last_updated': r.get('updated_at', ''),
-            'pushed_at': r.get('pushed_at', ''),
-            'archived': r.get('archived', False),
-            'license': r.get('license', {}).get('spdx_id') if r.get('license') else None,
-            'forks': r.get('forks_count', 0),
-            'topics': r.get('topics', []),
-        })
-        if i % 25 == 0 or i == len(repos):
-            print(f"  [{i}/{len(repos)}]")
-
-    results.sort(key=lambda x: x['stars'], reverse=True)
-    for idx, res in enumerate(results, 1):
-        res['rank'] = idx
+    if existing_map and not args.full and found_existing:
+        print(f"Incremental sync: found {len(new_repos_raw)} newly starred repos")
+        processed_new = []
+        for r in new_repos_raw:
+            processed_new.append({
+                'full_name': r['full_name'],
+                'stars': r.get('stargazers_count', 0),
+                'language': r.get('language') or 'Unknown',
+                'description': r.get('description') or 'No description',
+                'category': categorize(r['full_name'], r.get('description'), r.get('language')),
+                'url': r['html_url'],
+                'last_updated': r.get('updated_at', ''),
+                'pushed_at': r.get('pushed_at', ''),
+                'archived': r.get('archived', False),
+                'license': r.get('license', {}).get('spdx_id') if r.get('license') else None,
+                'forks': r.get('forks_count', 0),
+                'topics': r.get('topics', []),
+            })
+        combined = processed_new + [r for r in existing_repos if r['full_name'] not in {n['full_name'] for n in processed_new}]
+        combined.sort(key=lambda x: x.get('stars', 0), reverse=True)
+        for idx, res in enumerate(combined, 1):
+            res['rank'] = idx
+        results = combined
+    else:
+        # Full sync processing
+        print(f"Total fetched: {len(new_repos_raw)} repos\n")
+        results = []
+        for i, r in enumerate(new_repos_raw, 1):
+            results.append({
+                'full_name': r['full_name'],
+                'stars': r.get('stargazers_count', 0),
+                'language': r.get('language') or 'Unknown',
+                'description': r.get('description') or 'No description',
+                'category': categorize(r['full_name'], r.get('description'), r.get('language')),
+                'url': r['html_url'],
+                'last_updated': r.get('updated_at', ''),
+                'pushed_at': r.get('pushed_at', ''),
+                'archived': r.get('archived', False),
+                'license': r.get('license', {}).get('spdx_id') if r.get('license') else None,
+                'forks': r.get('forks_count', 0),
+                'topics': r.get('topics', []),
+            })
+        results.sort(key=lambda x: x['stars'], reverse=True)
+        for idx, res in enumerate(results, 1):
+            res['rank'] = idx
 
     output = {
         'username': username,
@@ -140,10 +208,10 @@ def main():
         'repos': results,
     }
 
-    with open('repos_output.json', 'w') as f:
+    with open('repos_output.json', 'w', encoding='utf-8', newline='\n') as f:
         json.dump(output, f, indent=2)
 
-    print(f"\nDone. Wrote repos_output.json ({len(results)} repos)")
+    print(f"\nDone. Wrote repos_output.json ({len(results)} total repos)")
 
 if __name__ == "__main__":
     main()

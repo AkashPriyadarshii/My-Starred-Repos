@@ -8,10 +8,10 @@
 [![Live Site](https://img.shields.io/badge/Live%20Site-my--starred--repos.vercel.app-34d399?style=flat-square&logo=vercel)](https://my-starred-repos.vercel.app/)
 [![LLM Context](https://img.shields.io/badge/LLM%20Endpoint-/llms.txt-38bdf8?style=flat-square&logo=openai)](https://my-starred-repos.vercel.app/llms.txt)
 [![Search API](https://img.shields.io/badge/REST%20API-/api/search-a78bfa?style=flat-square)](https://my-starred-repos.vercel.app/api/search?q=mcp)
-[![Weekly Sync](https://img.shields.io/badge/Sync-Weekly%20%2B%20On--Demand-emerald?style=flat-square&logo=github-actions)](https://github.com/AkashPriyadarshii/My-Starred-Repos/actions)
+[![Sync](https://img.shields.io/badge/Sync-On--Demand%20%2B%20Public%20API-emerald?style=flat-square)](#-architecture--data-pipeline)
 [![License](https://img.shields.io/badge/License-CUSTOM-gray?style=flat-square)](#license)
 
-**960+ hand-curated, production-tested GitHub repositories curated by [Akash Priyadarshi](https://github.com/AkashPriyadarshii).**  
+**1,350+ hand-curated, production-tested GitHub repositories curated by [Akash Priyadarshi](https://github.com/AkashPriyadarshii).**<br>
 *Optimized for human developers exploring top tools and autonomous AI coding agents (Claude Code, Codex, Cursor, OpenClaw) needing instant, token-efficient project context.*
 
 [Explore Web Dashboard](https://my-starred-repos.vercel.app/) &bull; [Read USAGE.md](USAGE.md) &bull; [API Reference](#-rest-search-api) &bull; [Categories Manifest](#-categories-manifest)
@@ -165,7 +165,7 @@ GitHub API (User Stars)
          │
          ▼
  ┌─────────────────┐
- │ fetch_stars.py  │ ◄─── Auto-syncs weekly (Sunday 00:00 UTC) + on-demand
+ │ fetch_stars.py  │ ◄─── On-demand sync via GitHub Public API
  └────────┬────────┘
           │
           ▼ writes repos_output.json (Single Source of Truth)

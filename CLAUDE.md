@@ -8,11 +8,11 @@ No GitHub releases. No release tags. Version tracked in `CHANGELOG.md` only.
 
 ## Data pipeline
 
-- `fetch_stars.py` — pulls all starred repos from GitHub API, categorizes by keyword (word-boundary matched), writes `repos_output.json` with `pushed_at` and `archived`
+- `fetch_stars.py` — pulls starred repos from GitHub public API (100% unauthenticated, no personal tokens needed). Default incremental sync stops early once known repos are met, consuming only 1-2 public requests.
 - `build_site.py` — bakes `repos_output.json` into `index.html` (SEO, project matcher, FAQ, view toggle) + `llms.txt` + `llms-full.txt` + per-category `llms-*.txt` + `sitemap.xml`. Run after every `fetch_stars.py`
 - `generate_assets.py` — regenerates `icons/`, `favicon.ico`, `og-image.png`, `manifest.webmanifest` from design tokens (PIL). Only re-run when brand changes
 - `api/search.js` — Serverless REST search endpoint for AI agents, tools, and MCP servers (CORS enabled)
-- `.github/workflows/sync-stars.yml` — runs weekly (cron `0 0 * * 0` on Sundays) + manual `workflow_dispatch` (1–7 days), runs fetch + build, commits fresh `repos_output.json` + generated site files if changed. Uses ephemeral `secrets.GITHUB_TOKEN`
+- Syncing: Run on-demand locally with `python fetch_stars.py && python build_site.py` via GitHub's public API.
 - Site renders `repos_output.json` — no backend database
 
 ## Key files
@@ -35,7 +35,7 @@ No GitHub releases. No release tags. Version tracked in `CHANGELOG.md` only.
 - `app.js`: all repo-derived strings go through `escapeHTML()` before template insertion. `repo.url` in `href` too — GitHub API is trusted, keep it that way
 - No `console.log` in production code
 - Git: HTTPS via gh credential manager. Identity: `272530059+AkashPriyadarshii@users.noreply.github.com`
-- `.omc/`, `.codegraph/` are local tooling junk — never commit (both in `.gitignore`)
+- `.omc/`, `.codegraph/` are local tooling directories and must remain git-ignored
 - **No GitHub releases** — version is tracked in `CHANGELOG.md` only
 
 ## Verify after edits
