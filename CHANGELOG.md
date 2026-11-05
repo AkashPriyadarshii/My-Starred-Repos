@@ -2,7 +2,33 @@
 
 All notable changes to My-Starred-Repos.
 
-## [v0.3] — 2026-08-30 — Bloom Warm-Amber Aura Redesign
+## [v0.4] — 2026-11-05 — Truth pass, hardening, and calmer UI
+
+The previous entries described things the repo did not actually do. This release makes the claims match the code.
+
+### Fixed
+- **Corrupt `localStorage` no longer blanks the page.** Pins and view mode are read through guarded helpers, so a malformed value falls back to defaults instead of throwing before the first render.
+- **Cache-busting defeated the CDN.** `app.js` appended `?t=<timestamp>` to every `repos_output.json` fetch, which turned the `s-maxage=3600` rule into a cache miss and shipped ~950 KB per view. The fetch is now plain, and asset versions are derived from file hashes (`style.css?v=60e98401`) instead of hand-edited constants that drifted.
+- **Wrong identity URLs** on the baked page: portfolio is `akashpriyadarshi.is-a.dev` (the old Vercel URL 308-redirects) and LinkedIn is `linkedin.com/in/akashpriyadarshii`.
+- **False claims removed**: "auto-updated weekly via GitHub Actions" (there is no workflow and no cron), TF-IDF/cosine scoring (the matcher is weighted keyword overlap), fuzzy search (it is substring matching), "MCP compatibility" (there is no MCP server, only an HTTP endpoint), `changefreq=weekly` in the sitemap, and "auto-updated daily" in the manifest.
+- **Snapshot age is visible** in the header instead of a pulsing "live" dot.
+- **`repo.language` is escaped** in both card and row templates.
+- Search debounce is cancelled when the field is cleared, so a stale timer cannot re-filter.
+- Dead code removed: `count_label()`, unused `categories` parameter of `render_sitemap`, the visitor counter and its countapi dependency, the unused Instrument Serif font and `--font-accent` token.
+
+### Changed
+- **`/api/search`** honours the documented contract: `GET`/`HEAD` only (`405` otherwise, with `Allow`), absent or empty filters mean "no filter", unknown `category`/`sort` return `400` with the allowed values, `limit` clamps to 1–100, `offset`/`next_offset` paginate, and the response carries `generated_at`, `data_age_seconds`, `schema_version`, `sync_mode`. The JSON snapshot is parsed once per warm instance instead of per request, and errors no longer echo server paths.
+- **`fetch_stars.py`** does a full sync by default and takes `--incremental` as an opt-in. The dataset gained `schema_version`, `sync_mode`, `requests_used`, and per-repo `synced_at`; the derived per-repo `rank` field is gone. Incremental runs keep old records untouched, including their `synced_at`, so stale metadata stays visible.
+- **`build_site.py`** gained `--check` (exit 1 when committed output drifts from the generator), bakes the real metric numbers into the shell, and stops emitting the per-category `llms-*.txt` files (11 files, and the loop never deleted orphans). `llms.txt` and `llms-full.txt` now open with a dataset metadata block.
+- **Design**: removed the ambient bloom field, grain overlay, animated scrollbar pulse, pulsing sync dot, card edge-glow stripe, staggered card entrance, shimmer skeleton, and the five frosted `backdrop-filter` layers. Compact list is now the default view. Muted text was lifted from `oklch(58%)` to `oklch(68%)` for contrast on the `oklch(13%)` paper.
+
+### Added
+- `tests/test_contract.py` — checks the dataset shape, category validity, and that generated files match `build_site.py`.
+- `tests/test_api_search.mjs` — exercises the search handler with stub requests: 405, empty filters, alias resolution, bad sort, pagination.
+
+---
+
+## [v0.3] — 2026-08-30 — Bloom Warm-Amber Aura Redesign (reverted in v0.4)
 
 Full frontend skin overhaul to a premium atmospheric "Bloom" register (Hallmark Hyperlane theme), replacing the dev-tool terminal look.
 
@@ -19,7 +45,7 @@ Full frontend skin overhaul to a premium atmospheric "Bloom" register (Hallmark 
 
 ---
 
-## [v0.2] — 2026-08-28 — Dual-Audience Platform (Humans & AI Agents)
+## [v0.2] — 2026-08-28 — Dual-Audience Platform (Humans & AI Agents) (per-category llms files and weekly cron removed in v0.4)
 
 Major update turning My-Starred-Repos into a dual-purpose platform for developer discovery and machine-readable AI agent context.
 

@@ -1,11 +1,11 @@
 {
   "name": "Starred Repos \u2014 Akash Priyadarshi",
   "short_name": "Starred Repos",
-  "description": "Curated GitHub starred repositories by Akash Priyadarshi, organized by topic and auto-updated daily.",
+  "description": "Curated GitHub starred repositories by Akash Priyadarshi, organized by topic. Baked snapshot, refreshed on demand.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#09090b",
-  "theme_color": "#09090b",
+  "background_color": "#16100b",
+  "theme_color": "#16100b",
   "icons": [
     {
       "src": "/icons/icon-192.png",

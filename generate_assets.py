@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate icons, favicon, og-image, and manifest from the site's design tokens.
 
-Design matches style.css: bg #09090b, accent #34d399, text #fafafa, emerald star.
+Design matches style.css: warm charcoal bg #16100b, amber accent, warm ink text.
 Re-run any time the brand changes.
 """
 import io
@@ -68,8 +68,8 @@ MANIFEST = {
     "description": "Curated GitHub starred repositories by Akash Priyadarshi, organized by topic and auto-updated daily.",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#09090b",
-    "theme_color": "#09090b",
+    "background_color": "#16100b",
+    "theme_color": "#16100b",
     "icons": [
         {"src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
         {"src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png"},

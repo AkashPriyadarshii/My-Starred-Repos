@@ -1,151 +1,116 @@
-# Usage Guide — For Humans & AI Agents
+# Usage — Humans and AI Agents
 
-My-Starred-Repos is a dual-audience platform designed for developers discovering open-source software and AI agents fetching token-efficient, categorized project context.
+Two audiences: people browsing the page, and agents querying the snapshot.
 
----
+## 1. For Humans
 
-## 👤 1. For Humans
+Live site: **https://my-starred-repos.vercel.app/**
 
-### Interactive Web Dashboard
-Visit the live site: **[https://my-starred-repos.vercel.app/](https://my-starred-repos.vercel.app/)**
+### Keyboard
 
-### Keyboard Shortcuts
 | Key | Action |
 |---|---|
-| `/` | Focus search bar instantly from anywhere on the page |
-| `Esc` | Blur search bar and clear query if active |
+| `/` | Focus search |
+| `j` / `k` | Move selection down / up |
+| `Enter` | Open the selected repo |
+| `Escape` | Clear search and matcher filter |
 
-### Discovery & Filtering
-- **Fuzzy & Substring Search**: Type any package name, topic, or keyword to filter the 1,350+ repositories in real time.
-- **Category Tabs**: Click any category (e.g. *AI & Agents*, *Dev Tools*, *Mobile*, *Security*) to narrow down projects.
-- **Language Filter**: Use the language dropdown to filter strictly by primary language (Rust, Go, Python, Kotlin, TypeScript, Zig, etc.).
-- **Popular Topic Badges**: Click any pre-rendered topic pill in the curation section (e.g., *MCP Servers*, *Claude Code Skills*, *Rust CLI*, *Android Internals*) to auto-apply that search term and scroll to results.
+### Filtering
 
-### View Modes
-- **Card Grid View** (Default): Spacious card layout showing star count, language badge, description, and relative update date.
-- **Compact Table View**: Single-line dense row mode ideal for power users scanning through hundreds of tools rapidly.
-- View preference is automatically saved in `localStorage`.
+Search is a case-insensitive substring match on name, description, language, and topics. Category tabs narrow by topic; the language dropdown filters on primary language; sort offers stars (both directions), name, and last update. Clicking a topic pill in the curation section applies that search term.
 
-### Local Bookmarks & Pinning
-- Click the star icon (⭐ / 📌) on any card or compact row to pin the repository.
-- Switch to the **📌 Pinned** category tab anytime to review your saved shortlist.
-- All bookmarks persist locally in your browser (`localStorage`) with zero login or tracking.
+### Views
 
-### One-Click `git clone`
-- Click the copy button (📋) on any repo to copy `git clone <repo-url>.git` directly to your clipboard.
+Compact list is the default: one hairline row per repo, best for scanning hundreds of entries. Grid shows cards with description, language, and update date. The choice is saved in `localStorage` under `starred_view_mode`.
 
-### Vibe Coder Project Matcher
-1. Click the **Project Matcher** button next to the search bar.
-2. Paste your project README, tech stack idea, or problem description.
-3. Click **Find Matching Repos**.
-4. The client-side relevance engine calculates weighted keyword overlaps, topic matches, and semantic relevance scores across all 1,350+ repos, displaying match percentage pills (e.g. `98% Match`).
+### Pins and clone
 
----
+The pin button on a card or row saves the repo under the **Pinned** tab. The copy button puts `git clone <url>.git` on the clipboard. Pins live in `localStorage` under `starred_pinned`, no account, nothing sent anywhere.
 
-## 🤖 2. For AI Agents & Vibe Coders
+### Project matcher
 
-### REST Search API Endpoint
-AI agents, scripts, and automation tools can query the serverless search API with CORS enabled.
+Open **Project Matcher**, paste a README, idea, or stack list, run it. The page scores every repo client-side: weighted overlap on topics, name, language, category, and description, plus a small boost for star count. The percentage is relative to the best match in the current dataset, so `98%` means "closest fit here", not a quality grade. Nothing you paste leaves the page.
+
+### Staleness
+
+The header badge shows how old the snapshot is (`snapshot today`, `snapshot 12d old`). The data is regenerated when someone runs the sync script, so a stale badge is expected between runs.
+
+## 2. For AI Agents
+
+### Search API
 
 ```http
-GET https://my-starred-repos.vercel.app/api/search?q={query}&category={category}&lang={lang}&limit={limit}&sort={sort}
+GET https://my-starred-repos.vercel.app/api/search?q={query}&category={category}&lang={lang}&limit={limit}&offset={offset}&sort={sort}
 ```
 
-#### Query Parameters
-| Parameter | Type | Default | Description |
-|---|---|---|---|
-| `q` | string | `""` | Search query across name, description, language, category, and topics |
-| `category`| string | `"all"` | Filter by category — display names (`AI & Agents`, `Dev Tools`, `Mobile`, `Security`, `Web Automation`, `LLM & RAG`, `Web Dev`, `Other`, `Media`, `Databases`, `DevOps`) — slugs (`ai`, `dev-tools`, `web-automation`, `llm-rag`, `web-dev`) also accepted |
-| `lang` | string | `"all"` | Filter by primary programming language (`rust`, `python`, `go`, etc.) |
-| `limit` | number | `20` | Maximum number of records returned (1–100) |
-| `sort` | string | `"stars-desc"` | Sorting order: `stars-desc`, `stars-asc`, `name-asc`, `updated-desc` |
+| Parameter | Default | Notes |
+|---|---|---|
+| `q` | none | Space-separated terms, all must appear somewhere in the record |
+| `category` | all | Display name (`AI & Agents`, `Dev Tools`, ...) or slug (`ai`, `dev-tools`, `web-automation`, `llm-rag`, `web-dev`, `databases`, `devops`, `security`, `mobile`, `media`, `other`) |
+| `lang` | all | Primary language, case-insensitive |
+| `limit` | 20 | Clamped to 1–100 |
+| `offset` | 0 | Use with `next_offset` from the previous response |
+| `sort` | `stars-desc` | `stars-desc`, `stars-asc`, `name-asc`, `updated-desc` |
 
-#### Example cURL
+Empty or `all` filters mean "no filter". An unknown `sort` or `category` returns `400` with the allowed values instead of silently returning nothing. Only `GET` is accepted; anything else returns `405`.
+
 ```bash
 curl -s "https://my-starred-repos.vercel.app/api/search?q=mcp&limit=5"
+curl -s "https://my-starred-repos.vercel.app/api/search?category=dev-tools&lang=rust&limit=10&offset=10"
 ```
 
-#### Sample Response JSON
+Every response carries `generated_at`, `data_age_seconds`, `total_matches`, and `next_offset`, and the same age in the `X-Data-Age` header. Check it before treating the data as current.
+
 ```json
 {
-  "schema_version": "0.2",
-  "total_tracked": 964,
+  "schema_version": 1,
+  "generated_at": "2026-11-05T14:20:11+05:30",
+  "data_age_seconds": 90321,
+  "sync_mode": "full",
+  "total_tracked": 1353,
   "total_matches": 42,
   "limit": 5,
+  "offset": 0,
+  "next_offset": 5,
   "query": "mcp",
   "category": null,
   "language": null,
-  "results": [
-    {
-      "full_name": "modelcontextprotocol/servers",
-      "stars": 45120,
-      "language": "TypeScript",
-      "description": "Model Context Protocol Servers",
-      "category": "AI & Agents",
-      "url": "https://github.com/modelcontextprotocol/servers",
-      "last_updated": "2026-08-27T10:14:02Z",
-      "license": "MIT",
-      "forks": 4120,
-      "topics": ["ai", "mcp", "agent", "protocol"]
-    }
-  ]
+  "sort": "stars-desc",
+  "results": []
 }
 ```
 
----
-
-### Machine-Readable LLM Text Endpoints
-
-Fetch token-optimized Markdown text files designed specifically for AI system prompts, context windows, and RAG pipelines:
+### Text endpoints
 
 | Endpoint | Content |
 |---|---|
-| [`https://my-starred-repos.vercel.app/llms.txt`](https://my-starred-repos.vercel.app/llms.txt) | Top 100 starred repos + Topic Taxonomy + Category Manifest |
-| [`https://my-starred-repos.vercel.app/llms-full.txt`](https://my-starred-repos.vercel.app/llms-full.txt) | Complete collection of 1127 repos with metadata |
-| [`https://my-starred-repos.vercel.app/llms-ai-agents.txt`](https://my-starred-repos.vercel.app/llms-ai-agents.txt) | AI & Agents category slice (539+ repos) |
-| [`https://my-starred-repos.vercel.app/llms-dev-tools.txt`](https://my-starred-repos.vercel.app/llms-dev-tools.txt) | Dev Tools & CLI utilities slice |
-| [`https://my-starred-repos.vercel.app/llms-mobile.txt`](https://my-starred-repos.vercel.app/llms-mobile.txt) | Android & Mobile internals slice |
-| [`https://my-starred-repos.vercel.app/llms-web-automation.txt`](https://my-starred-repos.vercel.app/llms-web-automation.txt) | Web Scraping & Automation slice |
-| [`https://my-starred-repos.vercel.app/llms-llm-rag.txt`](https://my-starred-repos.vercel.app/llms-llm-rag.txt) | LLM & RAG frameworks slice |
-| [`https://my-starred-repos.vercel.app/llms-web-dev.txt`](https://my-starred-repos.vercel.app/llms-web-dev.txt) | Web Dev frameworks slice |
-| [`https://my-starred-repos.vercel.app/llms-security.txt`](https://my-starred-repos.vercel.app/llms-security.txt) | Security & Pentesting slice |
-| [`https://my-starred-repos.vercel.app/llms-other.txt`](https://my-starred-repos.vercel.app/llms-other.txt) | Other / Unclassified slice (207 repos) |
-| [`https://my-starred-repos.vercel.app/llms-media.txt`](https://my-starred-repos.vercel.app/llms-media.txt) | Media & Video/Audio slice |
-| [`https://my-starred-repos.vercel.app/llms-databases.txt`](https://my-starred-repos.vercel.app/llms-databases.txt) | Databases & ORMs slice |
-| [`https://my-starred-repos.vercel.app/llms-devops.txt`](https://my-starred-repos.vercel.app/llms-devops.txt) | DevOps & Infra slice |
+| [`/llms.txt`](https://my-starred-repos.vercel.app/llms.txt) | Dataset metadata, topic taxonomy, top 100 repos |
+| [`/llms-full.txt`](https://my-starred-repos.vercel.app/llms-full.txt) | Every repo with stars, language, and category |
 
----
+Both files open with the same metadata block (`schema_version`, `total_repos`, `generated_at`, `sync_mode`). Per-category text files were retired in v0.3; the API covers those queries with filters.
 
-### MCP (Model Context Protocol) Server Configuration
+### Tool definition
 
-To enable Claude Code, Cursor, Codex, or OpenClaw to search this repository directly, add the following tool definition to your MCP configuration or custom prompt:
+For a Claude Code, Cursor, or Codex tool wrapper:
 
 ```json
 {
   "name": "search_starred_repos",
-  "description": "Search 1,350+ hand-curated high-performance GitHub repositories across AI agents, MCP, Rust CLI, Android internals, and developer tools by Akash Priyadarshi.",
+  "description": "Search a curated index of 1,350+ GitHub repositories across AI agents, MCP, Rust CLI, Android internals, and developer tools by Akash Priyadarshi.",
   "parameters": {
     "type": "object",
     "properties": {
-      "query": {
-        "type": "string",
-        "description": "Search query or stack keywords (e.g., 'mcp server', 'rust grep', 'android memory')"
-      },
-      "category": {
-        "type": "string",
-        "description": "Optional category filter: 'AI & Agents', 'Dev Tools', 'Mobile', 'Security', 'Web Automation', 'Other', 'Media', 'LLM & RAG', 'Web Dev', 'Databases', 'DevOps' (slugs like 'ai', 'dev-tools' also accepted)"
-      },
-      "limit": {
-        "type": "number",
-        "description": "Max results to return (default 10, max 50)"
-      }
+      "query": { "type": "string", "description": "Stack keywords, e.g. 'mcp server', 'rust grep'" },
+      "category": { "type": "string", "description": "Optional: 'AI & Agents', 'Dev Tools', 'Mobile', 'Security', ... or a slug" },
+      "limit": { "type": "number", "description": "Max results, 1-100 (default 20)" }
     },
     "required": ["query"]
   }
 }
 ```
 
-#### Python Quick Integration
+### Python
+
 ```python
 import urllib.parse, urllib.request, json
 
@@ -156,8 +121,6 @@ def search_starred_repos(query: str, limit: int = 10) -> list:
         data = json.loads(resp.read().decode())
         return data.get("results", [])
 
-# Example usage:
-matches = search_starred_repos("mcp server")
-for repo in matches:
-    print(f"- {repo['full_name']} (★ {repo['stars']}): {repo['description']}")
+for repo in search_starred_repos("mcp server"):
+    print(f"- {repo['full_name']} ({repo['stars']} stars): {repo['description']}")
 ```
