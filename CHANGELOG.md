@@ -16,6 +16,13 @@ The previous entries described things the repo did not actually do. This release
 - Search debounce is cancelled when the field is cleared, so a stale timer cannot re-filter.
 - Dead code removed: `count_label()`, unused `categories` parameter of `render_sitemap`, the visitor counter and its countapi dependency, the unused Instrument Serif font and `--font-accent` token.
 
+### Redesigned
+- **One idea carries the page.** The library is drawn as a ledger: a single stacked bar of all repos split by category, server-rendered into `index.html`, clickable as the filter, with the 714-repo AI share stated once in the intro line. It replaces the vanity metric cards, the header follower/repo counts, the equal-weight category pills, the topic cloud and the top-10 list.
+- **Direction `data-terminal`**: near-black warm ground, amber used only as a 1px line or a selection mark, tabular numerals, 56px table rows, no glass, no bloom, no grain, no hover glow, no emoji, no sub-11px text.
+- **One view.** The grid/compact toggle and the broken compact-row layout are gone; compact is the page.
+- **Type**: Public Sans + JetBrains Mono (down from three faces, Instrument Serif dropped), 12.5–20px, sentence-case labels instead of tracked 10px caps.
+- The FAQ moved behind `<details>`; the matcher keeps its drawer and no longer inherits a filter after closing.
+
 ### Changed
 - **`/api/search`** honours the documented contract: `GET`/`HEAD` only (`405` otherwise, with `Allow`), absent or empty filters mean "no filter", unknown `category`/`sort` return `400` with the allowed values, `limit` clamps to 1–100, `offset`/`next_offset` paginate, and the response carries `generated_at`, `data_age_seconds`, `schema_version`, `sync_mode`. The JSON snapshot is parsed once per warm instance instead of per request, and errors no longer echo server paths.
 - **`fetch_stars.py`** does a full sync by default and takes `--incremental` as an opt-in. The dataset gained `schema_version`, `sync_mode`, `requests_used`, and per-repo `synced_at`; the derived per-repo `rank` field is gone. Incremental runs keep old records untouched, including their `synced_at`, so stale metadata stays visible.

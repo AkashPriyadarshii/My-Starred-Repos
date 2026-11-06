@@ -89,7 +89,7 @@ def itemlist_json(repos, n=20):
             "item": {
                 "@type": "SoftwareSourceCode",
                 "name": r.get("full_name", ""),
-                "description": r.get("description"),
+                "description": strip_emoji(r.get("description")),
                 "url": r.get("url"),
                 "codeRepository": r.get("url"),
             },
@@ -97,107 +97,61 @@ def itemlist_json(repos, n=20):
     return items
 
 
-def render_featured_section(repos, date_mod):
-    cards = []
-    for r in featured(repos):
-        desc = r.get("description") or "No description provided."
-        stars = f"{r.get('stars', 0):,}"
-        lang = r.get("language") or "N/A"
-        cards.append(
-            '<li class="seo-repo">'
-            '<div class="seo-repo-top">'
-            f'<a href="{esc(r.get("url"))}" target="_blank" rel="noopener" class="seo-repo-name">{esc(r.get("full_name"))}</a>'
-            f'<span class="seo-stars">★ {stars}</span>'
-            f'<span class="seo-lang">{esc(lang)}</span>'
-            '</div>'
-            f'<p class="seo-repo-desc">{esc(desc)}</p>'
-            '</li>'
-        )
+def render_about_section(repos, date_mod):
     cats = category_counts(repos)
-    cat_html = "".join(
-        f'<li class="seo-cat-item"><span class="seo-cat-name">{esc(cat)}</span><span class="seo-cat-count">{n}</span></li>'
-        for cat, n in cats
-    )
-    langs = ", ".join(esc(l) for l in top_langs(repos))
-
-    topic_clusters = [
-        ("AI Agents & Multi-Agent", "agent"),
-        ("Model Context Protocol (MCP)", "mcp"),
-        ("Claude Code Skills", "claude"),
-        ("LLM & RAG Pipelines", "rag"),
-        ("Rust CLI & Systems", "rust"),
-        ("Developer Tools & CLIs", "tool"),
-        ("System Design & Architecture", "system design"),
-        ("Android & Mobile Internals", "android"),
-        ("Web Automation & Scraping", "automation"),
-        ("Security & Pentesting", "security"),
-    ]
-    topics_html = "".join(
-        f'<button class="seo-topic-badge" data-query="{esc(q)}">{esc(title)}</button>'
-        for title, q in topic_clusters
-    )
+    total_stars = sum(r.get("stars", 0) for r in repos)
+    avg_stars = round(total_stars / len(repos)) if repos else 0
+    langs = " · ".join(esc(l) for l in top_langs(repos, 3))
 
     return f"""
-    <!-- Static SEO / E-E-A-T & Keyword Overview -->
-    <section id="seo-content" class="seo-section" aria-label="Curated Repository Directory, Search Clusters &amp; FAQ">
-      <div class="seo-card">
-        <div class="seo-header">
-          <h2>Curated GitHub Repositories &amp; Developer Tools</h2>
-          <p class="seo-def">my-starred-repos is a free, searchable index of {len(repos)} GitHub repositories starred by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">Akash Priyadarshi</a>, covering AI agents, MCP servers, Rust CLIs, RAG frameworks, and developer tools. The index is a baked snapshot of the public GitHub API, regenerated on demand. This build: {esc(date_mod)}.</p>
-          <p class="seo-desc">{len(repos)} starred open-source projects by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">Akash Priyadarshi</a>, organized across {len(cats)} categories from a snapshot generated {esc(date_mod)}. Primary technologies: {langs}.</p>
-        </div>
+    <section class="about" id="about" aria-label="About this index">
+      <div>
+        <h2>About this index</h2>
+        <p>my-starred-repos is a free, searchable index of {len(repos)} GitHub repositories starred by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">Akash Priyadarshi</a>: AI agents, MCP servers, Rust CLIs, RAG frameworks and developer tools, sorted into {len(cats)} categories. The page reads a baked snapshot of the public GitHub API, regenerated on demand, not a live feed. This build dates from {esc(date_mod)}.</p>
+        <p>Every entry is here because it was useful for production work, architectural clarity, or agentic workloads. Nothing is sponsored and nothing is ranked by anyone but the star count, which is GitHub's.</p>
 
-        <div class="seo-topics-wrap">
-          <h3>Popular Search Topics &amp; Clusters</h3>
-          <div class="seo-topic-cloud">{topics_html}</div>
+        <div class="faq">
+          <details>
+            <summary>What is my-starred-repos?</summary>
+            <p>my-starred-repos is a free index of every GitHub repository starred by Akash Priyadarshi, searchable by keyword, category, and language, with a client-side Project Matcher that ranks tools against your own project description. New stars appear on the next sync run.</p>
+          </details>
+          <details>
+            <summary>What are the best open-source AI agent and developer tool repositories in 2026?</summary>
+            <p>Top-rated repositories include multi-agent orchestration frameworks (LangGraph, CrewAI, AutoGen, Hermes-Agent), Model Context Protocol servers (MCP), agent skill ecosystems (Claude Code skills, Superpowers, ECC), type-safe LLM tools (Pydantic-AI), token-efficient CLI utilities (rustygrep, zcat, repomap), and local agent assistants (OpenClaw, Browser-Use).</p>
+          </details>
+          <details>
+            <summary>How does the Project Matcher rank repositories?</summary>
+            <p>It scores every repository in the browser by keyword overlap across names, topics, languages, and descriptions, with a small boost for well-starred projects. Nothing you paste leaves the page, and scores are relative to the best match in the current dataset.</p>
+          </details>
+          <details>
+            <summary>How often is the index updated?</summary>
+            <p>There is no schedule. The owner re-runs the sync script against the public GitHub API and commits the result; the snapshot label in the header shows how old the current build is.</p>
+          </details>
         </div>
+      </div>
 
-        <div class="seo-about">
-          <h3>Curation Philosophy &amp; Selection Criteria</h3>
-          <p>Every repository in this index is selected for production utility, architectural clarity, and agentic leverage — prioritizing AI coding workflows, high-performance systems (Rust, Zig, Go), Android internals, and zero-dependency developer tooling.</p>
-        </div>
-
-        <div class="seo-grid-overview">
-          <div class="seo-cats-block">
-            <h3>Directory Categories</h3>
-            <ul class="seo-cats-list">{cat_html}</ul>
-          </div>
-          <div class="seo-featured-block">
-            <h3>Top Starred Highlights</h3>
-            <ul class="seo-list">{''.join(cards)}</ul>
-          </div>
-        </div>
-
-        <div class="seo-faq">
-          <h3>Frequently Asked Questions</h3>
-          <div class="seo-faq-grid">
-            <div class="seo-faq-item">
-              <h4 class="seo-faq-q">What is my-starred-repos?</h4>
-              <p class="seo-faq-a">my-starred-repos is a free index of every GitHub repository starred by Akash Priyadarshi, searchable by keyword, category, and language, with a client-side Project Matcher that ranks tools against your own project description. New stars appear on the next sync run.</p>
-            </div>
-            <div class="seo-faq-item">
-              <h4 class="seo-faq-q">What are the best open-source AI agent and developer tool repositories in 2026?</h4>
-              <p class="seo-faq-a">Top-rated repositories include multi-agent orchestration frameworks (LangGraph, CrewAI, AutoGen, Hermes-Agent), Model Context Protocol servers (MCP), agent skill ecosystems (Claude Code skills, Superpowers, ECC), type-safe LLM tools (Pydantic-AI), token-efficient CLI utilities (rustygrep, zcat, repomap), and local agent assistants (OpenClaw, Browser-Use).</p>
-            </div>
-            <div class="seo-faq-item">
-              <h4 class="seo-faq-q">How does the Project Matcher rank repositories?</h4>
-              <p class="seo-faq-a">It scores every repository in the browser by keyword overlap across names, topics, languages, and descriptions, with a small boost for well-starred projects. Nothing you paste leaves the page, and scores are relative to the best match in the current dataset.</p>
-            </div>
-            <div class="seo-faq-item">
-              <h4 class="seo-faq-q">How often is the repository index updated?</h4>
-              <p class="seo-faq-a">There is no schedule. The owner re-runs the sync script against the public GitHub API and commits the result; the badge in the header shows how old the current snapshot is.</p>
-            </div>
-          </div>
-        </div>
+      <div class="stats-list" aria-label="Index statistics">
+        <div><span>repositories</span><b>{len(repos):,}</b></div>
+        <div><span>total stars</span><b>{fmt_num(total_stars)}</b></div>
+        <div><span>average stars</span><b>{fmt_num(avg_stars)}</b></div>
+        <div><span>categories</span><b>{len(cats)}</b></div>
+        <div><span>top languages</span><b>{langs}</b></div>
+        <div><span>snapshot</span><b>{esc(date_mod)}</b></div>
+        <div><span>machine readable</span><b><a href="/llms.txt">llms.txt</a></b></div>
       </div>
     </section>
 """
 
 
+EMOJI_RE = re.compile("[☀-➿⬀-⯿️‍🀀-🫿]")
+
+def strip_emoji(text):
+    return " ".join(EMOJI_RE.sub("", text or "").split())
+
 def render_noscript(repos, n=30):
     """Plain-HTML top-N list for no-JS crawlers and lightweight AI fetchers."""
     items = "".join(
-        f'<li><a href="{esc(r.get("url"))}">{esc(r.get("full_name"))}</a> — {esc((r.get("description") or "No description provided.")[:140])}</li>'
+        f'<li><a href="{esc(r.get("url"))}">{esc(r.get("full_name"))}</a> — {esc(strip_emoji((r.get("description") or "No description provided.")[:140]))}</li>'
         for r in sorted(repos, key=lambda r: r.get("stars", 0), reverse=True)[:n]
     )
     return f"""
@@ -234,15 +188,30 @@ def render_index(d):
     date_mod = generated[:10] if generated else datetime.utcnow().strftime("%Y-%m-%d")
 
     # Title: ~55 chars, exact count so SERP matches page copy (target 30-60)
-    title = f"Starred Repos — {esc(profile.get('name') or 'Akash Priyadarshi')} | {count} Curated Stars"
+    title = f"Starred Repos · {esc(profile.get('name') or 'Akash Priyadarshi')} | {count} curated stars"
 
     # Meta description: ~140 chars (target 120-160)
     desc = (
-        f"{count} curated GitHub starred repos by {esc(profile.get('name') or 'Akash Priyadarshi')} — "
-        "AI agents, MCP, dev tools, systems, LLMs & web dev. Snapshot refreshed on demand."
+        f"{count} curated GitHub starred repos by {esc(profile.get('name') or 'Akash Priyadarshi')}: "
+        "AI agents, MCP, dev tools, systems, LLMs and web dev. Snapshot refreshed on demand."
     )
 
-    featured_html = render_featured_section(repos, date_mod)
+    about_html = render_about_section(repos, date_mod)
+    cats = category_counts(repos)
+    cat_total = sum(n for _, n in cats) or 1
+    top_cat, top_n = cats[0] if cats else ("—", 0)
+    top_pct = round(top_n / cat_total * 100)
+    segs = "".join(
+        f'<button class="ledger-seg" data-cat="{esc(c.lower())}" aria-pressed="false"'
+        f' style="width:{n / cat_total * 100:.3f}%;--i:{i}"'
+        f' title="{esc(c)} · {n:,} repos ({n / cat_total * 100:.0f}%)"></button>'
+        for i, (c, n) in enumerate(cats)
+    )
+    keys = "".join(
+        f'<button class="ledger-key" data-cat="{esc(c.lower())}" aria-pressed="false" style="--i:{i}">'
+        f'<span class="swatch"></span>{esc(c)} <span class="n">{n:,}</span></button>'
+        for i, (c, n) in enumerate(cats)
+    )
     schema = {
         "@context": "https://schema.org",
         "@type": "WebApplication",
@@ -251,7 +220,7 @@ def render_index(d):
         "description": desc,
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Web",
-        "softwareVersion": "0.3.0",
+        "softwareVersion": "0.4.0",
         "author": {
             "@type": "Person",
             "name": profile.get("name") or "Akash Priyadarshi",
@@ -351,10 +320,10 @@ def render_index(d):
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://my-starred-repos.vercel.app/">
-  <meta property="og:title" content="{esc(profile.get('name') or 'Starred Repos')} — Starred Repos">
+  <meta property="og:title" content="Starred Repos by {esc(profile.get('name') or 'Akash Priyadarshi')}">
   <meta property="og:description" content="{esc(desc)}">
   <meta property="og:image" content="https://my-starred-repos.vercel.app/icons/og-image.png">
-  <meta property="og:image:alt" content="Starred Repos — {esc(profile.get('name') or 'Akash Priyadarshi')}">
+  <meta property="og:image:alt" content="Starred Repos by {esc(profile.get('name') or 'Akash Priyadarshi')}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="Starred Repos">
@@ -363,7 +332,7 @@ def render_index(d):
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://my-starred-repos.vercel.app/">
-  <meta name="twitter:title" content="{esc(profile.get('name') or 'Starred Repos')} — Starred Repos">
+  <meta name="twitter:title" content="Starred Repos by {esc(profile.get('name') or 'Akash Priyadarshi')}">
   <meta name="twitter:description" content="{esc(desc)}">
   <meta name="twitter:image" content="https://my-starred-repos.vercel.app/icons/og-image.png">
   <meta name="twitter:image:alt" content="Starred Repos dashboard">
@@ -379,15 +348,15 @@ def render_index(d):
   <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#16100b">
-  <meta name="msapplication-TileColor" content="#16100b">
+  <meta name="theme-color" content="#171412">
+  <meta name="msapplication-TileColor" content="#171412">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <!-- Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css?v={CSS_V}">
   <script defer src="app.js?v={JS_V}"></script>
@@ -396,164 +365,123 @@ def render_index(d):
 
   <a href="#grid" class="skip-link">Skip to repository list</a>
 
-  <div class="page">
-    <header class="header">
-      <div class="header-content">
-        <div class="header-left">
-          <a href="{esc(GITHUB)}" target="_blank" rel="noopener" class="avatar-link" aria-label="GitHub profile">
-            <img id="profile-avatar" src="" alt="{esc(profile.get('name') or 'Akash Priyadarshi')}" class="avatar-img hidden" width="56" height="56">
-            <div class="avatar-fallback" id="avatar-fallback">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path></svg>
-            </div>
-          </a>
-          <div class="header-text">
-            <h1 id="profile-name">{esc(profile.get('name') or 'Akash Priyadarshi')}</h1>
-            <p class="header-bio" id="profile-bio">{esc(profile.get('bio') or 'Curated starred repositories')}</p>
-          </div>
-        </div>
-        <div class="header-right">
-          <div class="header-stats" id="header-stats">
-            <div class="stat">
-              <span class="stat-val" id="stat-followers">{profile.get('followers', '—')}</span>
-              <span class="stat-label">followers</span>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat">
-              <span class="stat-val" id="stat-repos">{profile.get('public_repos', '—')}</span>
-              <span class="stat-label">repos</span>
-            </div>
-          </div>
-          <span class="sync-badge" id="sync-badge" title="Baked snapshot of the GitHub API">
-            <span class="sync-dot"></span>
-            <span id="sync-label">snapshot</span>
-          </span>
-        </div>
-      </div>
-    </header>
+  <header class="bar">
+    <div class="bar-brand">
+      <span class="mark" aria-hidden="true">AP</span>
+      <span class="bar-name">Starred Repos</span>
+      <span class="bar-scope">{count:,} repos · {len(cats)} categories · Akash Priyadarshi</span>
+    </div>
+    <nav class="bar-nav" aria-label="Other formats">
+      <a href="/llms.txt">llms.txt</a>
+      <a href="/api/search?q=agent">api</a>
+      <a href="{esc(GITHUB)}" target="_blank" rel="noopener">github</a>
+    </nav>
+  </header>
 
-    <!-- Metrics -->
-    <section class="metrics" id="metrics">
-      <div class="metric-card">
-        <span class="metric-val" id="metric-stars">{fmt_num(total_stars)}</span>
-        <span class="metric-label">total stars tracked</span>
+  <div class="wrap">
+
+    <section class="intro">
+      <div>
+        <h1 id="profile-name">{esc(profile.get('name') or 'Akash Priyadarshi')}</h1>
+        <p class="intro-line">Every repository I have starred, {count:,} of them. {top_pct}% is AI and agent tooling, which says more about the last two years than about the list. Search it, filter it, or paste your project into the matcher.</p>
       </div>
-      <div class="metric-card">
-        <span class="metric-val" id="metric-repos">{len(repos)}</span>
-        <span class="metric-label">starred repos</span>
+      <span class="snapshot" id="sync-badge" title="Baked snapshot of the GitHub API">
+        <span class="snapshot-dot"></span>
+        <span id="sync-label">snapshot {esc(date_mod)}</span>
+      </span>
+    </section>
+
+    <section class="ledger" aria-label="The library by category">
+      <div class="ledger-head">
+        <h2 class="label">The library, by category</h2>
+        <p class="ledger-note"><b>{esc(top_cat)}</b> holds {top_n:,} of {cat_total:,} repos, {top_pct}% of the index</p>
       </div>
-      <div class="metric-card">
-        <span class="metric-val" id="metric-lang">{esc(top_lang)}</span>
-        <span class="metric-label">top language</span>
-      </div>
-      <div class="metric-card">
-        <span class="metric-val" id="metric-avg">{fmt_num(avg_stars)}</span>
-        <span class="metric-label">avg stars</span>
+      <div class="ledger-bar" id="ledger-bar">{segs}</div>
+      <div class="ledger-keys" id="ledger-keys">
+        {keys}
+        <button class="ledger-key pinned-key" data-cat="pinned" aria-pressed="false">Pinned <span class="n" id="pinned-count">0</span></button>
       </div>
     </section>
 
-    <!-- Controls -->
-    <section class="controls">
-      <div class="controls-top">
-        <div class="search-wrap">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <input type="text" id="search" placeholder="Search repos, topics, tools (/ to focus)..." autocomplete="off" aria-label="Search repositories">
-          <button id="search-clear" class="search-clear hidden" aria-label="Clear search">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-          </button>
-        </div>
-        <div class="controls-right">
-          <button id="matcher-toggle-btn" class="btn-matcher" title="Match starred tools to your project">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
-            <span>Project Matcher</span>
-          </button>
-          <select id="lang-filter" aria-label="Filter by language">
-            <option value="all">All languages</option>
-          </select>
-          <select id="sort" aria-label="Sort repositories">
-            <option value="stars-desc">Stars: high to low</option>
-            <option value="stars-asc">Stars: low to high</option>
-            <option value="name-asc">Name: A to Z</option>
-            <option value="updated-desc">Recently updated</option>
-          </select>
-          <div class="view-toggle" role="group" aria-label="View mode">
-            <button id="view-grid-btn" class="view-btn" title="Card grid view" aria-label="Grid view">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            </button>
-            <button id="view-compact-btn" class="view-btn active" title="Compact list view" aria-label="Compact view">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-            </button>
-          </div>
-        </div>
+    <section class="toolbar" aria-label="Filters and sorting">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="search" placeholder="Search repos, topics  ( / )" autocomplete="off" aria-label="Search repositories">
+        <button id="search-clear" class="search-clear hidden" aria-label="Clear search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
       </div>
-
-      <!-- Project Matcher Drawer -->
-      <div id="matcher-panel" class="matcher-panel hidden">
-        <div class="matcher-header">
-          <div class="matcher-title-wrap">
-            <h2 class="matcher-title">Project Relevance Matcher</h2>
-          </div>
-          <button id="matcher-close-btn" class="matcher-close-btn" aria-label="Close project matcher">&times;</button>
-        </div>
-        <p class="matcher-desc">Paste your README, tech stack requirements, or idea description. The matcher scores every starred repo by keyword overlap, client-side, with no request leaving the page.</p>
-        <div class="matcher-input-wrap">
-          <textarea id="matcher-input" placeholder="e.g. Building an offline-first Android expense tracker in Kotlin with local SQLite and auto SMS extraction... or A multi-agent AI coding harness with Claude Code MCP servers and token-efficient Rust CLI tools..." rows="3"></textarea>
-          <div class="matcher-actions">
-            <button id="matcher-submit-btn" class="matcher-btn-primary">Find Matching Repos</button>
-            <button id="matcher-reset-btn" class="matcher-btn-secondary">Clear</button>
-            <span id="matcher-status" class="matcher-status"></span>
-          </div>
-          <div class="matcher-chips-wrap">
-            <span class="matcher-chips-label">Quick Ideas:</span>
-            <button class="matcher-chip" data-prompt="Multi-agent orchestration Claude Code MCP servers tools">Multi-Agent &amp; MCP</button>
-            <button class="matcher-chip" data-prompt="Rust CLI high performance token efficient terminal utilities">Rust CLI &amp; Performance</button>
-            <button class="matcher-chip" data-prompt="Offline-first Android Kotlin Jetpack Compose SQLite">Android &amp; Kotlin</button>
-            <button class="matcher-chip" data-prompt="Web crawling headless browser scraping anti-bot">Web Scraping</button>
-            <button class="matcher-chip" data-prompt="Local RAG embeddings vector database search">RAG &amp; Vector DBs</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="controls-bottom">
-        <div class="category-tabs" id="category-tabs" role="tablist" aria-label="Filter by category">
-          <button class="cat-tab active" data-cat="all" role="tab" aria-selected="true">All</button>
-          <button class="cat-tab cat-tab-pinned" data-cat="pinned" role="tab" aria-selected="false">Pinned (<span id="pinned-count">0</span>)</button>
-        </div>
-        <span class="result-count" id="result-count"></span>
-      </div>
+      <select id="lang-filter" aria-label="Filter by language">
+        <option value="all">All languages</option>
+      </select>
+      <select id="sort" aria-label="Sort repositories">
+        <option value="stars-desc">Stars, high to low</option>
+        <option value="stars-asc">Stars, low to high</option>
+        <option value="name-asc">Name, A to Z</option>
+        <option value="updated-desc">Recently updated</option>
+      </select>
+      <button id="matcher-toggle-btn" class="btn" aria-expanded="false" aria-controls="matcher-panel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"></path></svg>
+        <span>Match a project</span>
+      </button>
+      <span class="result-count" id="result-count" aria-live="polite"></span>
     </section>
 
-    <!-- Grid -->
-    <main class="grid" id="grid" role="list" aria-label="Repository cards">
-      <div class="skeleton-grid" id="skeleton">
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
+    <div id="matcher-panel" class="matcher hidden">
+      <div class="matcher-head">
+        <h2 class="matcher-title">Project matcher</h2>
+        <button id="matcher-close-btn" class="matcher-close" aria-label="Close project matcher">&times;</button>
       </div>
+      <p class="matcher-desc">Paste a README, a stack, or an idea. Every repo is scored in the browser by keyword overlap across names, topics, languages and descriptions, with a small boost for star count. Nothing leaves the page.</p>
+      <textarea id="matcher-input" rows="3" placeholder="Offline-first Android expense tracker in Kotlin with local SQLite and SMS extraction"></textarea>
+      <div class="matcher-actions">
+        <button id="matcher-submit-btn" class="matcher-btn-primary">Rank repositories</button>
+        <button id="matcher-reset-btn" class="matcher-btn-secondary">Clear</button>
+        <span id="matcher-status" class="matcher-status"></span>
+      </div>
+      <div class="matcher-chips-wrap">
+        <span class="matcher-chips-label">Try:</span>
+        <button class="matcher-chip" data-prompt="Multi-agent orchestration Claude Code MCP servers tools">multi-agent and MCP</button>
+        <button class="matcher-chip" data-prompt="Rust CLI high performance token efficient terminal utilities">Rust CLI</button>
+        <button class="matcher-chip" data-prompt="Offline-first Android Kotlin Jetpack Compose SQLite">Android and Kotlin</button>
+        <button class="matcher-chip" data-prompt="Web crawling headless browser scraping anti-bot">web scraping</button>
+        <button class="matcher-chip" data-prompt="Local RAG embeddings vector database search">RAG and vector DBs</button>
+      </div>
+    </div>
+
+    <div class="rows-head" aria-hidden="true">
+      <span>#</span>
+      <span>repository</span>
+      <span>language</span>
+      <span>stars</span>
+      <span></span>
+    </div>
+
+    <main class="rows" id="grid" role="list" aria-label="Starred repositories">
+      <div class="skeleton-row"></div>
+      <div class="skeleton-row"></div>
+      <div class="skeleton-row"></div>
+      <div class="skeleton-row"></div>
+      <div class="skeleton-row"></div>
+      <div class="skeleton-row"></div>
     </main>
 
     {noscript_html}
 
-    <!-- Empty state -->
-    <div class="empty-state hidden" id="empty-state">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      <p>No repos match your filters</p>
-      <button class="empty-reset" id="empty-reset">Clear filters</button>
+    <div class="empty hidden" id="empty-state">
+      <p>Nothing matches those filters.</p>
+      <button id="empty-reset">Clear filters</button>
     </div>
 
-    {featured_html}
+    {about_html}
 
-    <!-- Toast notification for copy / pin actions -->
     <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
-    <!-- Footer -->
     <footer class="footer">
-      <div class="footer-content">
-        <p class="footer-text">Starred Repos v0.3 by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">{esc(profile.get('name') or 'Akash Priyadarshi')}</a>. Baked snapshot, refreshed on demand. <a href="/llms.txt" target="_blank" class="footer-link">llms.txt</a> &bull; <a href="/llms-full.txt" target="_blank" class="footer-link">llms-full.txt</a> &bull; <a href="/api/search?q=agent" target="_blank" class="footer-link">API</a></p>
-      </div>
+      <span>Starred Repos v0.4, a baked snapshot refreshed on demand. Built by <a href="{esc(GITHUB)}" target="_blank" rel="noopener">{esc(profile.get('name') or 'Akash Priyadarshi')}</a>.</span>
+      <span><a href="/llms.txt">llms.txt</a> · <a href="/llms-full.txt">llms-full.txt</a> · <a href="/api/search?q=agent">api</a> · <a href="{esc(PORTFOLIO)}" target="_blank" rel="noopener">portfolio</a></span>
     </footer>
+
   </div>
 
 </body>
