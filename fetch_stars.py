@@ -232,7 +232,7 @@ def main():
             # Exact starred count: fetch the real last page and count it.
             resp = safe_get(session, last_page_url, timeout=30, headers=STAR_HEADERS)
             if resp.status_code == 200 and resp.json():
-                last_page = int(last_page_url.split('page=')[-1])
+                last_page = int(last_page_url.split('page=')[-1].split('&')[0])
                 total = (last_page - 1) * 100 + len(resp.json())
         return raw, newest, stopped, total
 
