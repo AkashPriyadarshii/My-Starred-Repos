@@ -17,16 +17,60 @@ CATEGORIES = {
     'Media': ['video', 'audio', 'image', 'media', 'ffmpeg', 'speech-to-text', 'whisper'],
 }
 
+CACHE_FILE = '.http-cache.json'
+_http_cache = None
+
+class CachedResp:
+    """Stand-in for requests.Response when a conditional GET returns 304."""
+    def __init__(self, body):
+        self.status_code = 200
+        self._body = body
+        self.headers = {}
+        self.text = ''
+    def json(self):
+        return self._body
+    def raise_for_status(self):
+        pass
+
+def load_cache():
+    global _http_cache
+    if _http_cache is None:
+        try:
+            with open(CACHE_FILE, 'r', encoding='utf-8') as f:
+                _http_cache = json.load(f)
+        except Exception:
+            _http_cache = {}
+    return _http_cache
+
+def save_cache():
+    if _http_cache is not None:
+        with open(CACHE_FILE, 'w', encoding='utf-8') as f:
+            json.dump(_http_cache, f)
+
 REQUEST_COUNT = 0
 
 
-def safe_get(session, url, timeout=10, retries=3):
+def safe_get(session, url, timeout=10, retries=3, headers=None):
     global REQUEST_COUNT
+    cache = load_cache()
+    entry = cache.get(url)
+    extra = dict(headers or {})
+    if entry and entry.get('etag'):
+        extra['If-None-Match'] = entry['etag']
     backoff = 15
     for attempt in range(retries):
         try:
             REQUEST_COUNT += 1
-            resp = session.get(url, timeout=timeout)
+            resp = session.get(url, timeout=timeout, headers=extra or None)
+            if resp.status_code == 304 and entry:
+                print('  304 Not Modified (served from .http-cache.json)')
+                return CachedResp(entry['body'])
+            etag = resp.headers.get('ETag')
+            if etag and resp.status_code == 200:
+                try:
+                    cache[url] = {'etag': etag, 'body': resp.json()}
+                except Exception:
+                    pass
             remaining = resp.headers.get('X-RateLimit-Remaining')
             if remaining is not None and int(remaining) == 0:
                 reset_time = resp.headers.get('X-RateLimit-Reset')
@@ -35,7 +79,7 @@ def safe_get(session, url, timeout=10, retries=3):
                     print(f"Rate limit hit. Sleeping {sleep_time:.0f}s...")
                     time.sleep(sleep_time)
                     continue
-            if resp.status_code == 403 and 'rate limit' in resp.text.lower():
+            if resp.status_code == 403 and 'rate limit' in (resp.text or '').lower():
                 retry_after = resp.headers.get('Retry-After')
                 sleep_time = int(retry_after) + 2 if retry_after else backoff
                 time.sleep(sleep_time)
@@ -46,7 +90,7 @@ def safe_get(session, url, timeout=10, retries=3):
             if attempt == retries - 1:
                 raise
             time.sleep(3)
-    return session.get(url, timeout=timeout)
+    return session.get(url, timeout=timeout, headers=headers)
 
 # Short keywords ("ai", "git", "cli"...) need word boundaries — bare "ai"
 # must not match "gmail"/"main"/"container". Longer keywords keep substring
@@ -87,8 +131,8 @@ def main():
     parser.add_argument(
         '--incremental',
         action='store_true',
-        help="Stop at the first already-known repo. Saves requests, but known repos keep their old "
-             "star counts and unstarred repos are never pruned. Use --full to repair drift.",
+        help="Fetch only stars newer than the last snapshot (starred_at cutoff), then verify "
+             "the total count. If counts drift (unstarring), falls back to a full sweep automatically.",
     )
     parser.add_argument('--user', default='AkashPriyadarshii', help="GitHub username")
     args = parser.parse_args()
@@ -111,7 +155,6 @@ def main():
         print("Running in 100% public unauthenticated mode (no tokens)")
 
     session.headers.update(headers)
-
     # Fetch profile
     print("Fetching profile...")
     try:
@@ -138,59 +181,79 @@ def main():
 
     existing_repos = []
     existing_map = {}
+    cutoff = None
     if args.incremental and os.path.exists('repos_output.json'):
         try:
             with open('repos_output.json', 'r', encoding='utf-8') as f:
                 old_data = json.load(f)
             existing_repos = old_data.get('repos', [])
             existing_map = {r['full_name']: r for r in existing_repos}
-            print(f"Incremental mode: {len(existing_repos)} repos already in repos_output.json")
+            cutoff = old_data.get('newest_star_at')
+            print(f"Incremental mode: {len(existing_repos)} repos in snapshot, cutoff {cutoff or 'none (full sweep)'}")
         except Exception:
             existing_map = {}
 
-    print("Fetching starred repos...")
-    raw_repos = []
-    page = 1
-    stopped_early = False
+    STAR_HEADERS = {'Accept': 'application/vnd.github.star+json'}
 
-    while True:
-        resp = safe_get(session, f"https://api.github.com/users/{username}/starred?per_page=100&page={page}", timeout=30)
-        rem = resp.headers.get('X-RateLimit-Remaining', '?')
-        lim = resp.headers.get('X-RateLimit-Limit', '?')
-        resp.raise_for_status()
-        data = resp.json()
-        if not data:
-            break
-
-        print(f"  Page {page}: {len(data)} repos (rate limit remaining: {rem}/{lim})")
-
-        if existing_map:
-            fresh = []
-            for r in data:
-                if r['full_name'] in existing_map:
-                    stopped_early = True
-                    break
-                fresh.append(r)
-            raw_repos.extend(fresh)
-            if stopped_early:
-                print("  Reached previously synced repos. Stopping early.")
+    def fetch_pages(use_cutoff):
+        """Fetch starred repos, newest-star first. Returns (repo_items, newest_star_at, stopped)."""
+        raw, page, stopped = [], 1, False
+        newest = None
+        while True:
+            resp = safe_get(
+                session,
+                f"https://api.github.com/users/{username}/starred?per_page=100&page={page}&sort=created&direction=desc",
+                timeout=30,
+                headers=STAR_HEADERS,
+            )
+            rem = resp.headers.get('X-RateLimit-Remaining', '?')
+            lim = resp.headers.get('X-RateLimit-Limit', '?')
+            resp.raise_for_status()
+            data = resp.json()
+            if not data:
                 break
-        else:
-            raw_repos.extend(data)
+            print(f"  Page {page}: {len(data)} repos (rate limit remaining: {rem}/{lim})")
+            for item in data:
+                sa = item.get('starred_at', '')
+                if newest is None or sa > newest:
+                    newest = sa
+                if use_cutoff and sa <= use_cutoff:
+                    stopped = True
+                    break
+                raw.append(item['repo'])
+            if stopped or len(data) < 100:
+                break
+            page += 1
+        return raw, newest, stopped
 
-        if len(data) < 100:
-            break
-        page += 1
+    print("Fetching starred repos...")
+    raw_repos, newest_star_at, stopped_early = fetch_pages(cutoff)
+    sync_mode = 'incremental' if (cutoff and stopped_early) else 'full'
+
+    if args.incremental and cutoff:
+        # Unstar detection: compare actual starred total (from the last-page Link
+        # header) against what the snapshot plus new stars should add up to.
+        resp = safe_get(session, f"https://api.github.com/users/{username}/starred?per_page=100&page=999999&sort=created&direction=desc", headers=STAR_HEADERS)
+        last_link = (resp.links or {}).get('last', {}).get('url', '')
+        if last_link:
+            last_page = int(last_link.split('page=')[-1])
+            total_actual = (last_page - 1) * 100 + len(resp.json())
+        else:
+            total_actual = len(resp.json())
+        expected = len(existing_repos) + len(raw_repos)
+        if total_actual != expected:
+            print(f"  Count drift: {total_actual} starred vs {expected} expected. Running full sweep to repair.")
+            raw_repos, newest_star_at, stopped_early = fetch_pages(None)
+            sync_mode = 'full'
 
     now = datetime.now(IST).isoformat()
     fetched = [to_repo(r, now) for r in raw_repos]
 
-    if existing_map and stopped_early:
+    if sync_mode == 'incremental':
         fetched_names = {r['full_name'] for r in fetched}
         # Known repos keep their original synced_at so stale metadata stays visible.
         results = fetched + [r for r in existing_repos if r['full_name'] not in fetched_names]
         print(f"Incremental: {len(fetched)} new, {len(results) - len(fetched)} kept from previous snapshot")
-        print("  Known repos were not re-fetched; run without --incremental to refresh stars and prune unstars.")
     else:
         results = fetched
         print(f"Full sync: {len(results)} repos fetched")
@@ -202,7 +265,8 @@ def main():
         'username': username,
         'total_repos': len(results),
         'generated_at': now,
-        'sync_mode': 'incremental' if (existing_map and stopped_early) else 'full',
+        'newest_star_at': newest_star_at or '',
+        'sync_mode': sync_mode,
         'requests_used': REQUEST_COUNT,
         'profile': profile,
         'repos': results,
@@ -210,6 +274,8 @@ def main():
 
     with open('repos_output.json', 'w', encoding='utf-8', newline='\n') as f:
         json.dump(output, f, indent=2)
+
+    save_cache()
 
     print(f"\nDone. Wrote repos_output.json ({len(results)} repos, {REQUEST_COUNT} requests)")
     print("Next: python build_site.py")
