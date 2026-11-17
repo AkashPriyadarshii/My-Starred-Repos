@@ -196,9 +196,10 @@ def main():
     STAR_HEADERS = {'Accept': 'application/vnd.github.star+json'}
 
     def fetch_pages(use_cutoff):
-        """Fetch starred repos, newest-star first. Returns (repo_items, newest_star_at, stopped)."""
+        """Fetch starred repos, newest-star first. Returns (items, newest_star_at, stopped, total_count)."""
         raw, page, stopped = [], 1, False
         newest = None
+        last_page_url = None
         while True:
             resp = safe_get(
                 session,
@@ -209,6 +210,8 @@ def main():
             rem = resp.headers.get('X-RateLimit-Remaining', '?')
             lim = resp.headers.get('X-RateLimit-Limit', '?')
             resp.raise_for_status()
+            if last_page_url is None:
+                last_page_url = (resp.links or {}).get('last', {}).get('url')
             data = resp.json()
             if not data:
                 break
@@ -224,26 +227,24 @@ def main():
             if stopped or len(data) < 100:
                 break
             page += 1
-        return raw, newest, stopped
+        total = None
+        if last_page_url:
+            # Exact starred count: fetch the real last page and count it.
+            resp = safe_get(session, last_page_url, timeout=30, headers=STAR_HEADERS)
+            if resp.status_code == 200 and resp.json():
+                last_page = int(last_page_url.split('page=')[-1])
+                total = (last_page - 1) * 100 + len(resp.json())
+        return raw, newest, stopped, total
 
     print("Fetching starred repos...")
-    raw_repos, newest_star_at, stopped_early = fetch_pages(cutoff)
+    raw_repos, newest_star_at, stopped_early, total_actual = fetch_pages(cutoff)
     sync_mode = 'incremental' if (cutoff and stopped_early) else 'full'
 
-    if args.incremental and cutoff:
-        # Unstar detection: compare actual starred total (from the last-page Link
-        # header) against what the snapshot plus new stars should add up to.
-        resp = safe_get(session, f"https://api.github.com/users/{username}/starred?per_page=100&page=999999&sort=created&direction=desc", headers=STAR_HEADERS)
-        last_link = (resp.links or {}).get('last', {}).get('url', '')
-        if last_link:
-            last_page = int(last_link.split('page=')[-1])
-            total_actual = (last_page - 1) * 100 + len(resp.json())
-        else:
-            total_actual = len(resp.json())
+    if args.incremental and cutoff and total_actual is not None:
         expected = len(existing_repos) + len(raw_repos)
         if total_actual != expected:
             print(f"  Count drift: {total_actual} starred vs {expected} expected. Running full sweep to repair.")
-            raw_repos, newest_star_at, stopped_early = fetch_pages(None)
+            raw_repos, newest_star_at, stopped_early, _ = fetch_pages(None)
             sync_mode = 'full'
 
     now = datetime.now(IST).isoformat()
