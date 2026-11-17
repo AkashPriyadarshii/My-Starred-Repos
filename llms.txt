@@ -7,7 +7,7 @@
 
 - schema_version: 1
 - total_repos: 1509
-- generated_at: 2026-11-17T14:41:57.869977+05:30
+- generated_at: 2026-11-17T14:52:57.802105+05:30
 - sync_mode: full
 - freshness: regenerated on demand (no schedule, no cron). Treat generated_at as the truth.
 - search_api: https://my-starred-repos.vercel.app/api/search?q=agent
