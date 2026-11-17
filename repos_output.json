@@ -2,10 +2,10 @@
   "schema_version": 1,
   "username": "AkashPriyadarshii",
   "total_repos": 1509,
-  "generated_at": "2026-11-17T14:55:21.168866+05:30",
+  "generated_at": "2026-11-17T14:57:10.523956+05:30",
   "newest_star_at": "2026-11-17T08:11:06Z",
-  "sync_mode": "full",
-  "requests_used": 19,
+  "sync_mode": "incremental",
+  "requests_used": 3,
   "profile": {
     "login": "AkashPriyadarshii",
     "name": "Akash Priyadarshi",
